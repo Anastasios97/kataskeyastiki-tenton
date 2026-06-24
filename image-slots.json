@@ -1,0 +1,400 @@
+{
+  "home": {
+    "hero": {
+      "local": "/images/home/hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2200&q=90",
+      "alt": "Εξωτερικός χώρος κατοικίας με σύστημα σκίασης",
+      "recommended": "2200 × 1400 px, οριζόντια"
+    },
+    "products": {
+      "classic": {
+        "local": "/images/home/products/classic.jpg",
+        "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Κλασσικό σύστημα σκίασης",
+        "recommended": "1400 × 1100 px, οριζόντια"
+      },
+      "pergola": {
+        "local": "/images/home/products/pergola.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912973-3233cc80bf86?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Περγκοτέντα σε εξωτερικό χώρο",
+        "recommended": "1400 × 1100 px, οριζόντια"
+      },
+      "bioclimatic": {
+        "local": "/images/home/products/bioclimatic.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912293-9a8013e17403?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Βιοκλιματική πέργκολα",
+        "recommended": "1400 × 1100 px, οριζόντια"
+      },
+      "umbrella": {
+        "local": "/images/home/products/umbrella.jpg",
+        "fallback": "https://images.pexels.com/photos/261169/pexels-photo-261169.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "alt": "Ομπρέλες εξωτερικού χώρου",
+        "recommended": "1400 × 1100 px, οριζόντια"
+      },
+      "parking": {
+        "local": "/images/home/products/parking.jpg",
+        "fallback": "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Σύστημα προστασίας οχήματος",
+        "recommended": "1400 × 1100 px, οριζόντια"
+      }
+    },
+    "applications": {
+      "homes": {
+        "local": "/images/home/applications/homes.jpg",
+        "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Εφαρμογή σκίασης σε κατοικία",
+        "recommended": "1400 × 1200 px"
+      },
+      "hospitality": {
+        "local": "/images/home/applications/hospitality.jpg",
+        "fallback": "https://images.pexels.com/photos/261169/pexels-photo-261169.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "alt": "Εφαρμογή σκίασης σε χώρο εστίασης",
+        "recommended": "1400 × 1200 px"
+      },
+      "special": {
+        "local": "/images/home/applications/special.jpg",
+        "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=85",
+        "alt": "Ειδική κατασκευή εξωτερικού χώρου",
+        "recommended": "1400 × 1200 px"
+      }
+    },
+    "company": {
+      "local": "/images/home/company.jpg",
+      "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1400&q=85",
+      "alt": "Έργο της Κατασκευαστικής Τεντών",
+      "recommended": "1400 × 1700 px, κατακόρυφη"
+    },
+    "contact": {
+      "local": "/images/home/contact.jpg",
+      "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=2000&q=80",
+      "alt": "Σύγχρονος εξωτερικός χώρος",
+      "recommended": "2000 × 1200 px, οριζόντια"
+    }
+  },
+  "classic": {
+    "hero": {
+      "local": "/images/classic/hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=88",
+      "alt": "Κλασσικό σύστημα σκίασης σε κατοικία",
+      "recommended": "2000 × 1300 px, οριζόντια"
+    },
+    "systems": {
+      "antirida": {
+        "hero": {
+          "local": "/images/classic/antirida/hero-antirida-v-guides-20260621.jpg",
+          "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=88",
+          "alt": "Τέντα με αντιρίδες",
+          "recommended": "2000 × 1300 px, οριζόντια"
+        },
+        "gallery": [
+          {
+            "local": "/images/classic/antirida/gallery-01-20260621.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα αντιρίδα, εφαρμογή 1",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/antirida/gallery-02-20260621.jpg",
+            "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα αντιρίδα, εφαρμογή 2",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/antirida/gallery-03-20260621.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα αντιρίδα, εφαρμογή 3",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/antirida/gallery-04-20260621.jpg",
+            "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα αντιρίδα, εφαρμογή 4",
+            "recommended": "1600 × 1200 px"
+          }
+        ]
+      },
+      "arms": {
+        "hero": {
+          "local": "/images/classic/arms/hero-folding-arms-no-people-20260621.png",
+          "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1800&q=88",
+          "alt": "Τέντα με σπαστούς βραχίονες",
+          "recommended": "2000 × 1300 px, οριζόντια"
+        },
+        "gallery": [
+          {
+            "local": "/images/classic/arms/gallery-01.jpg",
+            "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα με σπαστούς βραχίονες, εφαρμογή 1",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/arms/gallery-02.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα με σπαστούς βραχίονες, εφαρμογή 2",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/arms/gallery-03.jpg",
+            "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα με σπαστούς βραχίονες, εφαρμογή 3",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/arms/gallery-04.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Τέντα με σπαστούς βραχίονες, εφαρμογή 4",
+            "recommended": "1600 × 1200 px"
+          }
+        ]
+      },
+      "monoblock": {
+        "hero": {
+          "local": "/images/classic/monoblock/hero.jpg",
+          "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1800&q=88",
+          "alt": "Τέντα monoblock",
+          "recommended": "2000 × 1300 px, οριζόντια"
+        },
+        "gallery": [
+          {
+            "local": "/images/classic/monoblock/gallery-01.jpg",
+            "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Monoblock, εφαρμογή 1",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/monoblock/gallery-02.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Monoblock, εφαρμογή 2",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/monoblock/gallery-03.jpg",
+            "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Monoblock, εφαρμογή 3",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/monoblock/gallery-04.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Monoblock, εφαρμογή 4",
+            "recommended": "1600 × 1200 px"
+          }
+        ]
+      },
+      "vertical": {
+        "hero": {
+          "local": "/images/classic/vertical/hero.jpg",
+          "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1800&q=88",
+          "alt": "Κάθετο σύστημα σκίασης",
+          "recommended": "2000 × 1300 px, οριζόντια"
+        },
+        "gallery": [
+          {
+            "local": "/images/classic/vertical/gallery-01.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Κάθετο σύστημα, εφαρμογή 1",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/vertical/gallery-02.jpg",
+            "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Κάθετο σύστημα, εφαρμογή 2",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/vertical/gallery-03.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Κάθετο σύστημα, εφαρμογή 3",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/vertical/gallery-04.jpg",
+            "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Κάθετο σύστημα, εφαρμογή 4",
+            "recommended": "1600 × 1200 px"
+          }
+        ]
+      },
+      "kapotines": {
+        "hero": {
+          "local": "/images/classic/kapotines/hero.jpg",
+          "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1800&q=88",
+          "alt": "Τέντα καποτίνα",
+          "recommended": "2000 × 1300 px, οριζόντια"
+        },
+        "gallery": [
+          {
+            "local": "/images/classic/kapotines/gallery-01.jpg",
+            "fallback": "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Καποτίνα, εφαρμογή 1",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/kapotines/gallery-02.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Καποτίνα, εφαρμογή 2",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/kapotines/gallery-03.jpg",
+            "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Καποτίνα, εφαρμογή 3",
+            "recommended": "1600 × 1200 px"
+          },
+          {
+            "local": "/images/classic/kapotines/gallery-04.jpg",
+            "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1200&q=86",
+            "alt": "Καποτίνα, εφαρμογή 4",
+            "recommended": "1600 × 1200 px"
+          }
+        ]
+      }
+    }
+  },
+  "cassette": {
+    "hero": {
+      "local": "/images/classic/cassette/hero.jpg",
+      "fallback": "https://sevensun.gr/wp-content/uploads/2021/01/dreambox-4-scaled.jpg",
+      "alt": "Τέντα πλήρους κασετίνας",
+      "recommended": "2000 × 1300 px, οριζόντια"
+    },
+    "gallery": [
+      {
+        "local": "/images/classic/cassette/gallery-01.jpg",
+        "fallback": "https://sevensun.gr/wp-content/uploads/2021/01/dreambox-4-scaled.jpg",
+        "alt": "Κασετίνα, εφαρμογή 1",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/classic/cassette/gallery-02-20260622.jpg",
+        "fallback": "https://rainiershading.com/wp-content/uploads/2023/04/Commercial-Grade-Shading-System.png",
+        "alt": "Κασετίνα, εφαρμογή 2",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/classic/cassette/gallery-03-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Κασετίνα, εφαρμογή 3",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/classic/cassette/gallery-04-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Κασετίνα, εφαρμογή 4",
+        "recommended": "1600 × 1200 px"
+      }
+    ]
+  },
+  "pergola": {
+    "hero": {
+      "local": "/images/pergola/hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1696846912973-3233cc80bf86?auto=format&fit=crop&w=1800&q=88",
+      "alt": "Περγκοτέντα αλουμινίου",
+      "recommended": "2200 × 1400 px, οριζόντια"
+    },
+    "gallery": [
+      {
+        "local": "/images/pergola/gallery-01.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912973-3233cc80bf86?auto=format&fit=crop&w=1800&q=88",
+        "alt": "Περγκοτέντα, εφαρμογή 1",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/pergola/gallery-02-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912293-9a8013e17403?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Περγκοτέντα, εφαρμογή 2",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/pergola/gallery-03-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846911635-83b97e53fb65?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Περγκοτέντα, εφαρμογή 3",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/pergola/gallery-04-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1530491396055-5aca4203edbf?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Περγκοτέντα, εφαρμογή 4",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/pergola/gallery-05-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912973-3233cc80bf86?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Περγκοτέντα με ενσωματωμένο φωτισμό, εφαρμογή 5",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/pergola/gallery-06-20260622.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912293-9a8013e17403?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Περγκοτέντα επαγγελματικού χώρου, εφαρμογή 6",
+        "recommended": "1600 × 1200 px"
+      }
+    ]
+  },
+  "bioclimatic": {
+    "hero": {
+      "local": "/images/bioclimatic/hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1696846912293-9a8013e17403?auto=format&fit=crop&w=1800&q=88",
+      "alt": "Βιοκλιματική πέργκολα αλουμινίου",
+      "recommended": "2200 × 1400 px, οριζόντια"
+    },
+    "gallery": [
+      {
+        "local": "/images/bioclimatic/gallery-01.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912293-9a8013e17403?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Βιοκλιματική πέργκολα, εφαρμογή 1",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/bioclimatic/gallery-02.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846912973-3233cc80bf86?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Βιοκλιματική πέργκολα, εφαρμογή 2",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/bioclimatic/gallery-03.jpg",
+        "fallback": "https://images.unsplash.com/photo-1696846911635-83b97e53fb65?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Βιοκλιματική πέργκολα, εφαρμογή 3",
+        "recommended": "1600 × 1200 px"
+      },
+      {
+        "local": "/images/bioclimatic/gallery-04.jpg",
+        "fallback": "https://images.unsplash.com/photo-1530491396055-5aca4203edbf?auto=format&fit=crop&w=1400&q=86",
+        "alt": "Βιοκλιματική πέργκολα, εφαρμογή 4",
+        "recommended": "1600 × 1200 px"
+      }
+    ]
+  },
+  "pages": {
+    "other": {
+      "local": "/images/pages/other-systems-umbrellas-20260622.jpg",
+      "fallback": "https://images.pexels.com/photos/261169/pexels-photo-261169.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "alt": "Άλλο σύστημα σκίασης",
+      "recommended": "2000 × 1300 px, οριζόντια"
+    },
+    "services": {
+      "local": "/images/pages/services-hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=2000&q=88",
+      "alt": "Εργασία τοποθέτησης και συντήρησης",
+      "recommended": "2000 × 1300 px, οριζόντια"
+    },
+    "companyHero": {
+      "local": "/images/pages/company-hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=88",
+      "alt": "Έργο της οικογενειακής επιχείρησης",
+      "recommended": "2000 × 1300 px, οριζόντια"
+    },
+    "companyStory": {
+      "local": "/images/pages/company-story.jpg",
+      "fallback": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1400&q=85",
+      "alt": "Η ομάδα και έργο της Κατασκευαστικής Τεντών",
+      "recommended": "1400 × 1700 px, κατακόρυφη"
+    },
+    "contact": {
+      "local": "/images/pages/contact-hero.jpg",
+      "fallback": "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=2000&q=88",
+      "alt": "Εξωτερικός χώρος με σύστημα σκίασης",
+      "recommended": "2000 × 1200 px, οριζόντια"
+    }
+  }
+}
