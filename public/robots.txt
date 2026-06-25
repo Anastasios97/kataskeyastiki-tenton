@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anastasios97.github.io/kataskeyastiki-tenton/sitemap.xml

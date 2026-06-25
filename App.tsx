@@ -8,6 +8,7 @@ const business = {
   email: "k.tenton@yahoo.gr",
   phones: ["6932254494", "6932254443", "2109829988"],
   address: "Στρατάρχη Παπάγου Αλεξάνδρου 109, Άγιος Δημήτριος, Αττική",
+  serviceArea: "Εξυπηρετούμε όλη την Αττική και αναλαμβάνουμε έργα σε όλη την Ελλάδα.",
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Stratarchi+Papagou+Alexandrou+109+Agios+Dimitrios+Attiki",
   facebookUrl: "https://www.facebook.com/katas.tenton?locale=el_GR",
@@ -19,6 +20,7 @@ type IconName =
   | "awning"
   | "check"
   | "glass"
+  | "menu"
   | "parking"
   | "pergola"
   | "phone"
@@ -84,6 +86,13 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
         <path d="M12 3v18M4 12h16" />
       </>
     ),
+    menu: (
+      <>
+        <path d="M4 7h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17h16" />
+      </>
+    ),
     parking: (
       <>
         <path d="M5 21V4h8a5 5 0 0 1 0 10H5" />
@@ -138,11 +147,11 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
 }
 
 function useMediaSource(image: SiteImage) {
-  const [source, setSource] = useState(image.fallback);
+  const [source, setSource] = useState(image.local);
 
   useEffect(() => {
     const controller = new AbortController();
-    setSource(image.fallback);
+    setSource(image.local);
 
     fetch(image.local, {
       cache: "no-store",
@@ -172,11 +181,13 @@ function MediaImage({
   alt = image.alt,
   className,
   loading,
+  priority = false,
 }: {
   image: SiteImage;
   alt?: string;
   className?: string;
   loading?: "eager" | "lazy";
+  priority?: boolean;
 }) {
   const source = useMediaSource(image);
 
@@ -184,7 +195,14 @@ function MediaImage({
     <img
       alt={alt}
       className={className}
+      decoding="async"
+      fetchPriority={priority ? "high" : undefined}
       loading={loading}
+      onError={(event) => {
+        if (event.currentTarget.src !== image.fallback) {
+          event.currentTarget.src = image.fallback;
+        }
+      }}
       src={source}
     />
   );
@@ -342,7 +360,7 @@ const routeMeta: Record<string, { title: string; description: string }> = {
   "/": {
     title: "Λύσεις σκίασης με εμπειρία",
     description:
-      "Οικογενειακή επιχείρηση με περισσότερα από 30 χρόνια εμπειρίας σε τέντες, πέργκολες και συστήματα σκίασης.",
+      "Οικογενειακή επιχείρηση με περισσότερα από 30 χρόνια εμπειρίας σε τέντες, πέργκολες και συστήματα σκίασης σε όλη την Αττική και την Ελλάδα.",
   },
   "/klassika-systimata-skiasis": {
     title: "Κλασσικά συστήματα σκίασης",
@@ -377,7 +395,7 @@ const routeMeta: Record<string, { title: string; description: string }> = {
   "/epikoinonia": {
     title: "Επικοινωνία",
     description:
-      "Επικοινωνήστε με την Κατασκευαστική Τεντών για αυτοψία και δωρεάν αρχική εκτίμηση.",
+      "Επικοινωνήστε με την Κατασκευαστική Τεντών για αυτοψία και δωρεάν αρχική εκτίμηση σε Αττική και όλη την Ελλάδα.",
   },
 };
 
@@ -1056,6 +1074,21 @@ const applications = [
   },
 ];
 
+const serviceAreas = [
+  {
+    title: "Όλη η Αττική",
+    text: "Άμεση εξυπηρέτηση σε κατοικίες και επαγγελματικούς χώρους σε Αθήνα, Πειραιά και προάστια.",
+  },
+  {
+    title: "Όλη η Ελλάδα",
+    text: "Αναλαμβάνουμε έργα εκτός Αττικής με συνεννόηση για μελέτη, μεταφορά και τοποθέτηση.",
+  },
+  {
+    title: "Κατοικίες & επιχειρήσεις",
+    text: "Προσαρμόζουμε τη λύση στη χρήση του χώρου, από μπαλκόνια μέχρι επαγγελματικές εγκαταστάσεις.",
+  },
+];
+
 const faqs = [
   {
     question: "Πώς ξεκινά η διαδικασία;",
@@ -1086,10 +1119,53 @@ function normalizeBasePath(path: string) {
 
 const appBasePath = normalizeBasePath(import.meta.env.BASE_URL || "/");
 const appBasePrefix = appBasePath === "/" ? "" : appBasePath.replace(/\/$/, "");
+const siteUrl = (
+  import.meta.env.VITE_SITE_URL || "https://anastasios97.github.io/kataskeyastiki-tenton"
+).replace(/\/+$/, "");
+const quoteFormEndpoint =
+  import.meta.env.VITE_QUOTE_FORM_ENDPOINT ||
+  `https://formsubmit.co/ajax/${business.email}`;
 
 function appHref(path: string) {
   if (!path.startsWith("/")) return path;
   return `${appBasePrefix}${path}`;
+}
+
+function absoluteSiteUrl(path: string) {
+  const routePath = path === "/" ? "" : path;
+
+  if (appBasePrefix && siteUrl.endsWith(appBasePrefix)) {
+    return `${siteUrl}${routePath}`;
+  }
+
+  return `${siteUrl}${appHref(path)}`;
+}
+
+function setMetaAttribute(selector: string, attribute: string, value: string) {
+  const element = document.querySelector<HTMLMetaElement>(selector);
+  element?.setAttribute(attribute, value);
+}
+
+function buildQuoteMailto(form: FormData) {
+  const name = String(form.get("name") ?? "").trim();
+  const contact = String(form.get("contact") ?? "").trim();
+  const area = String(form.get("area") ?? "").trim();
+  const need = String(form.get("need") ?? "").trim();
+  const message = String(form.get("message") ?? "").trim();
+  const subject = encodeURIComponent(`Αίτημα προσφοράς από ${name || "την ιστοσελίδα"}`);
+  const body = encodeURIComponent(
+    [
+      `Ονοματεπώνυμο: ${name}`,
+      `Τηλέφωνο / Email: ${contact}`,
+      `Περιοχή: ${area}`,
+      `Ενδιαφέρον: ${need}`,
+      "",
+      "Περιγραφή:",
+      message,
+    ].join("\n"),
+  );
+
+  return `mailto:${business.email}?subject=${subject}&body=${body}`;
 }
 
 function stripBasePath(pathname: string) {
@@ -1144,37 +1220,104 @@ function ContactDetails() {
 }
 
 function QuoteForm() {
-  const handleQuote = (event: FormEvent<HTMLFormElement>) => {
+  const [status, setStatus] = useState<{
+    type: "idle" | "sending" | "success" | "error";
+    message: string;
+    fallbackHref?: string;
+  }>({
+    type: "idle",
+    message: "",
+  });
+
+  const handleQuote = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const name = String(form.get("name") ?? "");
-    const contact = String(form.get("contact") ?? "");
-    const need = String(form.get("need") ?? "");
-    const subject = encodeURIComponent(`Αίτημα προσφοράς από ${name}`);
-    const body = encodeURIComponent(
-      `Ονοματεπώνυμο: ${name}\nΤηλέφωνο / Email: ${contact}\nΕνδιαφέρον: ${need}`,
-    );
-    window.location.href = `mailto:${business.email}?subject=${subject}&body=${body}`;
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const fallbackHref = buildQuoteMailto(form);
+
+    if (String(form.get("_honey") ?? "").trim()) return;
+
+    form.set("_subject", `Νέο αίτημα προσφοράς - ${business.name}`);
+    form.set("_template", "table");
+    form.set("_captcha", "false");
+
+    setStatus({
+      type: "sending",
+      message: "Στέλνουμε το αίτημά σας...",
+    });
+
+    try {
+      const response = await fetch(quoteFormEndpoint, {
+        body: form,
+        headers: {
+          Accept: "application/json",
+        },
+        method: "POST",
+      });
+
+      if (!response.ok) throw new Error("Quote form submission failed");
+
+      formElement.reset();
+      setStatus({
+        type: "success",
+        message: "Το αίτημα στάλθηκε. Θα επικοινωνήσουμε μαζί σας το συντομότερο.",
+      });
+    } catch {
+      setStatus({
+        type: "error",
+        message:
+          "Δεν ολοκληρώθηκε η αυτόματη αποστολή. Μπορείτε να στείλετε το ίδιο αίτημα με email.",
+        fallbackHref,
+      });
+    }
   };
 
   return (
     <form className="quote-form" onSubmit={handleQuote}>
+      <div className="form-head">
+        <strong>Γρήγορο αίτημα προσφοράς</strong>
+        <p>Στείλτε μας τα βασικά στοιχεία και θα επικοινωνήσουμε για λεπτομέρειες.</p>
+      </div>
+      <input
+        aria-hidden="true"
+        autoComplete="off"
+        className="form-honey"
+        name="_honey"
+        tabIndex={-1}
+        type="text"
+      />
+      <input name="_subject" type="hidden" value={`Νέο αίτημα προσφοράς - ${business.name}`} />
+      <input name="_template" type="hidden" value="table" />
+      <input name="_captcha" type="hidden" value="false" />
       <label>
         Ονοματεπώνυμο
-        <input name="name" type="text" placeholder="Το όνομά σας" required />
+        <input autoComplete="name" name="name" type="text" placeholder="Το όνομά σας" required />
       </label>
       <label>
         Τηλέφωνο ή email
         <input
+          autoComplete="tel email"
           name="contact"
           type="text"
-          placeholder="Πώς μπορούμε να επικοινωνήσουμε;"
+          placeholder="Τηλέφωνο ή email"
           required
         />
       </label>
       <label>
+        Περιοχή
+        <input
+          autoComplete="address-level2"
+          name="area"
+          type="text"
+          placeholder="π.χ. Αθήνα ή πόλη εκτός Αττικής"
+        />
+      </label>
+      <label>
         Τι σας ενδιαφέρει;
-        <select name="need" defaultValue="Νέα κατασκευή">
+        <select name="need" defaultValue="" required>
+          <option value="" disabled>
+            Επιλέξτε λύση
+          </option>
           <option>Κλασσικό σύστημα σκίασης</option>
           <option>Περγκοτέντα</option>
           <option>Βιοκλιματική πέργκολα</option>
@@ -1184,12 +1327,40 @@ function QuoteForm() {
           <option>Άλλο</option>
         </select>
       </label>
-      <button className="button button-sun form-submit" type="submit">
-        Ετοιμάστε το email μου <Icon name="arrow" size={19} />
+      <label>
+        Σύντομη περιγραφή
+        <textarea
+          name="message"
+          placeholder="Περιγράψτε τον χώρο, τις διαστάσεις ή ό,τι θέλετε να γνωρίζουμε."
+          rows={4}
+          required
+        />
+      </label>
+      <button
+        className="button button-sun form-submit"
+        disabled={status.type === "sending"}
+        type="submit"
+      >
+        {status.type === "sending" ? "Αποστολή..." : "Στείλτε αίτημα"} <Icon name="arrow" size={19} />
       </button>
+      {status.message && (
+        <p
+          aria-live="polite"
+          className={`form-status form-status-${status.type}`}
+          role="status"
+        >
+          {status.message}
+          {status.fallbackHref && (
+            <>
+              {" "}
+              <a href={status.fallbackHref}>Άνοιγμα email</a>
+            </>
+          )}
+        </p>
+      )}
       <small>
-        Η φόρμα ανοίγει το πρόγραμμα email της συσκευής σας. Δεν αποθηκεύουμε
-        προσωπικά δεδομένα.
+        Τα στοιχεία αποστέλλονται αποκλειστικά για να οργανώσουμε επικοινωνία
+        και αρχική εκτίμηση.
       </small>
     </form>
   );
@@ -1206,6 +1377,27 @@ function DetailCta() {
         <a className="button button-sun" href={appHref("/epikoinonia")}>
           Επικοινωνήστε μαζί μας <Icon name="arrow" size={19} />
         </a>
+      </div>
+    </section>
+  );
+}
+
+function CoverageBand() {
+  return (
+    <section className="coverage-section">
+      <div className="container coverage-grid">
+        <div>
+          <p className="eyebrow light"><span /> Περιοχές εξυπηρέτησης</p>
+          <h2>{business.serviceArea}</h2>
+        </div>
+        <div className="coverage-list">
+          {serviceAreas.map((area) => (
+            <article key={area.title}>
+              <strong>{area.title}</strong>
+              <p>{area.text}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -2129,7 +2321,8 @@ function ContactPage() {
             <h2>Μιλήστε με την ομάδα μας.</h2>
             <p>
               Υπεύθυνος: <strong>{business.manager}</strong>. Εξυπηρετούμε κατοικίες
-              και επαγγελματικούς χώρους στην Αττική.
+              και επαγγελματικούς χώρους σε όλη την Αττική και αναλαμβάνουμε έργα
+              σε όλη την Ελλάδα.
             </p>
             <ContactDetails />
           </div>
@@ -2169,7 +2362,7 @@ function HomePage({
             Οικογενειακή επιχείρηση • 30 χρόνια εμπειρίας • Υπεύθυνος Μιχάλης Παπαδάμ
           </p>
           <h1>
-            Σκιά που σχεδιάζεται
+            Σκιά που σχεδιάζεται{" "}
             <br />
             <em>για να ζείτε καλύτερα.</em>
           </h1>
@@ -2225,6 +2418,8 @@ function HomePage({
           </div>
         </div>
       </section>
+
+      <CoverageBand />
 
       <section className="products-section section" id="products">
         <div className="container">
@@ -2328,7 +2523,7 @@ function HomePage({
             <h2>Η εμπειρία περνά από γενιά σε γενιά.</h2>
             <p className="lead">
               Η Κατασκευαστική Τεντών είναι οικογενειακή επιχείρηση με βάση την
-              Αττική και πολυετή παρουσία στον χώρο της σκίασης.
+              Αττική, με έργα σε όλη την Ελλάδα και πολυετή παρουσία στον χώρο της σκίασης.
             </p>
             <p>
               Συνδυάζουμε την πρακτική γνώση του τεχνίτη με σύγχρονα συστήματα,
@@ -2387,7 +2582,7 @@ function HomePage({
             <h2>Πείτε μας τι θέλετε να σκιάσετε.</h2>
             <p>
               Στείλτε μια πρώτη περιγραφή και θα επικοινωνήσουμε για τις
-              λεπτομέρειες και την αυτοψία.
+              λεπτομέρειες, την αυτοψία και τον τρόπο εξυπηρέτησης στην περιοχή σας.
             </p>
             <ContactDetails />
             <a className="text-link light-link" href={appHref("/epikoinonia")}>
@@ -2404,6 +2599,7 @@ function HomePage({
 export default function App() {
   const [path, setPath] = useState(() => cleanPath(window.location.pathname));
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const onPopState = () => {
@@ -2412,6 +2608,38 @@ export default function App() {
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [path]);
+
+  useEffect(() => {
+    document.body.classList.toggle("menu-is-open", isMenuOpen);
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMenuOpen(false);
+    };
+
+    if (isMenuOpen) document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.classList.remove("menu-is-open");
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    const preload = document.createElement("link");
+    preload.rel = "preload";
+    preload.as = "image";
+    preload.href = media.home.hero.local;
+    preload.setAttribute("fetchpriority", "high");
+    document.head.appendChild(preload);
+
+    return () => {
+      preload.remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -2458,10 +2686,24 @@ export default function App() {
           }
         : routeMeta["/"]
     );
-    document.title = `${meta.title} | ${business.name}`;
+    const title = `${meta.title} | ${business.name}`;
+    const canonicalUrl = absoluteSiteUrl(path);
+    const imageUrl = absoluteSiteUrl("/images/home/hero.jpg");
+
+    document.title = title;
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute("content", meta.description);
+    document
+      .querySelector<HTMLLinkElement>('link[rel="canonical"]')
+      ?.setAttribute("href", canonicalUrl);
+    setMetaAttribute('meta[property="og:title"]', "content", title);
+    setMetaAttribute('meta[property="og:description"]', "content", meta.description);
+    setMetaAttribute('meta[property="og:url"]', "content", canonicalUrl);
+    setMetaAttribute('meta[property="og:image"]', "content", imageUrl);
+    setMetaAttribute('meta[name="twitter:title"]', "content", title);
+    setMetaAttribute('meta[name="twitter:description"]', "content", meta.description);
+    setMetaAttribute('meta[name="twitter:image"]', "content", imageUrl);
   }, [path]);
 
   const activeProductPage = productPages.find((page) => page.path === path);
@@ -2495,6 +2737,16 @@ export default function App() {
             <a className="header-cta" href={appHref("/epikoinonia")}>
               Ζητήστε προσφορά
             </a>
+            <button
+              aria-controls="mobile-menu"
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
+              className="menu-toggle"
+              onClick={() => setIsMenuOpen((current) => !current)}
+              type="button"
+            >
+              <Icon name={isMenuOpen ? "x" : "menu"} size={21} />
+            </button>
           </div>
         </div>
         <nav className="primary-tabs" aria-label="Κύρια πλοήγηση">
@@ -2516,6 +2768,58 @@ export default function App() {
             ))}
           </div>
         </nav>
+        <div
+          className={`mobile-menu ${isMenuOpen ? "is-open" : ""}`}
+          id="mobile-menu"
+          aria-hidden={!isMenuOpen}
+        >
+          <button
+            aria-label="Κλείσιμο μενού"
+            className="mobile-menu-backdrop"
+            onClick={() => setIsMenuOpen(false)}
+            tabIndex={isMenuOpen ? 0 : -1}
+            type="button"
+          />
+          <nav className="mobile-menu-panel" aria-label="Μενού κινητού">
+            <div className="mobile-menu-head">
+              <span className="brand-mark">{business.shortName}</span>
+              <button
+                aria-label="Κλείσιμο μενού"
+                className="mobile-menu-close"
+                onClick={() => setIsMenuOpen(false)}
+                type="button"
+              >
+                <Icon name="x" size={22} />
+              </button>
+            </div>
+            <div className="mobile-menu-links">
+              {navItems.map((item) => (
+                <a
+                  className={
+                    path === item.path ||
+                    (item.path === "/klassika-systimata-skiasis" &&
+                      path.startsWith("/klassika-systimata-skiasis/"))
+                      ? "is-active"
+                      : ""
+                  }
+                  href={appHref(item.path)}
+                  key={item.path}
+                  tabIndex={isMenuOpen ? 0 : -1}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            <div className="mobile-menu-actions">
+              <a href={`tel:+30${business.phones[0]}`} tabIndex={isMenuOpen ? 0 : -1}>
+                <Icon name="phone" size={17} /> {business.phones[0]}
+              </a>
+              <a href={appHref("/epikoinonia")} tabIndex={isMenuOpen ? 0 : -1}>
+                Ζητήστε προσφορά <Icon name="arrow" size={17} />
+              </a>
+            </div>
+          </nav>
+        </div>
       </header>
 
       {!knownPath && (
@@ -2596,6 +2900,14 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <div className="mobile-quick-actions" aria-label="Γρήγορες ενέργειες">
+        <a href={`tel:+30${business.phones[0]}`}>
+          <Icon name="phone" size={17} /> Κλήση
+        </a>
+        <a href={appHref("/epikoinonia")}>
+          Προσφορά <Icon name="arrow" size={17} />
+        </a>
+      </div>
     </div>
   );
 }
