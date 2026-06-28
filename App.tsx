@@ -59,6 +59,13 @@ type ClassicSystem = {
   features: string[];
   image: SiteImage;
   gallery: SiteImage[];
+  chooser: {
+    shortTitle: string;
+    bestFor: string;
+    keyBenefit: string;
+    decisionHint: string;
+    tags: string[];
+  };
 };
 
 type FabricDesign = {
@@ -785,6 +792,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.classic.systems.antirida.hero,
     gallery: media.classic.systems.antirida.gallery,
+    chooser: {
+      shortTitle: "Αντιρίδα",
+      bestFor: "Κλασσικά μπαλκόνια και σημεία με αέρα.",
+      keyBenefit: "Οικονομική και στιβαρή λύση με σταθερούς οδηγούς.",
+      decisionHint: "Τη διαλέγετε όταν θέλετε αντοχή, απλή λειτουργία και εύκολη συντήρηση.",
+      tags: ["Οικονομική", "Αντοχή στον αέρα", "Κλασσική λύση"],
+    },
   },
   {
     path: "/klassika-systimata-skiasis/spastoi-vrachiones",
@@ -803,6 +817,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.classic.systems.arms.hero,
     gallery: media.classic.systems.arms.gallery,
+    chooser: {
+      shortTitle: "Σπαστοί βραχίονες",
+      bestFor: "Μπαλκόνια και προσόψεις που πρέπει να μένουν ελεύθερα.",
+      keyBenefit: "Μεγάλη σκίαση χωρίς μπροστινή στήριξη.",
+      decisionHint: "Τη διαλέγετε όταν θέλετε πιο καθαρή όψη και άνετη κίνηση μπροστά από την τέντα.",
+      tags: ["Ελεύθερος χώρος", "Σύγχρονη όψη", "Μεγάλο άνοιγμα"],
+    },
   },
   {
     path: "/klassika-systimata-skiasis/kasetes-kasoneta",
@@ -821,6 +842,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.cassette.hero,
     gallery: media.cassette.gallery,
+    chooser: {
+      shortTitle: "Κασέτες",
+      bestFor: "Σύγχρονες κατοικίες και εκτεθειμένα σημεία.",
+      keyBenefit: "Προστατεύονται πανί, άξονας και βραχίονες όταν μαζεύει.",
+      decisionHint: "Τη διαλέγετε όταν μετράει η εμφάνιση και θέλετε το σύστημα πιο προστατευμένο.",
+      tags: ["Κλειστού τύπου", "Προστασία πανιού", "Premium όψη"],
+    },
   },
   {
     path: "/klassika-systimata-skiasis/monoblock",
@@ -839,6 +867,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.classic.systems.monoblock.hero,
     gallery: media.classic.systems.monoblock.gallery,
+    chooser: {
+      shortTitle: "Monoblock",
+      bestFor: "Μεγάλα ανοίγματα ή δύσκολες επιφάνειες στήριξης.",
+      keyBenefit: "Ενιαία μπάρα που μοιράζει καλύτερα τα φορτία.",
+      decisionHint: "Το διαλέγετε όταν ο τοίχος ή η πρόσοψη χρειάζεται πιο σίγουρη και ενιαία στήριξη.",
+      tags: ["Ενιαία μπάρα", "Μεγάλα ανοίγματα", "Δύσκολη στήριξη"],
+    },
   },
   {
     path: "/klassika-systimata-skiasis/katheta-systimata",
@@ -857,6 +892,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.classic.systems.vertical.hero,
     gallery: media.classic.systems.vertical.gallery,
+    chooser: {
+      shortTitle: "Κάθετα",
+      bestFor: "Πλαϊνό ή μπροστινό κλείσιμο σε μπαλκόνια και ημιυπαίθριους.",
+      keyBenefit: "Προστασία από ήλιο, αέρα και βροχή σε κατακόρυφη κάλυψη.",
+      decisionHint: "Το διαλέγετε όταν θέλετε προστασία σαν εξωτερική κουρτίνα ή κάθετο κλείσιμο.",
+      tags: ["Κάθετη κάλυψη", "Αέρας & βροχή", "Screen ή ζελατίνα"],
+    },
   },
   {
     path: "/klassika-systimata-skiasis/kapotines",
@@ -875,6 +917,13 @@ const classicSystems: ClassicSystem[] = [
     ],
     image: media.classic.systems.kapotines.hero,
     gallery: media.classic.systems.kapotines.gallery,
+    chooser: {
+      shortTitle: "Καποτίνες",
+      bestFor: "Παράθυρα, εισόδους, βιτρίνες και μικρότερα ανοίγματα.",
+      keyBenefit: "Καμπυλωτή κατασκευή με διαχρονική εμφάνιση και δυνατότητα σήμανσης.",
+      decisionHint: "Τη διαλέγετε όταν θέλετε κλασσική όψη, προβολή και σκίαση σε συγκεκριμένο άνοιγμα.",
+      tags: ["Καμπυλωτή μορφή", "Βιτρίνες", "Σήμανση"],
+    },
   },
 ];
 
@@ -1430,21 +1479,46 @@ function ClassicSystemsPage() {
         <div className="container">
           <div className="section-heading split-heading">
             <div>
-              <p className="eyebrow light"><span /> Επιλογές</p>
-              <h2>Έξι συστήματα, μία σωστή επιλογή για τον χώρο σας.</h2>
+              <p className="eyebrow light"><span /> Οδηγός επιλογής</p>
+              <h2>Δείτε όλα τα κλασσικά συστήματα μαζί και διαλέξτε πιο εύκολα.</h2>
             </div>
             <p>
-              Επιλέξτε σύστημα για να δείτε αναλυτική περιγραφή, εξαρτήματα,
-              αυτοματισμούς και ενδεικτική συλλογή εφαρμογών.
+              Συγκρίνετε με μια ματιά πού ταιριάζει κάθε σύστημα, τι κερδίζετε
+              και ποια λύση αξίζει να δείτε αναλυτικά.
             </p>
           </div>
-          <div className="classic-choice-grid">
+          <div className="classic-choice-grid" aria-label="Οδηγός επιλογής κλασσικού συστήματος σκίασης">
             {classicSystems.map((system, index) => (
               <a className="classic-choice-card" href={appHref(system.path)} key={system.path}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{system.title}</h3>
-                <p>{system.summary}</p>
-                <strong>Δείτε αναλυτικά <Icon name="arrow" size={17} /></strong>
+                <div className="classic-choice-media">
+                  <MediaImage
+                    image={system.image}
+                    alt={system.image.alt}
+                    loading="lazy"
+                  />
+                  <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+                </div>
+                <div className="classic-choice-body">
+                  <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
+                  <h3>{system.title}</h3>
+                  <p>{system.chooser.decisionHint}</p>
+                  <dl className="classic-choice-facts">
+                    <div>
+                      <dt>Ιδανικό για</dt>
+                      <dd>{system.chooser.bestFor}</dd>
+                    </div>
+                    <div>
+                      <dt>Κερδίζετε</dt>
+                      <dd>{system.chooser.keyBenefit}</dd>
+                    </div>
+                  </dl>
+                  <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
+                    {system.chooser.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
+                  <strong>Επιλογή συστήματος <Icon name="arrow" size={17} /></strong>
+                </div>
               </a>
             ))}
           </div>
