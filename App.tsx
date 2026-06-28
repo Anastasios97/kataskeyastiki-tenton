@@ -68,6 +68,28 @@ type ClassicSystem = {
   };
 };
 
+type AdvisorItem = {
+  path: string;
+  title: string;
+  shortTitle: string;
+  image: SiteImage;
+  bestFor: string;
+  keyBenefit: string;
+  decisionHint: string;
+  tags: string[];
+  features: string[];
+};
+
+type AdvisorQuizQuestion = {
+  id: string;
+  question: string;
+  options: {
+    label: string;
+    text: string;
+    itemPath: string;
+  }[];
+};
+
 type FabricDesign = {
   name: string;
   code: string;
@@ -240,6 +262,35 @@ function DetailHero({
       <div className="detail-hero-shade" />
       <div className="container detail-hero-content">
         <p className="eyebrow light"><span /> {eyebrow}</p>
+        <h1>{title}</h1>
+        <p>{intro}</p>
+        {ctaLabel && (
+          <a className="button button-sun" href={appHref("/epikoinonia")}>
+            {ctaLabel} <Icon name="arrow" size={19} />
+          </a>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function PlainDetailHero({
+  eyebrow,
+  title,
+  intro,
+  className = "",
+  ctaLabel,
+}: {
+  eyebrow: string;
+  title: string;
+  intro: ReactNode;
+  className?: string;
+  ctaLabel?: string;
+}) {
+  return (
+    <section className={`plain-detail-hero ${className}`.trim()}>
+      <div className="container plain-detail-hero-content">
+        <p className="eyebrow"><span /> {eyebrow}</p>
         <h1>{title}</h1>
         <p>{intro}</p>
         {ctaLabel && (
@@ -546,26 +597,44 @@ const pergolaTypes = [
   {
     title: "Ευθύγραμμη με κλίση",
     text: "Η κλασσική τεντοπέργκολα αλουμινίου με προκαθορισμένη κλίση για σωστή τάση του PVC και οργανωμένη απορροή της βροχής.",
+    bestFor: "Βεράντες και αυλές όπου χρειάζεται καθαρή απορροή νερού.",
+    keyBenefit: "Σταθερή λειτουργία, απλή γεωμετρία και αξιόπιστη κάλυψη.",
+    tags: ["Κλασσική επιλογή", "Απορροή", "Καθημερινή χρήση"],
   },
   {
     title: "Επίπεδη όψη 90°",
     text: "Λύση με καθαρή, οριζόντια αρχιτεκτονική γραμμή για σύγχρονες προσόψεις και χώρους όπου ζητείται λιτή εμφάνιση.",
+    bestFor: "Σύγχρονες κατοικίες και επαγγελματικές όψεις.",
+    keyBenefit: "Πιο minimal αποτέλεσμα χωρίς έντονη εμφανή κλίση.",
+    tags: ["Minimal", "Σύγχρονη όψη", "Καθαρή γραμμή"],
   },
   {
     title: "Καμπυλωτή",
     text: "Η καμπύλη διαδρομή της οροφής εξυπηρετεί ιδιαίτερες αρχιτεκτονικές απαιτήσεις και δημιουργεί πιο ανάλαφρη τελική μορφή.",
+    bestFor: "Χώρους με ιδιαίτερη αρχιτεκτονική ή πιο μαλακή τελική μορφή.",
+    keyBenefit: "Δίνει χαρακτήρα και βοηθά όταν η ευθεία γραμμή δεν ταιριάζει.",
+    tags: ["Καμπύλη", "Αρχιτεκτονική", "Ειδική μορφή"],
   },
   {
     title: "Κρεμαστή",
     text: "Αναρτώμενη κατασκευή χωρίς εμπρόσθιες κολώνες, όταν το κατάλληλο υπόβαθρο επιτρέπει ασφαλή στήριξη σε τοίχο ή οροφή.",
+    bestFor: "Χώρους όπου θέλουμε να μείνει ελεύθερη η μπροστινή πλευρά.",
+    keyBenefit: "Λιγότερα εμπόδια στο δάπεδο, εφόσον το επιτρέπει η στήριξη.",
+    tags: ["Χωρίς μπροστινές κολώνες", "Ελεύθερη κίνηση", "Τεχνικός έλεγχος"],
   },
   {
     title: "Μεγάλων ανοιγμάτων",
     text: "Ενισχυμένες διατομές και οδηγοί για επαγγελματικές εφαρμογές, αυλές και μεγάλες επιφάνειες που απαιτούν στιβαρή κάλυψη.",
+    bestFor: "Επαγγελματικούς χώρους, μεγάλες αυλές και εκτεταμένες βεράντες.",
+    keyBenefit: "Μεγάλη σκιαζόμενη επιφάνεια με ενισχυμένη κατασκευή.",
+    tags: ["Μεγάλη κάλυψη", "Ενισχυμένη", "Επαγγελματική χρήση"],
   },
   {
     title: "Σε υπάρχουσα κατασκευή",
     text: "Το κινητό σύστημα σκίασης μπορεί, μετά από τεχνικό έλεγχο, να εφαρμοστεί επάνω σε κατάλληλη μεταλλική ή ξύλινη υποδομή.",
+    bestFor: "Χώρους που έχουν ήδη μεταλλική ή ξύλινη υποδομή.",
+    keyBenefit: "Αξιοποιεί υπάρχουσα κατασκευή όταν είναι ασφαλής και κατάλληλη.",
+    tags: ["Υπάρχουσα βάση", "Προσαρμογή", "Έλεγχος στήριξης"],
   },
 ];
 
@@ -948,30 +1017,30 @@ const fabricSuppliers = [
   },
 ];
 
-const classicQuizQuestions = [
+const advisorQuizQuestions: AdvisorQuizQuestion[] = [
   {
     id: "space",
-    question: "Πού θα μπει κυρίως η τέντα;",
+    question: "Πού θα μπει κυρίως η σκίαση;",
     options: [
       {
         label: "Μπαλκόνι με αέρα",
         text: "Θέλω κάτι δοκιμασμένο και στιβαρό.",
-        systemPath: "/klassika-systimata-skiasis/antirida",
+        itemPath: "/klassika-systimata-skiasis/antirida",
       },
       {
         label: "Πρόσοψη ή μπαλκόνι χωρίς εμπόδια",
         text: "Θέλω να μένει ελεύθερος ο χώρος μπροστά.",
-        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+        itemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
       },
       {
-        label: "Σύγχρονη κατοικία",
-        text: "Με νοιάζει πολύ η καθαρή εμφάνιση.",
-        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+        label: "Μεγάλη αυλή ή επαγγελματικός χώρος",
+        text: "Χρειάζομαι μόνιμη κατασκευή με μεγάλη κάλυψη.",
+        itemPath: "/pergkotentes",
       },
       {
-        label: "Πλαϊνό κλείσιμο",
-        text: "Θέλω προστασία από ήλιο, αέρα ή βροχή.",
-        systemPath: "/klassika-systimata-skiasis/katheta-systimata",
+        label: "Χώρος υψηλής αισθητικής",
+        text: "Θέλω έλεγχο φωτός, αέρα και πιο αρχιτεκτονική λύση.",
+        itemPath: "/vioklimatikes-pergkoles",
       },
     ],
   },
@@ -982,22 +1051,22 @@ const classicQuizQuestions = [
       {
         label: "Οικονομία και αντοχή",
         text: "Να είναι πρακτικό και αξιόπιστο.",
-        systemPath: "/klassika-systimata-skiasis/antirida",
+        itemPath: "/klassika-systimata-skiasis/antirida",
       },
       {
         label: "Ελεύθερη κίνηση",
         text: "Να μη χρειάζεται μπροστινή στήριξη.",
-        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+        itemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
       },
       {
-        label: "Προστασία μηχανισμού",
-        text: "Να κλείνει πιο προστατευμένα όταν μαζεύει.",
-        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+        label: "Προστασία όλο τον χρόνο",
+        text: "Θέλω σκιά και κάλυψη σε μεγάλη επιφάνεια.",
+        itemPath: "/pergkotentes",
       },
       {
-        label: "Στήριξη σε δύσκολο σημείο",
-        text: "Ο τοίχος ή το άνοιγμα θέλει πιο ειδική λύση.",
-        systemPath: "/klassika-systimata-skiasis/monoblock",
+        label: "Έλεγχος φωτός και αερισμού",
+        text: "Θέλω να ρυθμίζεται το μικροκλίμα του χώρου.",
+        itemPath: "/vioklimatikes-pergkoles",
       },
     ],
   },
@@ -1008,22 +1077,22 @@ const classicQuizQuestions = [
       {
         label: "Κλασσική και απλή",
         text: "Θέλω κάτι γνώριμο, πρακτικό και διαχρονικό.",
-        systemPath: "/klassika-systimata-skiasis/antirida",
+        itemPath: "/klassika-systimata-skiasis/antirida",
       },
       {
         label: "Καθαρή και μοντέρνα",
         text: "Θέλω πιο σύγχρονη όψη στην πρόσοψη.",
-        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+        itemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
       },
       {
-        label: "Premium και μαζεμένη",
-        text: "Θέλω το σύστημα να δείχνει πιο ολοκληρωμένο.",
-        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+        label: "Σταθερή κατασκευή εξωτερικού χώρου",
+        text: "Θέλω να μοιάζει περισσότερο με πέργκολα.",
+        itemPath: "/pergkotentes",
       },
       {
-        label: "Καμπυλωτή προβολή",
-        text: "Με ενδιαφέρει παράθυρο, είσοδος ή βιτρίνα.",
-        systemPath: "/klassika-systimata-skiasis/kapotines",
+        label: "Αρχιτεκτονική πέργκολα με περσίδες",
+        text: "Θέλω πιο premium εικόνα και ρυθμιζόμενη οροφή.",
+        itemPath: "/vioklimatikes-pergkoles",
       },
     ],
   },
@@ -1140,6 +1209,42 @@ const homeProducts = [
     image: media.home.products.parking,
     tag: "Σκίαση parking",
     path: "/alla-systimata-skiasis",
+  },
+];
+
+const advisorItems: AdvisorItem[] = [
+  ...classicSystems.map((system) => ({
+    path: system.path,
+    title: system.title,
+    shortTitle: system.chooser.shortTitle,
+    image: system.image,
+    bestFor: system.chooser.bestFor,
+    keyBenefit: system.chooser.keyBenefit,
+    decisionHint: system.chooser.decisionHint,
+    tags: system.chooser.tags,
+    features: system.features,
+  })),
+  {
+    path: "/pergkotentes",
+    title: "Περγκοτέντες",
+    shortTitle: "Περγκοτέντα",
+    image: media.home.products.pergola,
+    bestFor: "Μεγάλες βεράντες, αυλές και επαγγελματικούς χώρους.",
+    keyBenefit: "Σταθερή κατασκευή αλουμινίου με κινητή οροφή PVC.",
+    decisionHint: "Τη διαλέγετε όταν θέλετε μεγάλη κάλυψη, πιο μόνιμη παρουσία και προστασία σε εξωτερικό χώρο.",
+    tags: ["Μεγάλη κάλυψη", "PVC οροφή", "Ηλεκτροκίνηση"],
+    features: pergolaFeatures.slice(0, 3).map((feature) => feature.title),
+  },
+  {
+    path: "/vioklimatikes-pergkoles",
+    title: "Βιοκλιματικές πέργκολες",
+    shortTitle: "Βιοκλιματική",
+    image: media.home.products.bioclimatic,
+    bestFor: "Χώρους υψηλής αισθητικής που χρειάζονται έλεγχο ήλιου και αέρα.",
+    keyBenefit: "Ρυθμιζόμενες περσίδες για σκιά, φυσικό αερισμό και προστασία.",
+    decisionHint: "Τη διαλέγετε όταν θέλετε πιο premium κατασκευή και ακριβή ρύθμιση φωτός και μικροκλίματος.",
+    tags: ["Περσίδες", "Μικροκλίμα", "Premium λύση"],
+    features: bioclimaticFeatures.slice(0, 3).map((feature) => feature.title),
   },
 ];
 
@@ -1533,41 +1638,257 @@ function CoverageBand() {
   );
 }
 
-function ClassicSystemsPage() {
+function SelectionAdvisor() {
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
   const [comparedPaths, setComparedPaths] = useState<string[]>([
-    classicSystems[0].path,
-    classicSystems[1].path,
+    "/klassika-systimata-skiasis/spastoi-vrachiones",
+    "/pergkotentes",
+    "/vioklimatikes-pergkoles",
   ]);
-  const [selectedSystemPath, setSelectedSystemPath] = useState<string>("");
+  const [selectedItemPath, setSelectedItemPath] = useState<string>("");
 
-  const quizScores = Object.values(quizAnswers).reduce<Record<string, number>>((scores, systemPath) => {
-    scores[systemPath] = (scores[systemPath] ?? 0) + 1;
+  const quizScores = Object.values(quizAnswers).reduce<Record<string, number>>((scores, itemPath) => {
+    scores[itemPath] = (scores[itemPath] ?? 0) + 1;
     return scores;
   }, {});
-  const quizRecommendations = classicSystems
-    .filter((system) => quizScores[system.path])
+  const quizRecommendations = advisorItems
+    .filter((item) => quizScores[item.path])
     .sort((a, b) => (quizScores[b.path] ?? 0) - (quizScores[a.path] ?? 0))
     .slice(0, 2);
-  const selectedSystem = classicSystems.find((system) => system.path === selectedSystemPath);
-  const comparedSystems = comparedPaths
-    .map((systemPath) => classicSystems.find((system) => system.path === systemPath))
-    .filter((system): system is ClassicSystem => Boolean(system));
+  const selectedItem = advisorItems.find((item) => item.path === selectedItemPath);
+  const comparedItems = comparedPaths
+    .map((itemPath) => advisorItems.find((item) => item.path === itemPath))
+    .filter((item): item is AdvisorItem => Boolean(item));
 
-  function updateQuizAnswer(questionId: string, systemPath: string) {
-    setQuizAnswers((current) => ({ ...current, [questionId]: systemPath }));
+  function updateQuizAnswer(questionId: string, itemPath: string) {
+    setQuizAnswers((current) => ({ ...current, [questionId]: itemPath }));
   }
 
-  function toggleComparedSystem(systemPath: string) {
+  function toggleComparedItem(itemPath: string) {
     setComparedPaths((current) => {
-      if (current.includes(systemPath)) {
-        return current.length === 1 ? current : current.filter((path) => path !== systemPath);
+      if (current.includes(itemPath)) {
+        return current.length === 1 ? current : current.filter((path) => path !== itemPath);
       }
 
-      return [...(current.length >= 3 ? current.slice(1) : current), systemPath];
+      return [...(current.length >= 3 ? current.slice(1) : current), itemPath];
     });
   }
 
+  return (
+    <>
+      <section className="advisor-tools classic-quiz section" id="odigos-epilogis" aria-labelledby="advisor-title">
+        <div className="container advisor-tools-stack">
+          <div className="section-heading split-heading">
+            <div>
+              <p className="eyebrow"><span /> Οδηγός επιλογής</p>
+              <h2 id="advisor-title">Δείτε μαζί τις βασικές λύσεις και βρείτε από πού να ξεκινήσετε.</h2>
+            </div>
+            <p>
+              Το quiz και η σύγκριση δεν αντικαθιστούν την αυτοψία, αλλά βοηθούν
+              να ξεχωρίσετε αν σας ταιριάζει κλασσική τέντα, περγκοτέντα ή
+              βιοκλιματική πέργκολα.
+            </p>
+          </div>
+
+          <div className="classic-quiz-grid">
+            <div className="classic-quiz-intro">
+              <p className="eyebrow"><span /> Γρήγορο quiz</p>
+              <h3>Απαντήστε σε 3 ερωτήσεις και δείτε την πιο πιθανή κατεύθυνση.</h3>
+              <p>
+                Μετά επιλέγετε λύσεις για σύγκριση, ώστε να φανούν δίπλα δίπλα
+                τα πλεονεκτήματα κάθε συστήματος.
+              </p>
+            </div>
+
+            <div className="classic-quiz-panel">
+              {advisorQuizQuestions.map((question, questionIndex) => (
+                <fieldset className="classic-quiz-question" key={question.id}>
+                  <legend>
+                    <span>{String(questionIndex + 1).padStart(2, "0")}</span>
+                    {question.question}
+                  </legend>
+                  <div className="classic-quiz-options">
+                    {question.options.map((option) => {
+                      const isSelected = quizAnswers[question.id] === option.itemPath;
+
+                      return (
+                        <button
+                          className={`classic-quiz-option ${isSelected ? "is-selected" : ""}`}
+                          key={`${question.id}-${option.label}`}
+                          onClick={() => updateQuizAnswer(question.id, option.itemPath)}
+                          type="button"
+                        >
+                          <strong>{option.label}</strong>
+                          <span>{option.text}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              ))}
+
+              <div className="classic-quiz-result" aria-live="polite">
+                <span>Πρόταση</span>
+                {quizRecommendations.length > 0 ? (
+                  <div className="classic-quiz-result-list">
+                    {quizRecommendations.map((item, index) => (
+                      <article key={item.path}>
+                        <small>{index === 0 ? "Πιο πιθανή επιλογή" : "Εναλλακτική"}</small>
+                        <h3>{item.shortTitle}</h3>
+                        <p>{item.decisionHint}</p>
+                        <div>
+                          <button onClick={() => setSelectedItemPath(item.path)} type="button">
+                            Επιλογή
+                          </button>
+                          <a href={appHref(item.path)}>Δείτε τη σελίδα</a>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Διαλέξτε απαντήσεις για να εμφανιστεί πρόταση συστήματος.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="classic-choice-grid" aria-label="Όλες οι βασικές λύσεις σκίασης">
+            {advisorItems.map((item, index) => {
+              const isCompared = comparedPaths.includes(item.path);
+              const isSelected = selectedItemPath === item.path;
+
+              return (
+                <article
+                  className={`classic-choice-card ${isSelected ? "is-selected" : ""}`}
+                  key={item.path}
+                >
+                  <a className="classic-choice-media" href={appHref(item.path)}>
+                    <MediaImage image={item.image} alt={item.image.alt} loading="lazy" />
+                    <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+                  </a>
+                  <div className="classic-choice-body">
+                    <span className="classic-choice-kicker">{item.shortTitle}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.decisionHint}</p>
+                    <dl className="classic-choice-facts">
+                      <div>
+                        <dt>Ιδανικό για</dt>
+                        <dd>{item.bestFor}</dd>
+                      </div>
+                      <div>
+                        <dt>Κερδίζετε</dt>
+                        <dd>{item.keyBenefit}</dd>
+                      </div>
+                    </dl>
+                    <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
+                      {item.tags.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
+                    </div>
+                    <div className="classic-choice-actions">
+                      <button
+                        className="classic-choice-select"
+                        onClick={() => setSelectedItemPath(item.path)}
+                        type="button"
+                      >
+                        Επιλογή
+                      </button>
+                      <button
+                        className={`classic-choice-compare ${isCompared ? "is-active" : ""}`}
+                        onClick={() => toggleComparedItem(item.path)}
+                        type="button"
+                      >
+                        {isCompared ? "Στη σύγκριση" : "Σύγκριση"}
+                      </button>
+                    </div>
+                    <a className="classic-choice-link" href={appHref(item.path)}>
+                      Δείτε αναλυτικά <Icon name="arrow" size={17} />
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="classic-compare advisor-compare" aria-labelledby="advisor-compare-title">
+            <div className="section-heading split-heading">
+              <div>
+                <p className="eyebrow"><span /> Σύγκριση</p>
+                <h2 id="advisor-compare-title">Συγκρίνετε μέχρι 3 λύσεις πριν αποφασίσετε.</h2>
+              </div>
+              <p>
+                Πατήστε “Σύγκριση” στις κάρτες για να αλλάξετε τις επιλογές. Η
+                σύγκριση κρατά τα στοιχεία που βοηθούν περισσότερο στην πρώτη απόφαση.
+              </p>
+            </div>
+
+            <div className="classic-compare-grid">
+              {comparedItems.map((item) => (
+                <article className="classic-compare-card" key={item.path}>
+                  <div className="classic-compare-head">
+                    <span>{item.shortTitle}</span>
+                    <button
+                      disabled={comparedItems.length === 1}
+                      onClick={() => toggleComparedItem(item.path)}
+                      type="button"
+                    >
+                      Αφαίρεση
+                    </button>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <dl>
+                    <div>
+                      <dt>Ιδανικό για</dt>
+                      <dd>{item.bestFor}</dd>
+                    </div>
+                    <div>
+                      <dt>Κερδίζετε</dt>
+                      <dd>{item.keyBenefit}</dd>
+                    </div>
+                    <div>
+                      <dt>Δυνατότητες</dt>
+                      <dd>{item.features.slice(0, 2).join(" • ")}</dd>
+                    </div>
+                  </dl>
+                  <button
+                    className="classic-compare-select"
+                    onClick={() => setSelectedItemPath(item.path)}
+                    type="button"
+                  >
+                    Επιλογή αυτού <Icon name="arrow" size={17} />
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {selectedItem && (
+        <aside className="classic-sticky-choice" aria-live="polite">
+          <div>
+            <span>Επιλέξατε</span>
+            <strong>{selectedItem.shortTitle}</strong>
+            <p>{selectedItem.keyBenefit}</p>
+          </div>
+          <div className="classic-sticky-actions">
+            <a href={appHref("/epikoinonia")}>Ζητήστε προσφορά</a>
+            <a href={appHref(selectedItem.path)}>Λεπτομέρειες</a>
+            <button
+              aria-label="Κλείσιμο επιλογής"
+              onClick={() => setSelectedItemPath("")}
+              type="button"
+            >
+              <Icon name="x" size={18} />
+            </button>
+          </div>
+        </aside>
+      )}
+    </>
+  );
+}
+
+function ClassicSystemsPage() {
   return (
     <main className="detail-main">
       <DetailHero
@@ -1590,70 +1911,6 @@ function ClassicSystemsPage() {
         title="Κατασκευή με βάση τον χώρο και τη χρήση."
       />
 
-      <section className="classic-quiz section" aria-labelledby="classic-quiz-title">
-        <div className="container classic-quiz-grid">
-          <div className="classic-quiz-intro">
-            <p className="eyebrow"><span /> Γρήγορη επιλογή</p>
-            <h2 id="classic-quiz-title">Απαντήστε σε 3 ερωτήσεις και δείτε ποιο σύστημα ταιριάζει.</h2>
-            <p>
-              Δεν αντικαθιστά την αυτοψία, αλλά βοηθά να ξεκινήσετε από τη σωστή
-              κατηγορία πριν μιλήσουμε για διαστάσεις, ύφασμα και μηχανισμό.
-            </p>
-          </div>
-
-          <div className="classic-quiz-panel">
-            {classicQuizQuestions.map((question, questionIndex) => (
-              <fieldset className="classic-quiz-question" key={question.id}>
-                <legend>
-                  <span>{String(questionIndex + 1).padStart(2, "0")}</span>
-                  {question.question}
-                </legend>
-                <div className="classic-quiz-options">
-                  {question.options.map((option) => {
-                    const isSelected = quizAnswers[question.id] === option.systemPath;
-
-                    return (
-                      <button
-                        className={`classic-quiz-option ${isSelected ? "is-selected" : ""}`}
-                        key={`${question.id}-${option.label}`}
-                        onClick={() => updateQuizAnswer(question.id, option.systemPath)}
-                        type="button"
-                      >
-                        <strong>{option.label}</strong>
-                        <span>{option.text}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-            ))}
-
-            <div className="classic-quiz-result" aria-live="polite">
-              <span>Πρόταση</span>
-              {quizRecommendations.length > 0 ? (
-                <div className="classic-quiz-result-list">
-                  {quizRecommendations.map((system, index) => (
-                    <article key={system.path}>
-                      <small>{index === 0 ? "Πιο πιθανή επιλογή" : "Εναλλακτική"}</small>
-                      <h3>{system.chooser.shortTitle}</h3>
-                      <p>{system.chooser.decisionHint}</p>
-                      <div>
-                        <button onClick={() => setSelectedSystemPath(system.path)} type="button">
-                          Επιλογή
-                        </button>
-                        <a href={appHref(system.path)}>Δείτε τη σελίδα</a>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p>Διαλέξτε απαντήσεις για να εμφανιστεί πρόταση συστήματος.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="classic-choices section">
         <div className="container">
           <div className="section-heading split-heading">
@@ -1667,143 +1924,44 @@ function ClassicSystemsPage() {
             </p>
           </div>
           <div className="classic-choice-grid" aria-label="Οδηγός επιλογής κλασσικού συστήματος σκίασης">
-            {classicSystems.map((system, index) => {
-              const isCompared = comparedPaths.includes(system.path);
-              const isSelected = selectedSystemPath === system.path;
-
-              return (
-                <article
-                  className={`classic-choice-card ${isSelected ? "is-selected" : ""}`}
-                  key={system.path}
-                >
-                  <a className="classic-choice-media" href={appHref(system.path)}>
-                    <MediaImage
-                      image={system.image}
-                      alt={system.image.alt}
-                      loading="lazy"
-                    />
-                    <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+            {classicSystems.map((system, index) => (
+              <article className="classic-choice-card" key={system.path}>
+                <a className="classic-choice-media" href={appHref(system.path)}>
+                  <MediaImage
+                    image={system.image}
+                    alt={system.image.alt}
+                    loading="lazy"
+                  />
+                  <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+                </a>
+                <div className="classic-choice-body">
+                  <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
+                  <h3>{system.title}</h3>
+                  <p>{system.chooser.decisionHint}</p>
+                  <dl className="classic-choice-facts">
+                    <div>
+                      <dt>Ιδανικό για</dt>
+                      <dd>{system.chooser.bestFor}</dd>
+                    </div>
+                    <div>
+                      <dt>Κερδίζετε</dt>
+                      <dd>{system.chooser.keyBenefit}</dd>
+                    </div>
+                  </dl>
+                  <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
+                    {system.chooser.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
+                  <a className="classic-choice-link" href={appHref(system.path)}>
+                    Δείτε αναλυτικά <Icon name="arrow" size={17} />
                   </a>
-                  <div className="classic-choice-body">
-                    <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
-                    <h3>{system.title}</h3>
-                    <p>{system.chooser.decisionHint}</p>
-                    <dl className="classic-choice-facts">
-                      <div>
-                        <dt>Ιδανικό για</dt>
-                        <dd>{system.chooser.bestFor}</dd>
-                      </div>
-                      <div>
-                        <dt>Κερδίζετε</dt>
-                        <dd>{system.chooser.keyBenefit}</dd>
-                      </div>
-                    </dl>
-                    <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
-                      {system.chooser.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                    <div className="classic-choice-actions">
-                      <button
-                        className="classic-choice-select"
-                        onClick={() => setSelectedSystemPath(system.path)}
-                        type="button"
-                      >
-                        Επιλογή
-                      </button>
-                      <button
-                        className={`classic-choice-compare ${isCompared ? "is-active" : ""}`}
-                        onClick={() => toggleComparedSystem(system.path)}
-                        type="button"
-                      >
-                        {isCompared ? "Στη σύγκριση" : "Σύγκριση"}
-                      </button>
-                    </div>
-                    <a className="classic-choice-link" href={appHref(system.path)}>
-                      Δείτε αναλυτικά <Icon name="arrow" size={17} />
-                    </a>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="classic-compare section" aria-labelledby="classic-compare-title">
-        <div className="container">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow"><span /> Σύγκριση</p>
-              <h2 id="classic-compare-title">Συγκρίνετε μέχρι 3 συστήματα πριν αποφασίσετε.</h2>
-            </div>
-            <p>
-              Πατήστε “Σύγκριση” στις κάρτες για να αλλάξετε τις επιλογές. Η
-              σύγκριση κρατά τα στοιχεία που βοηθούν περισσότερο στην πρώτη απόφαση.
-            </p>
-          </div>
-
-          <div className="classic-compare-grid">
-            {comparedSystems.map((system) => (
-              <article className="classic-compare-card" key={system.path}>
-                <div className="classic-compare-head">
-                  <span>{system.chooser.shortTitle}</span>
-                  <button
-                    disabled={comparedSystems.length === 1}
-                    onClick={() => toggleComparedSystem(system.path)}
-                    type="button"
-                  >
-                    Αφαίρεση
-                  </button>
                 </div>
-                <h3>{system.title}</h3>
-                <dl>
-                  <div>
-                    <dt>Ιδανικό για</dt>
-                    <dd>{system.chooser.bestFor}</dd>
-                  </div>
-                  <div>
-                    <dt>Κερδίζετε</dt>
-                    <dd>{system.chooser.keyBenefit}</dd>
-                  </div>
-                  <div>
-                    <dt>Δυνατότητες</dt>
-                    <dd>{system.features.slice(0, 2).join(" • ")}</dd>
-                  </div>
-                </dl>
-                <button
-                  className="classic-compare-select"
-                  onClick={() => setSelectedSystemPath(system.path)}
-                  type="button"
-                >
-                  Επιλογή αυτού <Icon name="arrow" size={17} />
-                </button>
               </article>
             ))}
           </div>
         </div>
       </section>
-
-      {selectedSystem && (
-        <aside className="classic-sticky-choice" aria-live="polite">
-          <div>
-            <span>Επιλέξατε</span>
-            <strong>{selectedSystem.chooser.shortTitle}</strong>
-            <p>{selectedSystem.chooser.keyBenefit}</p>
-          </div>
-          <div className="classic-sticky-actions">
-            <a href={appHref("/epikoinonia")}>Ζητήστε προσφορά</a>
-            <a href={appHref(selectedSystem.path)}>Λεπτομέρειες</a>
-            <button
-              aria-label="Κλείσιμο επιλογής"
-              onClick={() => setSelectedSystemPath("")}
-              type="button"
-            >
-              <Icon name="x" size={18} />
-            </button>
-          </div>
-        </aside>
-      )}
 
       <section className="fabrics-section section">
         <div className="container">
@@ -2198,16 +2356,17 @@ function PergolaPage() {
         title="Η σταθερότητα της πέργκολας με οροφή που ανοίγει."
       />
 
-      <section className="pergola-types section">
+      <section className="pergola-types section" id="typoi-kataskeyis">
         <div className="container">
           <div className="section-heading split-heading">
             <div>
-              <p className="eyebrow light"><span /> Τύποι κατασκευής</p>
-              <h2>Η σωστή γεωμετρία για κάθε κτίριο.</h2>
+              <p className="eyebrow light"><span /> Οδηγός επιλογής κατασκευής</p>
+              <h2>Δείτε τους τύπους περγκοτέντας και ποιος ταιριάζει στον χώρο σας.</h2>
             </div>
             <p>
               Η μορφή επιλέγεται αφού ελεγχθούν η στήριξη, η απαιτούμενη
-              προβολή, η απορροή και η αρχιτεκτονική του χώρου.
+              προβολή, η απορροή και η αρχιτεκτονική του χώρου. Παρακάτω είναι
+              ένας πρακτικός οδηγός για την πρώτη επιλογή.
             </p>
           </div>
           <div className="pergola-type-grid">
@@ -2221,13 +2380,31 @@ function PergolaPage() {
                 </div>
                 <h3>{type.title}</h3>
                 <p>{type.text}</p>
+                <dl className="pergola-type-facts">
+                  <div>
+                    <dt>Ιδανικό για</dt>
+                    <dd>{type.bestFor}</dd>
+                  </div>
+                  <div>
+                    <dt>Κερδίζετε</dt>
+                    <dd>{type.keyBenefit}</dd>
+                  </div>
+                </dl>
+                <div className="pergola-type-tags" aria-label="Χαρακτηριστικά">
+                  {type.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <a className="pergola-type-link" href={appHref("/epikoinonia")}>
+                  Ζητήστε εκτίμηση <Icon name="arrow" size={17} />
+                </a>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="pergola-scale section">
+      <section className="pergola-scale section" id="klimaka-efarmoges">
         <div className="container">
           <div className="section-heading split-heading">
             <div>
@@ -2265,7 +2442,7 @@ function PergolaPage() {
         </div>
       </section>
 
-      <section className="pergola-equipment section">
+      <section className="pergola-equipment section" id="eksoplismos-pergkotentas">
         <div className="container pergola-equipment-grid">
           <div>
             <p className="eyebrow light"><span /> Υλικά και εξοπλισμός</p>
@@ -2354,7 +2531,7 @@ function BioclimaticPergolaPage() {
         title="Μία οροφή που συνεργάζεται με το περιβάλλον."
       />
 
-      <section className="bioclimatic-modes section">
+      <section className="bioclimatic-modes section" id="leitourgia-persidon">
         <div className="container">
           <div className="section-heading split-heading">
             <div>
@@ -2386,7 +2563,7 @@ function BioclimaticPergolaPage() {
         </div>
       </section>
 
-      <section className="bioclimatic-types section">
+      <section className="bioclimatic-types section" id="typoi-vioklimatikis">
         <div className="container">
           <div className="section-heading split-heading">
             <div>
@@ -2448,7 +2625,7 @@ function BioclimaticPergolaPage() {
         </div>
       </section>
 
-      <section className="bioclimatic-equipment section">
+      <section className="bioclimatic-equipment section" id="eksoplismos-vioklimatikis">
         <div className="container bioclimatic-equipment-grid">
           <div>
             <p className="eyebrow light"><span /> Λειτουργία και εξοπλισμός</p>
@@ -2587,10 +2764,9 @@ function ProductDetailPage({
 function ServicesPage() {
   return (
     <main className="detail-main">
-      <DetailHero
+      <PlainDetailHero
         className="services-detail-hero"
         eyebrow="Υπηρεσίες"
-        image={media.pages.services}
         intro="Από τη μελέτη και την τοποθέτηση μέχρι την επισκευή και τον καθαρισμό, παραμένουμε το σταθερό σημείο επικοινωνίας σας."
         title="Φροντίδα της κατασκευής σε κάθε στάδιο."
       />
@@ -2618,10 +2794,9 @@ function ServicesPage() {
 function CompanyPage() {
   return (
     <main className="detail-main">
-      <DetailHero
+      <PlainDetailHero
         className="company-detail-hero"
         eyebrow="Η εταιρεία μας"
-        image={media.pages.companyHero}
         intro={<>Μία οικογενειακή επιχείρηση με υπεύθυνο τον {business.manager} και περισσότερα από 30 χρόνια τεχνικής εμπειρίας στη σκίαση.</>}
         title="Η εμπειρία περνά από γενιά σε γενιά."
       />
@@ -2661,10 +2836,9 @@ function CompanyPage() {
 function ContactPage() {
   return (
     <main className="detail-main contact-page">
-      <DetailHero
+      <PlainDetailHero
         className="contact-detail-hero"
         eyebrow="Επικοινωνία"
-        image={media.pages.contact}
         intro="Επικοινωνήστε απευθείας μαζί μας ή στείλτε μια πρώτη περιγραφή για να οργανώσουμε αυτοψία στον χώρο."
         title="Πείτε μας τι θέλετε να σκιάσετε."
       />
@@ -2811,6 +2985,8 @@ function HomePage({
           </div>
         </div>
       </section>
+
+      <SelectionAdvisor />
 
       <section className="services-section section" id="services">
         <div className="container services-grid">
@@ -3069,6 +3245,32 @@ export default function App() {
     path === "/ypiresies" ||
     path === "/i-etaireia-mas" ||
     path === "/epikoinonia";
+  const secondaryTabs = path.startsWith("/klassika-systimata-skiasis")
+    ? [
+        {
+          label: "Όλα",
+          href: appHref("/klassika-systimata-skiasis"),
+          isActive: path === "/klassika-systimata-skiasis",
+        },
+        ...classicSystems.map((system) => ({
+          label: system.chooser.shortTitle,
+          href: appHref(system.path),
+          isActive: path === system.path,
+        })),
+      ]
+    : path === "/pergkotentes"
+      ? [
+          { label: "Τύποι κατασκευής", href: "#typoi-kataskeyis", isActive: false },
+          { label: "Κλίμακα και εφαρμογές", href: "#klimaka-efarmoges", isActive: false },
+          { label: "Εξοπλισμός", href: "#eksoplismos-pergkotentas", isActive: false },
+        ]
+      : path === "/vioklimatikes-pergkoles"
+        ? [
+            { label: "Λειτουργία περσίδων", href: "#leitourgia-persidon", isActive: false },
+            { label: "Τύποι", href: "#typoi-vioklimatikis", isActive: false },
+            { label: "Εξοπλισμός", href: "#eksoplismos-vioklimatikis", isActive: false },
+          ]
+        : [];
 
   return (
     <div className="site-shell">
@@ -3122,6 +3324,21 @@ export default function App() {
             ))}
           </div>
         </nav>
+        {secondaryTabs.length > 0 && (
+          <nav className="secondary-tabs" aria-label="Υποκατηγορίες">
+            <div className="secondary-tabs-inner">
+              {secondaryTabs.map((item) => (
+                <a
+                  className={item.isActive ? "is-active" : ""}
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
         <div
           className={`mobile-menu ${isMenuOpen ? "is-open" : ""}`}
           id="mobile-menu"
