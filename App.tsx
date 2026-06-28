@@ -948,6 +948,87 @@ const fabricSuppliers = [
   },
 ];
 
+const classicQuizQuestions = [
+  {
+    id: "space",
+    question: "Πού θα μπει κυρίως η τέντα;",
+    options: [
+      {
+        label: "Μπαλκόνι με αέρα",
+        text: "Θέλω κάτι δοκιμασμένο και στιβαρό.",
+        systemPath: "/klassika-systimata-skiasis/antirida",
+      },
+      {
+        label: "Πρόσοψη ή μπαλκόνι χωρίς εμπόδια",
+        text: "Θέλω να μένει ελεύθερος ο χώρος μπροστά.",
+        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+      },
+      {
+        label: "Σύγχρονη κατοικία",
+        text: "Με νοιάζει πολύ η καθαρή εμφάνιση.",
+        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+      },
+      {
+        label: "Πλαϊνό κλείσιμο",
+        text: "Θέλω προστασία από ήλιο, αέρα ή βροχή.",
+        systemPath: "/klassika-systimata-skiasis/katheta-systimata",
+      },
+    ],
+  },
+  {
+    id: "priority",
+    question: "Τι είναι πιο σημαντικό για εσάς;",
+    options: [
+      {
+        label: "Οικονομία και αντοχή",
+        text: "Να είναι πρακτικό και αξιόπιστο.",
+        systemPath: "/klassika-systimata-skiasis/antirida",
+      },
+      {
+        label: "Ελεύθερη κίνηση",
+        text: "Να μη χρειάζεται μπροστινή στήριξη.",
+        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+      },
+      {
+        label: "Προστασία μηχανισμού",
+        text: "Να κλείνει πιο προστατευμένα όταν μαζεύει.",
+        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+      },
+      {
+        label: "Στήριξη σε δύσκολο σημείο",
+        text: "Ο τοίχος ή το άνοιγμα θέλει πιο ειδική λύση.",
+        systemPath: "/klassika-systimata-skiasis/monoblock",
+      },
+    ],
+  },
+  {
+    id: "look",
+    question: "Ποια εικόνα ταιριάζει περισσότερο στον χώρο;",
+    options: [
+      {
+        label: "Κλασσική και απλή",
+        text: "Θέλω κάτι γνώριμο, πρακτικό και διαχρονικό.",
+        systemPath: "/klassika-systimata-skiasis/antirida",
+      },
+      {
+        label: "Καθαρή και μοντέρνα",
+        text: "Θέλω πιο σύγχρονη όψη στην πρόσοψη.",
+        systemPath: "/klassika-systimata-skiasis/spastoi-vrachiones",
+      },
+      {
+        label: "Premium και μαζεμένη",
+        text: "Θέλω το σύστημα να δείχνει πιο ολοκληρωμένο.",
+        systemPath: "/klassika-systimata-skiasis/kasetes-kasoneta",
+      },
+      {
+        label: "Καμπυλωτή προβολή",
+        text: "Με ενδιαφέρει παράθυρο, είσοδος ή βιτρίνα.",
+        systemPath: "/klassika-systimata-skiasis/kapotines",
+      },
+    ],
+  },
+];
+
 const fabricSwatches: FabricDesign[] = [
   {
     name: "Cherokee",
@@ -1453,6 +1534,40 @@ function CoverageBand() {
 }
 
 function ClassicSystemsPage() {
+  const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
+  const [comparedPaths, setComparedPaths] = useState<string[]>([
+    classicSystems[0].path,
+    classicSystems[1].path,
+  ]);
+  const [selectedSystemPath, setSelectedSystemPath] = useState<string>("");
+
+  const quizScores = Object.values(quizAnswers).reduce<Record<string, number>>((scores, systemPath) => {
+    scores[systemPath] = (scores[systemPath] ?? 0) + 1;
+    return scores;
+  }, {});
+  const quizRecommendations = classicSystems
+    .filter((system) => quizScores[system.path])
+    .sort((a, b) => (quizScores[b.path] ?? 0) - (quizScores[a.path] ?? 0))
+    .slice(0, 2);
+  const selectedSystem = classicSystems.find((system) => system.path === selectedSystemPath);
+  const comparedSystems = comparedPaths
+    .map((systemPath) => classicSystems.find((system) => system.path === systemPath))
+    .filter((system): system is ClassicSystem => Boolean(system));
+
+  function updateQuizAnswer(questionId: string, systemPath: string) {
+    setQuizAnswers((current) => ({ ...current, [questionId]: systemPath }));
+  }
+
+  function toggleComparedSystem(systemPath: string) {
+    setComparedPaths((current) => {
+      if (current.includes(systemPath)) {
+        return current.length === 1 ? current : current.filter((path) => path !== systemPath);
+      }
+
+      return [...(current.length >= 3 ? current.slice(1) : current), systemPath];
+    });
+  }
+
   return (
     <main className="detail-main">
       <DetailHero
@@ -1475,6 +1590,70 @@ function ClassicSystemsPage() {
         title="Κατασκευή με βάση τον χώρο και τη χρήση."
       />
 
+      <section className="classic-quiz section" aria-labelledby="classic-quiz-title">
+        <div className="container classic-quiz-grid">
+          <div className="classic-quiz-intro">
+            <p className="eyebrow"><span /> Γρήγορη επιλογή</p>
+            <h2 id="classic-quiz-title">Απαντήστε σε 3 ερωτήσεις και δείτε ποιο σύστημα ταιριάζει.</h2>
+            <p>
+              Δεν αντικαθιστά την αυτοψία, αλλά βοηθά να ξεκινήσετε από τη σωστή
+              κατηγορία πριν μιλήσουμε για διαστάσεις, ύφασμα και μηχανισμό.
+            </p>
+          </div>
+
+          <div className="classic-quiz-panel">
+            {classicQuizQuestions.map((question, questionIndex) => (
+              <fieldset className="classic-quiz-question" key={question.id}>
+                <legend>
+                  <span>{String(questionIndex + 1).padStart(2, "0")}</span>
+                  {question.question}
+                </legend>
+                <div className="classic-quiz-options">
+                  {question.options.map((option) => {
+                    const isSelected = quizAnswers[question.id] === option.systemPath;
+
+                    return (
+                      <button
+                        className={`classic-quiz-option ${isSelected ? "is-selected" : ""}`}
+                        key={`${question.id}-${option.label}`}
+                        onClick={() => updateQuizAnswer(question.id, option.systemPath)}
+                        type="button"
+                      >
+                        <strong>{option.label}</strong>
+                        <span>{option.text}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ))}
+
+            <div className="classic-quiz-result" aria-live="polite">
+              <span>Πρόταση</span>
+              {quizRecommendations.length > 0 ? (
+                <div className="classic-quiz-result-list">
+                  {quizRecommendations.map((system, index) => (
+                    <article key={system.path}>
+                      <small>{index === 0 ? "Πιο πιθανή επιλογή" : "Εναλλακτική"}</small>
+                      <h3>{system.chooser.shortTitle}</h3>
+                      <p>{system.chooser.decisionHint}</p>
+                      <div>
+                        <button onClick={() => setSelectedSystemPath(system.path)} type="button">
+                          Επιλογή
+                        </button>
+                        <a href={appHref(system.path)}>Δείτε τη σελίδα</a>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p>Διαλέξτε απαντήσεις για να εμφανιστεί πρόταση συστήματος.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="classic-choices section">
         <div className="container">
           <div className="section-heading split-heading">
@@ -1488,42 +1667,143 @@ function ClassicSystemsPage() {
             </p>
           </div>
           <div className="classic-choice-grid" aria-label="Οδηγός επιλογής κλασσικού συστήματος σκίασης">
-            {classicSystems.map((system, index) => (
-              <a className="classic-choice-card" href={appHref(system.path)} key={system.path}>
-                <div className="classic-choice-media">
-                  <MediaImage
-                    image={system.image}
-                    alt={system.image.alt}
-                    loading="lazy"
-                  />
-                  <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
-                </div>
-                <div className="classic-choice-body">
-                  <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
-                  <h3>{system.title}</h3>
-                  <p>{system.chooser.decisionHint}</p>
-                  <dl className="classic-choice-facts">
-                    <div>
-                      <dt>Ιδανικό για</dt>
-                      <dd>{system.chooser.bestFor}</dd>
+            {classicSystems.map((system, index) => {
+              const isCompared = comparedPaths.includes(system.path);
+              const isSelected = selectedSystemPath === system.path;
+
+              return (
+                <article
+                  className={`classic-choice-card ${isSelected ? "is-selected" : ""}`}
+                  key={system.path}
+                >
+                  <a className="classic-choice-media" href={appHref(system.path)}>
+                    <MediaImage
+                      image={system.image}
+                      alt={system.image.alt}
+                      loading="lazy"
+                    />
+                    <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+                  </a>
+                  <div className="classic-choice-body">
+                    <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
+                    <h3>{system.title}</h3>
+                    <p>{system.chooser.decisionHint}</p>
+                    <dl className="classic-choice-facts">
+                      <div>
+                        <dt>Ιδανικό για</dt>
+                        <dd>{system.chooser.bestFor}</dd>
+                      </div>
+                      <div>
+                        <dt>Κερδίζετε</dt>
+                        <dd>{system.chooser.keyBenefit}</dd>
+                      </div>
+                    </dl>
+                    <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
+                      {system.chooser.tags.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
                     </div>
-                    <div>
-                      <dt>Κερδίζετε</dt>
-                      <dd>{system.chooser.keyBenefit}</dd>
+                    <div className="classic-choice-actions">
+                      <button
+                        className="classic-choice-select"
+                        onClick={() => setSelectedSystemPath(system.path)}
+                        type="button"
+                      >
+                        Επιλογή
+                      </button>
+                      <button
+                        className={`classic-choice-compare ${isCompared ? "is-active" : ""}`}
+                        onClick={() => toggleComparedSystem(system.path)}
+                        type="button"
+                      >
+                        {isCompared ? "Στη σύγκριση" : "Σύγκριση"}
+                      </button>
                     </div>
-                  </dl>
-                  <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
-                    {system.chooser.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
+                    <a className="classic-choice-link" href={appHref(system.path)}>
+                      Δείτε αναλυτικά <Icon name="arrow" size={17} />
+                    </a>
                   </div>
-                  <strong>Επιλογή συστήματος <Icon name="arrow" size={17} /></strong>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="classic-compare section" aria-labelledby="classic-compare-title">
+        <div className="container">
+          <div className="section-heading split-heading">
+            <div>
+              <p className="eyebrow"><span /> Σύγκριση</p>
+              <h2 id="classic-compare-title">Συγκρίνετε μέχρι 3 συστήματα πριν αποφασίσετε.</h2>
+            </div>
+            <p>
+              Πατήστε “Σύγκριση” στις κάρτες για να αλλάξετε τις επιλογές. Η
+              σύγκριση κρατά τα στοιχεία που βοηθούν περισσότερο στην πρώτη απόφαση.
+            </p>
+          </div>
+
+          <div className="classic-compare-grid">
+            {comparedSystems.map((system) => (
+              <article className="classic-compare-card" key={system.path}>
+                <div className="classic-compare-head">
+                  <span>{system.chooser.shortTitle}</span>
+                  <button
+                    disabled={comparedSystems.length === 1}
+                    onClick={() => toggleComparedSystem(system.path)}
+                    type="button"
+                  >
+                    Αφαίρεση
+                  </button>
                 </div>
-              </a>
+                <h3>{system.title}</h3>
+                <dl>
+                  <div>
+                    <dt>Ιδανικό για</dt>
+                    <dd>{system.chooser.bestFor}</dd>
+                  </div>
+                  <div>
+                    <dt>Κερδίζετε</dt>
+                    <dd>{system.chooser.keyBenefit}</dd>
+                  </div>
+                  <div>
+                    <dt>Δυνατότητες</dt>
+                    <dd>{system.features.slice(0, 2).join(" • ")}</dd>
+                  </div>
+                </dl>
+                <button
+                  className="classic-compare-select"
+                  onClick={() => setSelectedSystemPath(system.path)}
+                  type="button"
+                >
+                  Επιλογή αυτού <Icon name="arrow" size={17} />
+                </button>
+              </article>
             ))}
           </div>
         </div>
       </section>
+
+      {selectedSystem && (
+        <aside className="classic-sticky-choice" aria-live="polite">
+          <div>
+            <span>Επιλέξατε</span>
+            <strong>{selectedSystem.chooser.shortTitle}</strong>
+            <p>{selectedSystem.chooser.keyBenefit}</p>
+          </div>
+          <div className="classic-sticky-actions">
+            <a href={appHref("/epikoinonia")}>Ζητήστε προσφορά</a>
+            <a href={appHref(selectedSystem.path)}>Λεπτομέρειες</a>
+            <button
+              aria-label="Κλείσιμο επιλογής"
+              onClick={() => setSelectedSystemPath("")}
+              type="button"
+            >
+              <Icon name="x" size={18} />
+            </button>
+          </div>
+        </aside>
+      )}
 
       <section className="fabrics-section section">
         <div className="container">
