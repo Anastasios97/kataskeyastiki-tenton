@@ -253,10 +253,10 @@
   },
   "cassette": {
     "hero": {
-      "local": "/images/classic/cassette/hero.jpg",
+      "local": "/images/classic/cassette/hero-cassette-real-20260629.jpg",
       "fallback": "https://sevensun.gr/wp-content/uploads/2021/01/dreambox-4-scaled.jpg",
-      "alt": "Τέντα πλήρους κασετίνας",
-      "recommended": "2000 × 1300 px, οριζόντια"
+      "alt": "Τέντα κασετίνα σε σύγχρονη κατοικία",
+      "recommended": "1153 × 2048 px, κατακόρυφη"
     },
     "gallery": [
       {

@@ -785,24 +785,6 @@ const bioclimaticColors = [
 
 const cassetteGalleryImages = media.cassette.gallery;
 
-const cassetteCategories = [
-  {
-    title: "Compact κασετίνα",
-    text: "Λεπτή και διακριτική κατασκευή για μπαλκόνια και μικρότερες βεράντες, με δυνατότητα χειροκίνητης ή ηλεκτρικής λειτουργίας ανά σύστημα.",
-    metric: "έως 5 × 3 m",
-  },
-  {
-    title: "Ενισχυμένη κασετίνα",
-    text: "Μεγαλύτερο κέλυφος και ενισχυμένοι βραχίονες για ευρύτερες επιφάνειες κατοικιών ή επαγγελματικών χώρων.",
-    metric: "έως 7 × 3,2 m",
-  },
-  {
-    title: "Υπερβαρέως τύπου",
-    text: "Ηλεκτροκίνητη λύση μεγάλης κάλυψης με δυνατότητα ενσωμάτωσης φωτισμού LED και πρόσθετων αυτοματισμών.",
-    metric: "έως 7 × 3,5 m",
-  },
-];
-
 const cassetteFeatures = [
   {
     title: "Πλήρες κλείσιμο",
@@ -2140,58 +2122,6 @@ function CassettePage() {
               <span>Μετώπη κλεισίματος</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="cassette-categories section">
-        <div className="container">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow"><span /> Κατηγορίες συστημάτων</p>
-              <h2>Από μικρό μπαλκόνι έως μεγάλη επαγγελματική πρόσοψη.</h2>
-            </div>
-            <p>
-              Οι διαστάσεις είναι ενδεικτικά μέγιστα από συγκεκριμένες σειρές
-              των LAMDA και SEVENSUN. Το κατάλληλο μοντέλο καθορίζεται μετά τη
-              μέτρηση και τον έλεγχο της στήριξης.
-            </p>
-          </div>
-          <div className="cassette-category-grid">
-            {cassetteCategories.map((category, index) => (
-              <article key={category.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{category.metric}</strong>
-                <h3>{category.title}</h3>
-                <p>{category.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="cassette-specs section">
-        <div className="container">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow light"><span /> Ενδεικτικά τεχνικά όρια</p>
-              <h2>Διαστάσεις και κλίση προσαρμοσμένες στη σειρά.</h2>
-            </div>
-            <p>
-              Κάθε τιμή ισχύει μόνο για το αντίστοιχο μοντέλο και δεν πρέπει να
-              μεταφέρεται σε διαφορετικό σύστημα χωρίς τον επίσημο κατάλογο.
-            </p>
-          </div>
-          <div className="cassette-spec-grid">
-            <article><strong>5 × 3 m</strong><span>compact κασετίνα LAMDA</span></article>
-            <article><strong>7 × 3,2 m</strong><span>ενισχυμένη σειρά LAMDA</span></article>
-            <article><strong>7 × 3,5 m</strong><span>LAMDA βαρέως τύπου και SEVENSUN Helios</span></article>
-            <article><strong>5°–70°</strong><span>συνολικό εύρος κλίσεων που συναντάται στις επιλεγμένες σειρές</span></article>
-          </div>
-          <p className="cassette-spec-note">
-            Η πραγματική μέγιστη διάσταση επηρεάζεται από την προβολή, τον
-            αριθμό βραχιόνων, τη θέση εγκατάστασης, το υπόβαθρο και την
-            πιστοποιημένη κλάση του συγκεκριμένου συστήματος.
-          </p>
         </div>
       </section>
 
