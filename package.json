@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build && node scripts/create-spa-fallback.mjs",
-    "check:images": "node scripts/check-images.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:photos": "node scripts/check-photos.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -17,7 +17,9 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.0.0",
+    "imagetools-core": "^7.1.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vite-imagetools": "^7.1.1"
   }
 }

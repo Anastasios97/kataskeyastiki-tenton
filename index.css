@@ -2531,42 +2531,6 @@ h2 {
   background: var(--cream);
 }
 
-.system-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-
-.system-gallery-grid figure {
-  position: relative;
-  min-height: 420px;
-  overflow: hidden;
-  margin: 0;
-  background: var(--forest);
-}
-
-.system-gallery-grid img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 600ms ease;
-}
-
-.system-gallery-grid figure:hover img {
-  transform: scale(1.035);
-}
-
-.system-gallery-grid figcaption {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  padding: 8px 12px;
-  color: white;
-  background: rgba(7, 24, 45, 0.86);
-  font-size: 0.65rem;
-  font-weight: 800;
-}
-
 .pergola-hero {
   min-height: 700px;
   background-position: center 58%;
@@ -3855,7 +3819,6 @@ h2 {
   .supplier-grid,
   .automation-features,
   .system-feature-grid,
-  .system-gallery-grid,
   .pergola-type-grid,
   .pergola-scale-grid,
   .pergola-feature-grid,
@@ -4044,10 +4007,6 @@ h2 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .system-gallery-grid figure {
-    min-height: 320px;
-  }
-
   .footer-grid {
     grid-template-columns: 1fr;
   }
@@ -4071,5 +4030,1067 @@ h2 {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   Σύγχρονο επίπεδο σχεδίασης: ίδια χρώματα, πιο μαλακές φόρμες, κίνηση,
+   γκαλερί φωτογραφιών και lightbox.
+   ========================================================================== */
+
+:root {
+  --radius-lg: 26px;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-soft: 0 18px 50px -24px rgba(11, 31, 58, 0.35);
+  --shadow-lift: 0 30px 70px -30px rgba(11, 31, 58, 0.55);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::selection {
+  color: var(--forest);
+  background: var(--sun);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sun);
+  outline-offset: 3px;
+}
+
+/* ---------- Κουμπιά ---------- */
+
+.button,
+.header-cta,
+.menu-toggle {
+  border-radius: 999px;
+}
+
+.button {
+  transition: transform 220ms var(--ease-out), background 220ms ease, color 220ms ease,
+    box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.button-sun {
+  box-shadow: 0 12px 30px -14px rgba(233, 185, 73, 0.9);
+}
+
+.button-sun:hover {
+  box-shadow: 0 18px 36px -14px rgba(233, 185, 73, 1);
+}
+
+.button-primary:hover {
+  background: var(--forest-light);
+}
+
+.button-glass {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.button-glass:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.button-ghost {
+  color: var(--forest);
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.button-ghost:hover {
+  border-color: var(--forest);
+}
+
+.header-cta {
+  transition: transform 200ms var(--ease-out), box-shadow 200ms ease;
+}
+
+.header-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -12px rgba(233, 185, 73, 1);
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  transition: box-shadow 250ms ease, background 250ms ease;
+}
+
+.site-header .header-inner {
+  transition: min-height 250ms var(--ease-out);
+}
+
+.site-header.is-scrolled {
+  background: rgba(251, 250, 246, 0.86);
+  box-shadow: 0 1px 0 var(--line), 0 12px 30px -20px rgba(11, 31, 58, 0.4);
+}
+
+.site-header.is-scrolled .header-inner {
+  min-height: 62px;
+}
+
+.scroll-progress {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--sun), #f1c965);
+  pointer-events: none;
+}
+
+.primary-tabs-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 6px 0;
+}
+
+.primary-tabs a {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  white-space: nowrap;
+  transition: color 200ms ease, background 200ms ease;
+}
+
+.primary-tabs a::after {
+  right: 50%;
+  bottom: 3px;
+  left: 50%;
+  border-radius: 999px;
+  transition: left 250ms var(--ease-out), right 250ms var(--ease-out);
+}
+
+.primary-tabs a.is-active::after {
+  right: 14px;
+  left: 14px;
+}
+
+.secondary-tabs a {
+  border-radius: 999px;
+}
+
+/* ---------- Home hero ---------- */
+
+.hero {
+  overflow: hidden;
+}
+
+.hero-media {
+  overflow: hidden;
+  background: var(--forest);
+  transform: none;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-position: center 42%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1400ms ease, transform 9000ms linear;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-content > * {
+  animation: rise-in 900ms var(--ease-out) both;
+}
+
+.hero-content > *:nth-child(2) { animation-delay: 90ms; }
+.hero-content > *:nth-child(3) { animation-delay: 180ms; }
+.hero-content > *:nth-child(4) { animation-delay: 270ms; }
+
+.hero-proof {
+  overflow: hidden;
+  border-top-left-radius: var(--radius-lg);
+  background: rgba(11, 31, 58, 0.72);
+  backdrop-filter: blur(18px) saturate(1.2);
+  animation: rise-in 900ms 380ms var(--ease-out) both;
+}
+
+.hero-dots {
+  position: absolute;
+  z-index: 4;
+  bottom: 150px;
+  left: max(24px, calc((100% - 1180px) / 2));
+  display: flex;
+  gap: 8px;
+}
+
+.hero-dots button {
+  width: 28px;
+  height: 4px;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: width 300ms var(--ease-out), background 300ms ease;
+}
+
+.hero-dots button.is-active {
+  width: 52px;
+  background: var(--sun);
+}
+
+.detail-hero {
+  overflow: hidden;
+}
+
+.detail-hero-content > * {
+  animation: rise-in 800ms var(--ease-out) both;
+}
+
+.detail-hero-content > *:nth-child(2) { animation-delay: 80ms; }
+.detail-hero-content > *:nth-child(3) { animation-delay: 160ms; }
+.detail-hero-content > *:nth-child(4) { animation-delay: 240ms; }
+
+.detail-hero-content .hero-actions {
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Κάρτες ---------- */
+
+.product-card,
+.application-card,
+.classic-choice-card,
+.classic-compare-card,
+.quote-form,
+.supplier-card,
+.source-card-grid a,
+.service-page-card,
+.detail-option-card,
+.pergola-type-card,
+.swatch,
+.classic-quiz-result,
+.classic-quiz-question,
+.classic-quiz-option,
+.about-image img {
+  border-radius: var(--radius);
+}
+
+.about-image {
+  border-radius: var(--radius-lg);
+}
+
+.product-card {
+  transition: transform 350ms var(--ease-out), box-shadow 350ms ease;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lift);
+}
+
+.product-icon {
+  backdrop-filter: blur(10px);
+}
+
+.application-card {
+  overflow: hidden;
+}
+
+.classic-choice-card:hover,
+.classic-compare-card:hover,
+.detail-option-card:hover,
+.service-page-card:hover,
+.pergola-type-card:hover {
+  box-shadow: var(--shadow-soft);
+}
+
+.classic-quiz-option {
+  transition: transform 200ms var(--ease-out), border-color 200ms ease, background 200ms ease;
+}
+
+.classic-quiz-option:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- Εμφάνιση με scroll ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Οδηγός επιλογής (tabs) ---------- */
+
+.advisor-tabs {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  gap: 4px;
+  margin: 0 0 34px;
+  padding: 5px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  box-shadow: var(--shadow-soft);
+  scrollbar-width: none;
+}
+
+.advisor-tabs button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  color: var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.86rem;
+  font-weight: 800;
+  transition: background 220ms ease, color 220ms ease;
+}
+
+.advisor-tabs button small {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(11, 31, 58, 0.07);
+  font-size: 0.7rem;
+}
+
+.advisor-tabs button.is-active {
+  color: white;
+  background: var(--forest);
+}
+
+.advisor-tabs button.is-active small {
+  color: var(--forest);
+  background: var(--sun);
+}
+
+.advisor-panel {
+  animation: rise-in 500ms var(--ease-out) both;
+}
+
+.advisor-add {
+  margin-top: 28px;
+}
+
+/* ---------- Γκαλερί φωτογραφιών ---------- */
+
+.gallery-heading-meta {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.gallery-heading-meta p {
+  margin: 0;
+}
+
+.photo-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  color: var(--forest);
+  border-radius: 999px;
+  background: var(--sun);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.photo-grid {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 240px;
+  gap: 14px;
+}
+
+.photo-grid--1 {
+  grid-template-columns: 1fr;
+  grid-auto-rows: min(62vw, 620px);
+}
+
+.photo-grid--2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 440px;
+}
+
+.photo-grid--3 .photo-tile:first-child,
+.photo-grid--4 .photo-tile:first-child,
+.photo-grid--many .photo-tile:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.photo-grid--4 .photo-tile:last-child {
+  grid-column: span 3;
+}
+
+.photo-grid--many .photo-tile:nth-child(7n + 5) {
+  grid-row: span 2;
+}
+
+.photo-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+  border-radius: var(--radius);
+  background: var(--forest);
+}
+
+.photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-out), filter 400ms ease;
+}
+
+.photo-tile::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(0deg, rgba(7, 24, 45, 0.45), transparent 45%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.photo-tile:hover img,
+.photo-tile:focus-visible img {
+  transform: scale(1.06);
+}
+
+.photo-tile:hover::after,
+.photo-tile:focus-visible::after {
+  opacity: 1;
+}
+
+.photo-tile-zoom {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: var(--forest);
+  border-radius: 50%;
+  background: var(--sun);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 250ms ease, transform 300ms var(--ease-out);
+}
+
+.photo-tile:hover .photo-tile-zoom,
+.photo-tile:focus-visible .photo-tile-zoom {
+  opacity: 1;
+  transform: none;
+}
+
+.gallery-more {
+  display: flex;
+  margin: 30px auto 0;
+}
+
+/* ---------- Lightbox ---------- */
+
+.lightbox {
+  position: fixed;
+  z-index: 300;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  color: white;
+  background: rgba(4, 14, 28, 0.95);
+  backdrop-filter: blur(10px);
+  animation: fade-in 250ms ease both;
+}
+
+.lightbox-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.lightbox-title {
+  flex: 1;
+  overflow: hidden;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox-count {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  cursor: pointer;
+  color: white;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  color: var(--forest);
+  background: var(--sun);
+}
+
+.lightbox-stage {
+  display: grid;
+  min-height: 0;
+  margin: 0;
+  padding: 0 84px;
+  place-items: center;
+  animation: zoom-in 350ms var(--ease-out) both;
+}
+
+.lightbox-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.lightbox-prev {
+  left: 20px;
+}
+
+.lightbox-prev svg {
+  transform: rotate(180deg);
+}
+
+.lightbox-next {
+  right: 20px;
+}
+
+.lightbox-thumbs {
+  display: flex;
+  justify-content: safe center;
+  gap: 8px;
+  padding: 16px 20px 20px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.lightbox-thumbs button {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 52px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 0.5;
+  transition: opacity 200ms ease, border-color 200ms ease;
+}
+
+.lightbox-thumbs button:hover,
+.lightbox-thumbs button.is-active {
+  opacity: 1;
+}
+
+.lightbox-thumbs button.is-active {
+  border-color: var(--sun);
+}
+
+.lightbox-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Άλμπουμ ανά σύστημα ---------- */
+
+.album-showcase {
+  background: var(--paper);
+}
+
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.album-card {
+  position: relative;
+  display: block;
+  min-height: 340px;
+  padding: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+  color: white;
+  border-radius: var(--radius-lg);
+  background: var(--forest);
+  text-align: left;
+  transition: transform 350ms var(--ease-out), box-shadow 350ms ease;
+}
+
+.album-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-out);
+}
+
+.album-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lift);
+}
+
+.album-card:hover img {
+  transform: scale(1.06);
+}
+
+.album-card-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(5, 18, 38, 0.88), rgba(5, 18, 38, 0.1) 60%);
+}
+
+.album-card-copy {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.album-card-copy strong {
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ---------- Σελίδα «Έργα μας» ---------- */
+
+.projects-hero {
+  background:
+    radial-gradient(circle at 85% 20%, rgba(233, 185, 73, 0.22), transparent 42%),
+    var(--paper);
+}
+
+.projects-section {
+  padding-top: 56px;
+  background: var(--cream);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 -4px 34px;
+  padding: 10px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-chips::-webkit-scrollbar,
+.advisor-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chips button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  cursor: pointer;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease, transform 200ms var(--ease-out);
+}
+
+.filter-chips button:hover {
+  transform: translateY(-1px);
+  border-color: var(--forest);
+}
+
+.filter-chips button small {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(11, 31, 58, 0.08);
+  font-size: 0.7rem;
+}
+
+.filter-chips button.is-active {
+  color: white;
+  border-color: var(--forest);
+  background: var(--forest);
+}
+
+.filter-chips button.is-active small {
+  color: var(--forest);
+  background: var(--sun);
+}
+
+.projects-masonry {
+  columns: 3 300px;
+  column-gap: 14px;
+}
+
+.projects-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+  border-radius: var(--radius);
+  background: var(--forest);
+  break-inside: avoid;
+  animation: rise-in 600ms var(--ease-out) both;
+}
+
+.projects-tile img {
+  width: 100%;
+  height: auto;
+  transition: transform 900ms var(--ease-out);
+}
+
+.projects-tile:hover img {
+  transform: scale(1.05);
+}
+
+.projects-tile-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 6px 11px;
+  color: white;
+  border-radius: 999px;
+  background: rgba(7, 24, 45, 0.72);
+  backdrop-filter: blur(8px);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.projects-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+/* ---------- Ταινία «Έργα μας» στην αρχική ---------- */
+
+.recent-work {
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.recent-work-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 48px;
+}
+
+.recent-work-track {
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.recent-work-rail {
+  display: flex;
+  width: max-content;
+  gap: 16px;
+  animation: marquee 60s linear infinite;
+}
+
+.recent-work-track:hover .recent-work-rail {
+  animation-play-state: paused;
+}
+
+.recent-work-item {
+  position: relative;
+  flex: 0 0 auto;
+  width: 330px;
+  height: 250px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--forest);
+}
+
+.recent-work-item:nth-child(even) {
+  width: 250px;
+}
+
+.recent-work-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease-out);
+}
+
+.recent-work-item:hover img {
+  transform: scale(1.06);
+}
+
+.recent-work-item span {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 6px 11px;
+  color: white;
+  border-radius: 999px;
+  background: rgba(7, 24, 45, 0.72);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 8px));
+  }
+}
+
+/* ---------- Κουμπί επιστροφής ---------- */
+
+.back-to-top {
+  position: fixed;
+  z-index: 90;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  cursor: pointer;
+  color: var(--forest);
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 16px 34px -14px rgba(11, 31, 58, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition: opacity 250ms ease, transform 300ms var(--ease-out);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+/* ---------- Κινητό ---------- */
+
+@media (max-width: 980px) {
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 200px;
+  }
+
+  .photo-grid--4 .photo-tile:last-child {
+    grid-column: span 2;
+  }
+
+  .photo-grid--2 {
+    grid-auto-rows: 320px;
+  }
+
+  .filter-chips {
+    flex-wrap: nowrap;
+  }
+
+  .hero-dots {
+    bottom: auto;
+    top: 28px;
+  }
+}
+
+@media (max-width: 680px) {
+  .photo-grid {
+    grid-auto-rows: 150px;
+    gap: 8px;
+  }
+
+  .photo-grid--1 {
+    grid-auto-rows: 72vw;
+  }
+
+  .photo-grid--2 {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 62vw;
+  }
+
+  .photo-grid--3 .photo-tile:first-child,
+  .photo-grid--4 .photo-tile:first-child,
+  .photo-grid--many .photo-tile:first-child {
+    grid-row: span 2;
+  }
+
+  .photo-grid--many .photo-tile:nth-child(7n + 5) {
+    grid-row: auto;
+  }
+
+  .photo-tile-zoom {
+    display: none;
+  }
+
+  .projects-masonry {
+    columns: 2;
+    column-gap: 8px;
+  }
+
+  .projects-tile {
+    margin-bottom: 8px;
+  }
+
+  .lightbox-stage {
+    padding: 0 8px;
+  }
+
+  .lightbox-nav {
+    top: auto;
+    bottom: 96px;
+    translate: none;
+  }
+
+  .recent-work-item {
+    width: 240px;
+    height: 190px;
+  }
+
+  .recent-work-item:nth-child(even) {
+    width: 190px;
+  }
+
+  .advisor-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-radius: 18px;
+  }
+
+  .advisor-tabs button {
+    justify-content: center;
+    padding: 11px 6px;
+    border-radius: 14px;
+    font-size: 0.74rem;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .advisor-tabs button small {
+    display: none;
+  }
+
+  .back-to-top {
+    right: 14px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
+  }
+
+  .album-card {
+    min-height: 280px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .recent-work-rail,
+  .hero-content > *,
+  .detail-hero-content > *,
+  .hero-proof,
+  .advisor-panel,
+  .projects-tile,
+  .lightbox,
+  .lightbox-stage {
+    animation: none;
+  }
+
+  .hero-slide {
+    transition: none;
+    transform: none;
   }
 }

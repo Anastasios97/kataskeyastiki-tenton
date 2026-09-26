@@ -1,5 +1,5 @@
-import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { media, SiteImage } from "./siteMedia";
+import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Album, albums, Photo, projectAlbums } from "./photos";
 
 const business = {
   name: "Κατασκευαστική Τεντών",
@@ -18,6 +18,9 @@ const business = {
 type IconName =
   | "arrow"
   | "awning"
+  | "camera"
+  | "grid"
+  | "up"
   | "check"
   | "glass"
   | "menu"
@@ -41,9 +44,10 @@ type ProductPage = {
   title: string;
   intro: string;
   description: string;
-  image: SiteImage;
+  image: Photo;
   icon: IconName;
   items: DetailItem[];
+  albums?: Album[];
   sources?: {
     name: string;
     text: string;
@@ -57,8 +61,8 @@ type ClassicSystem = {
   summary: string;
   description: string[];
   features: string[];
-  image: SiteImage;
-  gallery: SiteImage[];
+  image: Photo;
+  album: Album;
   chooser: {
     shortTitle: string;
     bestFor: string;
@@ -72,7 +76,7 @@ type AdvisorItem = {
   path: string;
   title: string;
   shortTitle: string;
-  image: SiteImage;
+  image: Photo;
   bestFor: string;
   keyBenefit: string;
   decisionHint: string;
@@ -108,7 +112,21 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
         <path d="M5 10v10M19 10v10M9 20v-6h6v6" />
       </>
     ),
+    camera: (
+      <>
+        <path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+        <circle cx="12" cy="13.5" r="3.5" />
+      </>
+    ),
     check: <path d="m5 12 4 4L19 6" />,
+    grid: (
+      <>
+        <rect x="3" y="3" width="8" height="8" rx="1.5" />
+        <rect x="13" y="3" width="8" height="8" rx="1.5" />
+        <rect x="3" y="13" width="8" height="8" rx="1.5" />
+        <rect x="13" y="13" width="8" height="8" rx="1.5" />
+      </>
+    ),
     glass: (
       <>
         <rect x="4" y="3" width="16" height="18" rx="1" />
@@ -156,6 +174,7 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
         <path d="M12 3v16a2 2 0 0 0 4 0" />
       </>
     ),
+    up: <path d="m6 15 6-6 6 6" />,
     x: <path d="m6 6 12 12M18 6 6 18" />,
   };
 
@@ -175,50 +194,22 @@ function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
   );
 }
 
-function useMediaSource(image: SiteImage) {
-  const [source, setSource] = useState(image.local);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    setSource(image.local);
-
-    fetch(image.local, {
-      cache: "no-store",
-      method: "HEAD",
-      signal: controller.signal,
-    })
-      .then((response) => {
-        const contentType = response.headers.get("content-type") ?? "";
-        if (response.ok && contentType.startsWith("image/")) {
-          setSource(image.local);
-        } else {
-          setSource(image.fallback);
-        }
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setSource(image.fallback);
-      });
-
-    return () => controller.abort();
-  }, [image.fallback, image.local]);
-
-  return source;
-}
-
 function MediaImage({
   image,
   alt = image.alt,
   className,
   loading,
   priority = false,
+  sizes = "(max-width: 680px) 100vw, 50vw",
 }: {
-  image: SiteImage;
+  image: Photo;
   alt?: string;
   className?: string;
   loading?: "eager" | "lazy";
   priority?: boolean;
+  sizes?: string;
 }) {
-  const source = useMediaSource(image);
+  const hasVariants = image.thumb !== image.src;
 
   return (
     <img
@@ -227,13 +218,123 @@ function MediaImage({
       decoding="async"
       fetchPriority={priority ? "high" : undefined}
       loading={loading}
-      onError={(event) => {
-        if (event.currentTarget.src !== image.fallback) {
-          event.currentTarget.src = image.fallback;
-        }
-      }}
-      src={source}
+      sizes={hasVariants ? sizes : undefined}
+      src={image.thumb}
+      srcSet={hasVariants ? `${image.thumb} 900w, ${image.src} 2000w` : undefined}
     />
+  );
+}
+
+function useBodyScrollLock(isLocked: boolean) {
+  useEffect(() => {
+    if (!isLocked) return;
+    document.body.classList.add("menu-is-open");
+    return () => document.body.classList.remove("menu-is-open");
+  }, [isLocked]);
+}
+
+function Lightbox({
+  photos,
+  index,
+  title,
+  onClose,
+  onChange,
+}: {
+  photos: Photo[];
+  index: number;
+  title: string;
+  onClose: () => void;
+  onChange: (index: number) => void;
+}) {
+  const touchStart = useRef<number | null>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const total = photos.length;
+  const photo = photos[index];
+
+  const go = useCallback(
+    (step: number) => onChange((index + step + total) % total),
+    [index, onChange, total],
+  );
+
+  useBodyScrollLock(true);
+
+  useEffect(() => {
+    closeButton.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "ArrowRight") go(1);
+      if (event.key === "ArrowLeft") go(-1);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [go, onClose]);
+
+  useEffect(() => {
+    // Προφόρτωση της επόμενης φωτογραφίας για άμεση εναλλαγή.
+    if (total < 2) return;
+    const next = new Image();
+    next.src = photos[(index + 1) % total].src;
+  }, [index, photos, total]);
+
+  return (
+    <div
+      aria-label={`${title}: φωτογραφία ${index + 1} από ${total}`}
+      aria-modal="true"
+      className="lightbox"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      onTouchEnd={(event) => {
+        if (touchStart.current === null) return;
+        const delta = event.changedTouches[0].clientX - touchStart.current;
+        if (Math.abs(delta) > 50) go(delta < 0 ? 1 : -1);
+        touchStart.current = null;
+      }}
+      onTouchStart={(event) => {
+        touchStart.current = event.touches[0].clientX;
+      }}
+      role="dialog"
+    >
+      <div className="lightbox-top">
+        <span className="lightbox-title">{title}</span>
+        <span className="lightbox-count">
+          {index + 1} / {total}
+        </span>
+        <button aria-label="Κλείσιμο" className="lightbox-close" onClick={onClose} ref={closeButton} type="button">
+          <Icon name="x" size={22} />
+        </button>
+      </div>
+      <figure className="lightbox-stage" key={photo.src}>
+        <img alt={photo.alt} src={photo.src} />
+      </figure>
+      {total > 1 && (
+        <>
+          <button aria-label="Προηγούμενη φωτογραφία" className="lightbox-nav lightbox-prev" onClick={() => go(-1)} type="button">
+            <Icon name="arrow" size={26} />
+          </button>
+          <button aria-label="Επόμενη φωτογραφία" className="lightbox-nav lightbox-next" onClick={() => go(1)} type="button">
+            <Icon name="arrow" size={26} />
+          </button>
+          <div className="lightbox-thumbs">
+            {photos.map((item, thumbIndex) => (
+              <button
+                aria-label={`Φωτογραφία ${thumbIndex + 1}`}
+                aria-current={thumbIndex === index}
+                className={thumbIndex === index ? "is-active" : ""}
+                key={item.src}
+                onClick={() => onChange(thumbIndex)}
+                type="button"
+              >
+                <img alt="" loading="lazy" src={item.thumb} />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -244,30 +345,39 @@ function DetailHero({
   intro,
   className = "",
   ctaLabel,
+  photoCount = 0,
 }: {
-  image: SiteImage;
+  image: Photo;
   eyebrow: string;
   title: string;
   intro: ReactNode;
   className?: string;
   ctaLabel?: string;
+  photoCount?: number;
 }) {
-  const source = useMediaSource(image);
-
   return (
     <section
       className={`detail-hero ${className}`.trim()}
-      style={{ backgroundImage: `url("${source}")` }}
+      style={{ backgroundImage: `url("${image.src}")` }}
     >
       <div className="detail-hero-shade" />
       <div className="container detail-hero-content">
         <p className="eyebrow light"><span /> {eyebrow}</p>
         <h1>{title}</h1>
         <p>{intro}</p>
-        {ctaLabel && (
-          <a className="button button-sun" href={appHref("/epikoinonia")}>
-            {ctaLabel} <Icon name="arrow" size={19} />
-          </a>
+        {(ctaLabel || photoCount > 0) && (
+          <div className="hero-actions">
+            {ctaLabel && (
+              <a className="button button-sun" href={appHref("/epikoinonia")}>
+                {ctaLabel} <Icon name="arrow" size={19} />
+              </a>
+            )}
+            {photoCount > 0 && (
+              <a className="button button-glass" href="#fotografies">
+                <Icon name="camera" size={19} /> {photoCountLabel(photoCount)}
+              </a>
+            )}
+          </div>
         )}
       </div>
     </section>
@@ -337,35 +447,91 @@ function DetailOverview({
   );
 }
 
+const GALLERY_PREVIEW = 9;
+
+function photoCountLabel(count: number) {
+  return count === 1 ? "1 φωτογραφία" : `${count} φωτογραφίες`;
+}
+
+/**
+ * Γκαλερί που προσαρμόζει τη διάταξη στον αριθμό των φωτογραφιών:
+ * 1 φωτογραφία = πλατιά, 2 = δίπλα δίπλα, 3+ = μωσαϊκό με την πρώτη μεγάλη.
+ */
+function PhotoGallery({ photos, title }: { photos: Photo[]; title: string }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? photos : photos.slice(0, GALLERY_PREVIEW);
+  const layout = photos.length >= 5 ? "many" : String(photos.length);
+
+  if (photos.length === 0) return null;
+
+  return (
+    <>
+      <div className={`photo-grid photo-grid--${layout}`}>
+        {visible.map((photo, index) => (
+          <button
+            aria-label={`Μεγέθυνση: ${photo.alt}`}
+            className="photo-tile"
+            key={photo.src}
+            onClick={() => setOpenIndex(index)}
+            type="button"
+          >
+            <MediaImage
+              image={photo}
+              loading="lazy"
+              sizes={index === 0 ? "(max-width: 680px) 100vw, 66vw" : "(max-width: 680px) 50vw, 33vw"}
+            />
+            <span className="photo-tile-zoom" aria-hidden="true">
+              <Icon name="plus" size={20} />
+            </span>
+          </button>
+        ))}
+      </div>
+      {photos.length > GALLERY_PREVIEW && (
+        <button className="button button-ghost gallery-more" onClick={() => setShowAll((value) => !value)} type="button">
+          {showAll ? "Λιγότερες φωτογραφίες" : `Δείτε όλες τις φωτογραφίες (${photos.length})`}
+        </button>
+      )}
+      {openIndex !== null && (
+        <Lightbox
+          index={openIndex}
+          onChange={setOpenIndex}
+          onClose={() => setOpenIndex(null)}
+          photos={photos}
+          title={title}
+        />
+      )}
+    </>
+  );
+}
+
 function GallerySection({
-  eyebrow = "Ενδεικτικές εφαρμογές",
+  eyebrow = "Φωτογραφίες έργων",
   title,
-  intro,
-  images,
+  intro = "Πατήστε σε μία φωτογραφία για μεγέθυνση. Με τα βελάκια ή με σύρσιμο περνάτε στην επόμενη.",
+  album,
 }: {
   eyebrow?: string;
   title: string;
-  intro: string;
-  images: SiteImage[];
+  intro?: string;
+  album: Album;
 }) {
+  if (album.photos.length === 0) return null;
+
   return (
-    <section className="system-gallery section">
+    <section className="system-gallery section" id="fotografies">
       <div className="container">
         <div className="section-heading split-heading">
           <div>
             <p className="eyebrow"><span /> {eyebrow}</p>
             <h2>{title}</h2>
           </div>
-          <p>{intro}</p>
+          <div className="gallery-heading-meta">
+            <span className="photo-count-pill">{photoCountLabel(album.photos.length)}</span>
+            <p>{intro}</p>
+          </div>
         </div>
-        <div className="system-gallery-grid">
-          {images.map((image, index) => (
-            <figure key={image.local}>
-              <MediaImage image={image} loading="lazy" />
-              <figcaption>Εφαρμογή {String(index + 1).padStart(2, "0")}</figcaption>
-            </figure>
-          ))}
-        </div>
+        <PhotoGallery photos={album.photos} title={album.title} />
       </div>
     </section>
   );
@@ -409,6 +575,7 @@ const navItems = [
   { label: "Περγκοτέντες", path: "/pergkotentes" },
   { label: "Βιοκλιματικές πέργκολες", path: "/vioklimatikes-pergkoles" },
   { label: "Άλλα συστήματα σκίασης", path: "/alla-systimata-skiasis" },
+  { label: "Έργα μας", path: "/erga" },
   { label: "Υπηρεσίες", path: "/ypiresies" },
   { label: "Η εταιρεία μας", path: "/i-etaireia-mas" },
   { label: "Επικοινωνία", path: "/epikoinonia" },
@@ -440,6 +607,11 @@ const routeMeta: Record<string, { title: string; description: string }> = {
     description:
       "Ομπρέλες, προστασία οχημάτων, ανεμοθραύστες και ειδικά συστήματα εξωτερικού χώρου.",
   },
+  "/erga": {
+    title: "Έργα μας",
+    description:
+      "Φωτογραφίες από τέντες, περγκοτέντες, βιοκλιματικές πέργκολες και συστήματα σκίασης της Κατασκευαστικής Τεντών.",
+  },
   "/ypiresies": {
     title: "Υπηρεσίες",
     description:
@@ -466,7 +638,7 @@ const productPages: ProductPage[] = [
       "Τέντες και μηχανισμοί που προσαρμόζονται στις διαστάσεις, στη χρήση και στην αισθητική του χώρου.",
     description:
       "Μελετάμε τον προσανατολισμό, την έκθεση στον αέρα και τις ανάγκες καθημερινής χρήσης πριν επιλέξουμε μηχανισμό, πανί και τρόπο στήριξης. Έτσι η κατασκευή λειτουργεί σωστά και παραμένει πρακτική στον χρόνο.",
-    image: media.classic.hero,
+    image: albums.classic.cover,
     icon: "awning",
     items: [
       {
@@ -495,7 +667,7 @@ const productPages: ProductPage[] = [
       "Σταθερές κατασκευές αλουμινίου με κινητό ύφασμα για μεγάλες βεράντες, αυλές και επαγγελματικούς χώρους.",
     description:
       "Η περγκοτέντα συνδυάζει τη σταθερότητα μιας πέργκολας με τη δυνατότητα να ανοίγει και να κλείνει η οροφή. Κατασκευάζεται στις διαστάσεις του χώρου και μπορεί να συνδυαστεί με φωτισμό, αυτοματισμούς και πλευρικά συστήματα.",
-    image: media.pergola.hero,
+    image: albums.pergola.cover,
     icon: "pergola",
     items: [
       {
@@ -524,7 +696,7 @@ const productPages: ProductPage[] = [
       "Πέργκολες αλουμινίου με περιστρεφόμενες περσίδες για έλεγχο των συνθηκών όλο τον χρόνο.",
     description:
       "Οι βιοκλιματικές πέργκολες επιτρέπουν τον ακριβή έλεγχο σκίασης και αερισμού. Όταν κλείνουν, δημιουργούν προστατευμένη οροφή με οργανωμένη απορροή νερού μέσα από την κατασκευή.",
-    image: media.bioclimatic.hero,
+    image: albums.bioclimatic.cover,
     icon: "pergola",
     items: [
       {
@@ -553,7 +725,7 @@ const productPages: ProductPage[] = [
       "Ομπρέλες, σκίαση οχημάτων, ανεμοθραύστες και ειδικά συστήματα για οικιακές και επαγγελματικές ανάγκες.",
     description:
       "Όταν ο χώρος απαιτεί διαφορετική προσέγγιση, επιλέγουμε τη λύση που καλύπτει τη χρήση χωρίς περιττούς συμβιβασμούς. Στα συστήματα πλευρικής προστασίας εξετάζονται ιδιαίτερα η ανεμοπίεση, η ασφαλής στήριξη, οι διαστάσεις και ο τρόπος λειτουργίας.",
-    image: media.pages.other,
+    image: albums.umbrellas.cover,
     icon: "umbrella",
     items: [
       {
@@ -581,6 +753,7 @@ const productPages: ProductPage[] = [
         text: "Μεταλλικές λύσεις προσαρμοσμένες στις ιδιαιτερότητες του κτιρίου.",
       },
     ],
+    albums: [albums.umbrellas, albums.parking, albums.windbreakers, albums.special],
     sources: [
       {
         name: "LAMDA • Συστήματα με τζάμια",
@@ -590,8 +763,6 @@ const productPages: ProductPage[] = [
     ],
   },
 ];
-
-const pergolaGalleryImages = media.pergola.gallery;
 
 const pergolaTypes = [
   {
@@ -783,8 +954,6 @@ const bioclimaticColors = [
   { name: "RAL 9005", value: "#171719" },
 ];
 
-const cassetteGalleryImages = media.cassette.gallery;
-
 const cassetteFeatures = [
   {
     title: "Πλήρες κλείσιμο",
@@ -841,8 +1010,8 @@ const classicSystems: ClassicSystem[] = [
       "Δυνατότητα εσωτερικού σωληνωτού μοτέρ",
       "Πολυεστερικά ή ακρυλικά υφάσματα σε μεγάλη ποικιλία",
     ],
-    image: media.classic.systems.antirida.hero,
-    gallery: media.classic.systems.antirida.gallery,
+    image: albums.antirida.cover,
+    album: albums.antirida,
     chooser: {
       shortTitle: "Αντιρίδα",
       bestFor: "Κλασσικά μπαλκόνια και σημεία με αέρα.",
@@ -866,8 +1035,8 @@ const classicSystems: ClassicSystem[] = [
       "Χειροκίνητη ή ηλεκτρική τηλεχειριζόμενη λειτουργία",
       "Συμβατότητα με αυτοματισμούς ηλίου και αέρα",
     ],
-    image: media.classic.systems.arms.hero,
-    gallery: media.classic.systems.arms.gallery,
+    image: albums.arms.cover,
+    album: albums.arms,
     chooser: {
       shortTitle: "Σπαστοί βραχίονες",
       bestFor: "Μπαλκόνια και προσόψεις που πρέπει να μένουν ελεύθερα.",
@@ -891,8 +1060,8 @@ const classicSystems: ClassicSystem[] = [
       "Επιλογές χρωμάτων RAL και σχεδιασμού πλαϊνών καπακιών",
       "Προμηθευτές και επιλογές από H Lamda, SevenSun, Metafrom και άλλους οίκους",
     ],
-    image: media.cassette.hero,
-    gallery: media.cassette.gallery,
+    image: albums.cassette.cover,
+    album: albums.cassette,
     chooser: {
       shortTitle: "Κασέτες",
       bestFor: "Σύγχρονες κατοικίες και εκτεθειμένα σημεία.",
@@ -916,8 +1085,8 @@ const classicSystems: ClassicSystem[] = [
       "Δυνατότητα ηλεκτροκίνησης και τηλεχειρισμού",
       "Αυτοματισμοί ηλίου και αέρα",
     ],
-    image: media.classic.systems.monoblock.hero,
-    gallery: media.classic.systems.monoblock.gallery,
+    image: albums.monoblock.cover,
+    album: albums.monoblock,
     chooser: {
       shortTitle: "Monoblock",
       bestFor: "Μεγάλα ανοίγματα ή δύσκολες επιφάνειες στήριξης.",
@@ -941,8 +1110,8 @@ const classicSystems: ClassicSystem[] = [
       "Προστασία από ήλιο, αέρα και βροχή",
       "Χειροκίνητη ή ηλεκτρική λειτουργία",
     ],
-    image: media.classic.systems.vertical.hero,
-    gallery: media.classic.systems.vertical.gallery,
+    image: albums.vertical.cover,
+    album: albums.vertical,
     chooser: {
       shortTitle: "Κάθετα",
       bestFor: "Πλαϊνό ή μπροστινό κλείσιμο σε μπαλκόνια και ημιυπαίθριους.",
@@ -966,8 +1135,8 @@ const classicSystems: ClassicSystem[] = [
       "Ιδανική για παράθυρα, εισόδους και βιτρίνες",
       "Μεγάλη ποικιλία χρωμάτων και δυνατότητα εκτύπωσης",
     ],
-    image: media.classic.systems.kapotines.hero,
-    gallery: media.classic.systems.kapotines.gallery,
+    image: albums.kapotines.cover,
+    album: albums.kapotines,
     chooser: {
       shortTitle: "Καποτίνες",
       bestFor: "Παράθυρα, εισόδους, βιτρίνες και μικρότερα ανοίγματα.",
@@ -1152,7 +1321,7 @@ const homeProducts = [
     description:
       "Σπαστοί βραχίονες, κασέτες, monoblock και κάθετα συστήματα για κατοικίες και επιχειρήσεις.",
     icon: "awning" as IconName,
-    image: media.home.products.classic,
+    image: albums.classic.cover,
     tag: "Σκίαση στα μέτρα σας",
     path: "/klassika-systimata-skiasis",
   },
@@ -1161,7 +1330,7 @@ const homeProducts = [
     description:
       "Σταθερές κατασκευές με κινητή οροφή για άνεση και προστασία σε μεγάλους εξωτερικούς χώρους.",
     icon: "pergola" as IconName,
-    image: media.home.products.pergola,
+    image: albums.pergola.cover,
     tag: "Κάλυψη όλο τον χρόνο",
     path: "/pergkotentes",
   },
@@ -1170,7 +1339,7 @@ const homeProducts = [
     description:
       "Περιστρεφόμενες περσίδες αλουμινίου για έλεγχο φωτός, αερισμού και προστασίας.",
     icon: "pergola" as IconName,
-    image: media.home.products.bioclimatic,
+    image: albums.bioclimatic.cover,
     tag: "Έξυπνη διαχείριση σκίασης",
     path: "/vioklimatikes-pergkoles",
   },
@@ -1179,7 +1348,7 @@ const homeProducts = [
     description:
       "Επαγγελματικές και οικιακές λύσεις μεγάλης κάλυψης, με έμφαση στην αντοχή και την ευχρηστία.",
     icon: "umbrella" as IconName,
-    image: media.home.products.umbrella,
+    image: albums.umbrellas.cover,
     tag: "Για κάθε εξωτερικό χώρο",
     path: "/alla-systimata-skiasis",
   },
@@ -1188,7 +1357,7 @@ const homeProducts = [
     description:
       "Ανθεκτικές κατασκευές που προστατεύουν το όχημα από ήλιο, βροχή και καθημερινή φθορά.",
     icon: "parking" as IconName,
-    image: media.home.products.parking,
+    image: albums.parking.cover,
     tag: "Σκίαση parking",
     path: "/alla-systimata-skiasis",
   },
@@ -1210,7 +1379,7 @@ const advisorItems: AdvisorItem[] = [
     path: "/pergkotentes",
     title: "Περγκοτέντες",
     shortTitle: "Περγκοτέντα",
-    image: media.home.products.pergola,
+    image: albums.pergola.cover,
     bestFor: "Μεγάλες βεράντες, αυλές και επαγγελματικούς χώρους.",
     keyBenefit: "Σταθερή κατασκευή αλουμινίου με κινητή οροφή PVC.",
     decisionHint: "Τη διαλέγετε όταν θέλετε μεγάλη κάλυψη, πιο μόνιμη παρουσία και προστασία σε εξωτερικό χώρο.",
@@ -1221,7 +1390,7 @@ const advisorItems: AdvisorItem[] = [
     path: "/vioklimatikes-pergkoles",
     title: "Βιοκλιματικές πέργκολες",
     shortTitle: "Βιοκλιματική",
-    image: media.home.products.bioclimatic,
+    image: albums.bioclimatic.cover,
     bestFor: "Χώρους υψηλής αισθητικής που χρειάζονται έλεγχο ήλιου και αέρα.",
     keyBenefit: "Ρυθμιζόμενες περσίδες για σκιά, φυσικό αερισμό και προστασία.",
     decisionHint: "Τη διαλέγετε όταν θέλετε πιο premium κατασκευή και ακριβή ρύθμιση φωτός και μικροκλίματος.",
@@ -1277,17 +1446,17 @@ const applications = [
   {
     title: "Κατοικίες",
     subtitle: "Μπαλκόνια, βεράντες και αυλές",
-    image: media.home.applications.homes,
+    image: albums.appHomes.cover,
   },
   {
     title: "Εστίαση",
     subtitle: "Καφέ, εστιατόρια και ξενοδοχεία",
-    image: media.home.applications.hospitality,
+    image: albums.appHospitality.cover,
   },
   {
     title: "Ειδικές κατασκευές",
     subtitle: "Λύσεις προσαρμοσμένες στον χώρο",
-    image: media.home.applications.special,
+    image: albums.appSpecial.cover,
   },
 ];
 
@@ -1628,6 +1797,8 @@ function SelectionAdvisor() {
     "/vioklimatikes-pergkoles",
   ]);
   const [selectedItemPath, setSelectedItemPath] = useState<string>("");
+  const [advisorTab, setAdvisorTab] = useState<"quiz" | "all" | "compare">("quiz");
+  const answeredCount = Object.keys(quizAnswers).length;
 
   const quizScores = Object.values(quizAnswers).reduce<Record<string, number>>((scores, itemPath) => {
     scores[itemPath] = (scores[itemPath] ?? 0) + 1;
@@ -1672,7 +1843,27 @@ function SelectionAdvisor() {
             </p>
           </div>
 
-          <div className="classic-quiz-grid">
+          <div className="advisor-tabs" role="tablist" aria-label="Εργαλεία επιλογής">
+            {[
+              { id: "quiz" as const, label: "Γρήγορο quiz", meta: `${answeredCount}/3` },
+              { id: "all" as const, label: "Όλες οι λύσεις", meta: String(advisorItems.length) },
+              { id: "compare" as const, label: "Σύγκριση", meta: String(comparedItems.length) },
+            ].map((tab) => (
+              <button
+                aria-selected={advisorTab === tab.id}
+                className={advisorTab === tab.id ? "is-active" : ""}
+                key={tab.id}
+                onClick={() => setAdvisorTab(tab.id)}
+                role="tab"
+                type="button"
+              >
+                {tab.label} <small>{tab.meta}</small>
+              </button>
+            ))}
+          </div>
+
+          {advisorTab === "quiz" && (
+          <div className="classic-quiz-grid advisor-panel">
             <div className="classic-quiz-intro">
               <p className="eyebrow"><span /> Γρήγορο quiz</p>
               <h3>Απαντήστε σε 3 ερωτήσεις και δείτε την πιο πιθανή κατεύθυνση.</h3>
@@ -1734,7 +1925,10 @@ function SelectionAdvisor() {
             </div>
           </div>
 
-          <div className="classic-choice-grid" aria-label="Όλες οι βασικές λύσεις σκίασης">
+          )}
+
+          {advisorTab === "all" && (
+          <div className="classic-choice-grid advisor-panel" aria-label="Όλες οι βασικές λύσεις σκίασης">
             {advisorItems.map((item, index) => {
               const isCompared = comparedPaths.includes(item.path);
               const isSelected = selectedItemPath === item.path;
@@ -1792,7 +1986,10 @@ function SelectionAdvisor() {
             })}
           </div>
 
-          <div className="classic-compare advisor-compare" aria-labelledby="advisor-compare-title">
+          )}
+
+          {advisorTab === "compare" && (
+          <div className="classic-compare advisor-compare advisor-panel" aria-labelledby="advisor-compare-title">
             <div className="section-heading split-heading">
               <div>
                 <p className="eyebrow"><span /> Σύγκριση</p>
@@ -1842,7 +2039,11 @@ function SelectionAdvisor() {
                 </article>
               ))}
             </div>
+            <button className="button button-ghost advisor-add" onClick={() => setAdvisorTab("all")} type="button">
+              Αλλαγή λύσεων προς σύγκριση
+            </button>
           </div>
+          )}
         </div>
       </section>
 
@@ -1876,7 +2077,7 @@ function ClassicSystemsPage() {
       <DetailHero
         ctaLabel="Ζητήστε δωρεάν εκτίμηση"
         eyebrow="Κλασσικά συστήματα σκίασης"
-        image={media.classic.hero}
+        image={albums.classic.cover}
         intro="Επιλέγουμε τον κατάλληλο μηχανισμό, τρόπο στήριξης, ύφασμα και αυτοματισμό σύμφωνα με τις πραγματικές απαιτήσεις του χώρου."
         title="Δοκιμασμένες λύσεις για κάθε μπαλκόνι και πρόσοψη."
       />
@@ -2080,7 +2281,8 @@ function CassettePage() {
         className="cassette-hero"
         ctaLabel="Ζητήστε μελέτη του χώρου"
         eyebrow="Κασέτες και κασονέτα"
-        image={media.cassette.hero}
+        image={albums.cassette.cover}
+        photoCount={albums.cassette.photos.length}
         intro="Ολοκληρωμένα συστήματα σκίασης που φυλάσσουν ύφασμα, βραχίονες και μηχανισμό μέσα σε ένα καθαρό, συμπαγές κέλυφος αλουμινίου."
         title="Η τέντα κλείνει. Η κατασκευή προστατεύεται."
       />
@@ -2095,6 +2297,11 @@ function CassettePage() {
         eyebrow="Γιατί κασετίνα"
         icon="awning"
         title="Προστασία του μηχανισμού με διακριτική αρχιτεκτονική παρουσία."
+      />
+
+      <GallerySection
+        album={albums.cassette}
+        title="Κασετίνες για σύγχρονες κατοικίες και επαγγελματικούς χώρους."
       />
 
       <section className="cassette-mechanism section">
@@ -2197,11 +2404,6 @@ function CassettePage() {
         title="Συστήματα κασετίνας από δύο εξειδικευμένους κατασκευαστές."
       />
 
-      <GallerySection
-        images={cassetteGalleryImages}
-        intro="Οι εικόνες είναι προσωρινά ενδεικτικές και θα αντικατασταθούν με φωτογραφίες πραγματικών έργων της Κατασκευαστικής Τεντών."
-        title="Κασετίνες για σύγχρονες κατοικίες και επαγγελματικούς χώρους."
-      />
       <DetailCta />
     </main>
   );
@@ -2219,6 +2421,7 @@ function ClassicSystemDetailPage({
         ctaLabel="Ζητήστε εκτίμηση"
         eyebrow="Κλασσικά συστήματα σκίασης"
         image={system.image}
+        photoCount={system.album.photos.length}
         intro={system.summary}
         title={system.title}
       />
@@ -2237,6 +2440,11 @@ function ClassicSystemDetailPage({
         </div>
       </section>
 
+      <GallerySection
+        album={system.album}
+        title="Δείτε το σύστημα σε πραγματικούς χώρους."
+      />
+
       <section className="system-features section">
         <div className="container">
           <p className="eyebrow light"><span /> Εξαρτήματα και δυνατότητες</p>
@@ -2251,12 +2459,6 @@ function ClassicSystemDetailPage({
         </div>
       </section>
 
-      <GallerySection
-        eyebrow="Συλλογή φωτογραφιών"
-        images={system.gallery}
-        intro="Οι φωτογραφίες είναι προσωρινά ενδεικτικές. Η συλλογή θα αντικατασταθεί με πραγματικά έργα της Κατασκευαστικής Τεντών."
-        title="Ενδεικτικές εφαρμογές του συστήματος."
-      />
       <DetailCta />
     </main>
   );
@@ -2269,7 +2471,8 @@ function PergolaPage() {
         className="pergola-hero"
         ctaLabel="Ζητήστε μελέτη του χώρου"
         eyebrow="Περγκοτέντες αλουμινίου"
-        image={media.pergola.hero}
+        image={albums.pergola.cover}
+        photoCount={albums.pergola.photos.length}
         intro="Ηλεκτροκίνητες κατασκευές με αναδιπλούμενη οροφή PVC για βεράντες, αυλές και επαγγελματικούς χώρους που χρειάζονται άνεση και προστασία."
         title="Μεγάλη κάλυψη. Ελεγχόμενη σκιά. Καθαρή γραμμή."
       />
@@ -2284,6 +2487,11 @@ function PergolaPage() {
         eyebrow="Τι είναι η περγκοτέντα"
         icon="pergola"
         title="Η σταθερότητα της πέργκολας με οροφή που ανοίγει."
+      />
+
+      <GallerySection
+        album={albums.pergola}
+        title="Περγκοτέντες για κατοικίες και επαγγελματικούς χώρους."
       />
 
       <section className="pergola-types section" id="typoi-kataskeyis">
@@ -2425,26 +2633,20 @@ function PergolaPage() {
         title="Κατασκευαστές και διαθέσιμες σειρές συστημάτων."
       />
 
-      <GallerySection
-        images={pergolaGalleryImages}
-        intro="Οι εικόνες είναι προσωρινά ενδεικτικές και θα αντικατασταθούν με φωτογραφίες πραγματικών έργων της Κατασκευαστικής Τεντών."
-        title="Περγκοτέντες για κατοικίες και επαγγελματικούς χώρους."
-      />
       <DetailCta />
     </main>
   );
 }
 
 function BioclimaticPergolaPage() {
-  const bioclimaticGallery = media.bioclimatic.gallery;
-
   return (
     <main className="detail-main">
       <DetailHero
         className="bioclimatic-hero"
         ctaLabel="Ζητήστε μελέτη του χώρου"
         eyebrow="Βιοκλιματικές πέργκολες"
-        image={media.bioclimatic.hero}
+        image={albums.bioclimatic.cover}
+        photoCount={albums.bioclimatic.photos.length}
         intro="Πέργκολες αλουμινίου με κινητές περσίδες που προσαρμόζουν το μικροκλίμα του εξωτερικού χώρου στις συνθήκες κάθε στιγμής."
         title="Ελέγξτε το φως, τον αέρα και τη σκιά."
       />
@@ -2459,6 +2661,11 @@ function BioclimaticPergolaPage() {
         eyebrow="Βιοκλιματικός σχεδιασμός"
         icon="pergola"
         title="Μία οροφή που συνεργάζεται με το περιβάλλον."
+      />
+
+      <GallerySection
+        album={albums.bioclimatic}
+        title="Σύγχρονοι εξωτερικοί χώροι με ελεγχόμενες περσίδες."
       />
 
       <section className="bioclimatic-modes section" id="leitourgia-persidon">
@@ -2622,11 +2829,6 @@ function BioclimaticPergolaPage() {
         title="Σειρές και τεχνολογίες από εξειδικευμένους κατασκευαστές."
       />
 
-      <GallerySection
-        images={bioclimaticGallery}
-        intro="Οι εικόνες είναι προσωρινά ενδεικτικές και θα αντικατασταθούν με φωτογραφίες πραγματικών έργων της Κατασκευαστικής Τεντών."
-        title="Σύγχρονοι εξωτερικοί χώροι με ελεγχόμενες περσίδες."
-      />
       <DetailCta />
     </main>
   );
@@ -2679,6 +2881,14 @@ function ProductDetailPage({
           </div>
         </div>
       </section>
+      {page.albums && (
+        <AlbumShowcase
+          albumList={page.albums}
+          eyebrow="Φωτογραφίες ανά σύστημα"
+          intro="Πατήστε σε μία κατηγορία για να δείτε όλες τις φωτογραφίες της."
+          title="Δείτε τα συστήματα σε πραγματικούς χώρους."
+        />
+      )}
       {page.sources && (
         <SourcesSection
           intro="Οι αναγραφόμενες διαστάσεις είναι μέγιστα όρια συγκεκριμένων σειρών του προμηθευτή. Η κατάλληλη λύση επιλέγεται μετά από αυτοψία και έλεγχο της θέσης εγκατάστασης."
@@ -2688,6 +2898,189 @@ function ProductDetailPage({
       )}
       <DetailCta />
     </main>
+  );
+}
+
+function AlbumShowcase({
+  albumList,
+  eyebrow,
+  title,
+  intro,
+}: {
+  albumList: Album[];
+  eyebrow: string;
+  title: string;
+  intro: string;
+}) {
+  const [openAlbum, setOpenAlbum] = useState<{ album: Album; index: number } | null>(null);
+  const withPhotos = albumList.filter((album) => album.photos.length > 0);
+
+  if (withPhotos.length === 0) return null;
+
+  return (
+    <section className="album-showcase section" id="fotografies">
+      <div className="container">
+        <div className="section-heading split-heading">
+          <div>
+            <p className="eyebrow"><span /> {eyebrow}</p>
+            <h2>{title}</h2>
+          </div>
+          <p>{intro}</p>
+        </div>
+        <div className="album-grid">
+          {withPhotos.map((album) => (
+            <button
+              className="album-card"
+              key={album.key}
+              onClick={() => setOpenAlbum({ album, index: 0 })}
+              type="button"
+            >
+              <MediaImage image={album.cover} loading="lazy" sizes="(max-width: 680px) 100vw, 33vw" />
+              <span className="album-card-shade" aria-hidden="true" />
+              <span className="album-card-copy">
+                <span className="photo-count-pill">
+                  <Icon name="camera" size={15} /> {photoCountLabel(album.photos.length)}
+                </span>
+                <strong>{album.title}</strong>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+      {openAlbum && (
+        <Lightbox
+          index={openAlbum.index}
+          onChange={(index) => setOpenAlbum({ ...openAlbum, index })}
+          onClose={() => setOpenAlbum(null)}
+          photos={openAlbum.album.photos}
+          title={openAlbum.album.title}
+        />
+      )}
+    </section>
+  );
+}
+
+type ProjectPhoto = Photo & { albumTitle: string; albumKey: string; path?: string };
+
+const allProjectPhotos: ProjectPhoto[] = projectAlbums.flatMap((album) =>
+  album.photos.map((photo) => ({
+    ...photo,
+    albumTitle: album.title,
+    albumKey: album.key,
+    path: album.path,
+  })),
+);
+
+function ProjectsPage() {
+  const [filter, setFilter] = useState("all");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const photos =
+    filter === "all" ? allProjectPhotos : allProjectPhotos.filter((photo) => photo.albumKey === filter);
+  const activeAlbum = projectAlbums.find((album) => album.key === filter);
+
+  return (
+    <main className="detail-main">
+      <PlainDetailHero
+        className="projects-hero"
+        eyebrow="Έργα μας"
+        intro="Φωτογραφίες από τέντες, πέργκολες και συστήματα σκίασης. Διαλέξτε κατηγορία και πατήστε σε μία φωτογραφία για μεγέθυνση."
+        title="Δείτε τη δουλειά μας στην πράξη."
+      />
+      <section className="projects-section section">
+        <div className="container">
+          <div className="filter-chips" role="toolbar" aria-label="Φίλτρο κατηγορίας">
+            <button
+              aria-pressed={filter === "all"}
+              className={filter === "all" ? "is-active" : ""}
+              onClick={() => setFilter("all")}
+              type="button"
+            >
+              <Icon name="grid" size={16} /> Όλα <small>{allProjectPhotos.length}</small>
+            </button>
+            {projectAlbums.map((album) => (
+              <button
+                aria-pressed={filter === album.key}
+                className={filter === album.key ? "is-active" : ""}
+                key={album.key}
+                onClick={() => setFilter(album.key)}
+                type="button"
+              >
+                {album.title} <small>{album.photos.length}</small>
+              </button>
+            ))}
+          </div>
+
+          <div className="projects-masonry" key={filter}>
+            {photos.map((photo, index) => (
+              <button
+                aria-label={`Μεγέθυνση: ${photo.alt}`}
+                className="projects-tile"
+                key={photo.src}
+                onClick={() => setOpenIndex(index)}
+                style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
+                type="button"
+              >
+                <MediaImage image={photo} loading="lazy" sizes="(max-width: 680px) 50vw, 33vw" />
+                <span className="projects-tile-label">{photo.albumTitle}</span>
+              </button>
+            ))}
+          </div>
+
+          {activeAlbum?.path && (
+            <div className="projects-more">
+              <a className="button button-primary" href={appHref(activeAlbum.path)}>
+                Μάθετε για: {activeAlbum.title} <Icon name="arrow" size={18} />
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+      {openIndex !== null && photos[openIndex] && (
+        <Lightbox
+          index={openIndex}
+          onChange={setOpenIndex}
+          onClose={() => setOpenIndex(null)}
+          photos={photos}
+          title={photos[openIndex].albumTitle}
+        />
+      )}
+      <DetailCta />
+    </main>
+  );
+}
+
+function RecentWorkStrip() {
+  // Πρώτα η κεντρική φωτογραφία κάθε κατηγορίας, μετά οι υπόλοιπες.
+  const covers = projectAlbums.map((album) => ({ ...album.cover, albumTitle: album.title }));
+  const coverSources = new Set(covers.map((photo) => photo.src));
+  const strip = covers
+    .concat(allProjectPhotos.filter((photo) => !coverSources.has(photo.src)))
+    .slice(0, 14);
+
+  if (strip.length < 3) return null;
+
+  return (
+    <section className="recent-work section" aria-labelledby="recent-work-title">
+      <div className="container recent-work-head">
+        <div>
+          <p className="eyebrow"><span /> Έργα μας</p>
+          <h2 id="recent-work-title">Πραγματικές κατασκευές, όχι υποσχέσεις.</h2>
+        </div>
+        <a className="button button-primary" href={appHref("/erga")}>
+          Όλες οι φωτογραφίες ({allProjectPhotos.length}) <Icon name="arrow" size={18} />
+        </a>
+      </div>
+      <div className="recent-work-track" aria-hidden="true">
+        <div className="recent-work-rail">
+          {[...strip, ...strip].map((photo, index) => (
+            <a className="recent-work-item" href={appHref("/erga")} key={`${photo.src}-${index}`} tabIndex={-1}>
+              <img alt="" loading="lazy" src={photo.thumb} />
+              <span>{photo.albumTitle}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -2733,7 +3126,7 @@ function CompanyPage() {
       <section className="about-section section">
         <div className="container about-grid">
           <div className="about-image">
-            <MediaImage image={media.pages.companyStory} />
+            <MediaImage image={albums.company.cover} sizes="(max-width: 980px) 100vw, 45vw" />
             <div className="experience-badge">
               <strong>30+</strong>
               <span>χρόνια<br />εμπειρίας</span>
@@ -2758,6 +3151,13 @@ function CompanyPage() {
           </div>
         </div>
       </section>
+      {albums.company.photos.length > 1 && (
+        <GallerySection
+          album={albums.company}
+          eyebrow="Η ομάδα στη δουλειά"
+          title="Από το εργαστήριο μέχρι την τοποθέτηση."
+        />
+      )}
       <DetailCta />
     </main>
   );
@@ -2798,8 +3198,19 @@ function HomePage({
   openFaq: number | null;
   setOpenFaq: (index: number | null) => void;
 }) {
-  const homeHeroSource = useMediaSource(media.home.hero);
-  const homeContactSource = useMediaSource(media.home.contact);
+  const heroPhotos = albums.home.photos.length > 0 ? albums.home.photos : [albums.home.cover];
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    // Με περισσότερες από μία φωτογραφίες στον φάκελο «arxiki», η κεντρική
+    // εικόνα εναλλάσσεται αυτόματα.
+    if (heroPhotos.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setHeroIndex((current) => (current + 1) % heroPhotos.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [heroPhotos.length]);
 
   const scrollToProducts = () => {
     document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
@@ -2808,11 +3219,15 @@ function HomePage({
   return (
     <main>
       <section className="hero" id="home">
-        <div
-          className="hero-media"
-          aria-hidden="true"
-          style={{ backgroundImage: `url("${homeHeroSource}")` }}
-        />
+        <div className="hero-media" aria-hidden="true">
+          {heroPhotos.map((photo, index) => (
+            <div
+              className={`hero-slide ${index === heroIndex ? "is-active" : ""}`}
+              key={photo.src}
+              style={{ backgroundImage: `url("${photo.src}")` }}
+            />
+          ))}
+        </div>
         <div className="hero-shade" aria-hidden="true" />
         <div className="container hero-content">
           <p className="eyebrow light">
@@ -2837,6 +3252,19 @@ function HomePage({
             </button>
           </div>
         </div>
+        {heroPhotos.length > 1 && (
+          <div className="hero-dots">
+            {heroPhotos.map((photo, index) => (
+              <button
+                aria-label={`Φωτογραφία ${index + 1}`}
+                className={index === heroIndex ? "is-active" : ""}
+                key={photo.src}
+                onClick={() => setHeroIndex(index)}
+                type="button"
+              />
+            ))}
+          </div>
+        )}
         <div className="hero-proof">
           <div>
             <strong>30+</strong>
@@ -2916,6 +3344,8 @@ function HomePage({
         </div>
       </section>
 
+      <RecentWorkStrip />
+
       <SelectionAdvisor />
 
       <section className="services-section section" id="services">
@@ -2972,7 +3402,7 @@ function HomePage({
       <section className="about-section section" id="about">
         <div className="container about-grid">
           <div className="about-image">
-            <MediaImage image={media.home.company} loading="lazy" />
+            <MediaImage image={albums.company.cover} loading="lazy" sizes="(max-width: 980px) 100vw, 45vw" />
             <div className="experience-badge">
               <strong>30</strong>
               <span>χρόνια<br />εμπειρίας</span>
@@ -3033,7 +3463,7 @@ function HomePage({
         className="contact-section"
         id="contact"
         style={{
-          backgroundImage: `linear-gradient(90deg, rgba(7, 27, 53, 0.98), rgba(7, 27, 53, 0.88)), url("${homeContactSource}")`,
+          backgroundImage: `linear-gradient(90deg, rgba(7, 27, 53, 0.98), rgba(7, 27, 53, 0.88)), url("${albums.home.cover.src}")`,
         }}
       >
         <div className="container contact-grid">
@@ -3060,6 +3490,79 @@ export default function App() {
   const [path, setPath] = useState(() => cleanPath(window.location.pathname));
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = max > 0 ? window.scrollY / max : 0;
+        document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
+        setIsScrolled(window.scrollY > 24);
+        setShowBackToTop(window.scrollY > 900);
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Ομαλή εμφάνιση των ενοτήτων καθώς ο επισκέπτης κάνει scroll.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!("IntersectionObserver" in window)) return;
+
+    const selectors = [
+      ".section-heading",
+      ".intro-copy",
+      ".product-card",
+      ".service-item",
+      ".application-card",
+      ".about-image",
+      ".about-copy",
+      ".faq-item",
+      ".coverage-list article",
+      ".detail-overview-grid > div",
+      ".system-description-grid > div",
+      ".photo-tile",
+      ".album-card",
+      ".detail-option-card",
+      ".pergola-type-card",
+      ".service-page-card",
+      ".source-card-grid a",
+    ].join(",");
+
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(selectors)).filter(
+      (element) => element.getBoundingClientRect().top > window.innerHeight * 0.9,
+    );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+    );
+
+    elements.forEach((element) => {
+      element.classList.add("reveal");
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+      elements.forEach((element) => element.classList.remove("reveal", "is-visible"));
+    };
+  }, [path]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -3093,7 +3596,7 @@ export default function App() {
     const preload = document.createElement("link");
     preload.rel = "preload";
     preload.as = "image";
-    preload.href = media.home.hero.local;
+    preload.href = albums.home.cover.src;
     preload.setAttribute("fetchpriority", "high");
     document.head.appendChild(preload);
 
@@ -3148,7 +3651,7 @@ export default function App() {
     );
     const title = `${meta.title} | ${business.name}`;
     const canonicalUrl = absoluteSiteUrl(path);
-    const imageUrl = absoluteSiteUrl("/images/home/hero.jpg");
+    const imageUrl = absoluteSiteUrl("/og-image.jpg");
 
     document.title = title;
     document
@@ -3172,6 +3675,7 @@ export default function App() {
     path === "/" ||
     Boolean(activeProductPage) ||
     Boolean(activeClassicSystem) ||
+    path === "/erga" ||
     path === "/ypiresies" ||
     path === "/i-etaireia-mas" ||
     path === "/epikoinonia";
@@ -3204,7 +3708,8 @@ export default function App() {
 
   return (
     <div className="site-shell">
-      <header className="site-header">
+      <header className={`site-header ${isScrolled ? "is-scrolled" : ""}`}>
+        <span className="scroll-progress" aria-hidden="true" />
         <div className="header-inner">
           <a className="brand" href={appHref("/")} aria-label="Αρχική">
             <span className="brand-mark">{business.shortName}</span>
@@ -3352,6 +3857,7 @@ export default function App() {
         path !== "/vioklimatikes-pergkoles" && (
         <ProductDetailPage page={activeProductPage} />
       )}
+      {path === "/erga" && <ProjectsPage />}
       {path === "/ypiresies" && <ServicesPage />}
       {path === "/i-etaireia-mas" && <CompanyPage />}
       {path === "/epikoinonia" && <ContactPage />}
@@ -3367,6 +3873,7 @@ export default function App() {
           </div>
           <div className="footer-links">
             <a href={appHref("/klassika-systimata-skiasis")}>Συστήματα</a>
+            <a href={appHref("/erga")}>Έργα μας</a>
             <a href={appHref("/ypiresies")}>Υπηρεσίες</a>
             <a href={appHref("/i-etaireia-mas")}>Η εταιρεία</a>
             <a href={appHref("/epikoinonia")}>Επικοινωνία</a>
@@ -3401,6 +3908,15 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <button
+        aria-label="Επιστροφή στην κορυφή"
+        className={`back-to-top ${showBackToTop ? "is-visible" : ""}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        tabIndex={showBackToTop ? 0 : -1}
+        type="button"
+      >
+        <Icon name="up" size={20} />
+      </button>
       <div className="mobile-quick-actions" aria-label="Γρήγορες ενέργειες">
         <a href={`tel:+30${business.phones[0]}`}>
           <Icon name="phone" size={17} /> Κλήση
