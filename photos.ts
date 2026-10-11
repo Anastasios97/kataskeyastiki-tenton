@@ -51,7 +51,7 @@ const unsplash = (id: string) =>
 export const albumConfig = {
   classic: {
     folder: "proionta/klassika-systimata",
-    title: "Κλασσικά συστήματα σκίασης",
+    title: "Κλασικά συστήματα σκίασης",
     path: "/klassika-systimata-skiasis",
     fallback: unsplash("photo-1600585154340-be6161a56a0c"),
   },
