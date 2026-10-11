@@ -2579,25 +2579,18 @@ h2 {
   font-weight: 800;
 }
 
-.pergola-line-icon {
-  display: flex;
+.pergola-shape {
+  display: block;
   width: 74px;
   height: 48px;
-  align-items: flex-end;
-  gap: 6px;
-  margin-bottom: 34px;
-  padding: 0 8px 8px;
-  border-right: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.55);
 }
 
-.pergola-line-icon i {
-  display: block;
-  width: 15px;
-  height: 28px;
-  border-top: 2px solid var(--sun);
-  transform: skewY(-12deg);
+.pergola-shape .accent {
+  color: var(--sun);
+  stroke: var(--sun);
+  stroke-width: 2.4;
 }
 
 .pergola-type-card h3 {
@@ -5092,5 +5085,569 @@ h2 {
   .hero-slide {
     transition: none;
     transform: none;
+  }
+}
+
+/* ---------- Αναδιοργάνωση περιεχομένου ---------- */
+
+.inline-link {
+  color: var(--forest);
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: var(--sun);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Κάρτες προϊόντων αρχικής: τι περιλαμβάνει η κάθε κατηγορία */
+.product-includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.product-includes li {
+  padding: 5px 10px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+/* Πώς δουλεύουμε */
+.process-light {
+  background: var(--paper);
+}
+
+.process-dark {
+  color: white;
+  background: var(--forest);
+}
+
+.process-dark h2 {
+  color: white;
+}
+
+.process-dark .split-heading > p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+
+.process-grid li {
+  position: relative;
+  min-height: 250px;
+  padding: 32px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.process-grid span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 38px;
+  place-items: center;
+  color: var(--ink);
+  border-radius: 50%;
+  background: var(--sun);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.process-grid h3 {
+  margin-bottom: 12px;
+  font-size: 1.22rem;
+  letter-spacing: -0.03em;
+}
+
+.process-grid p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.72;
+}
+
+.process-dark .process-grid,
+.process-dark .process-grid li {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.process-dark .process-grid li {
+  background: transparent;
+}
+
+.process-dark .process-grid p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* Κατασκευαστές */
+.partners-section {
+  padding: 72px 0;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.partners-inner {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.partners-inner h2 {
+  max-width: 560px;
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.partners-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.partners-list li {
+  padding: 12px 18px;
+  color: var(--forest);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.about-checks {
+  margin: 0 0 30px;
+}
+
+/* Κλασικά συστήματα: ομάδες και σύγκριση */
+.classic-choice-group + .classic-choice-group {
+  margin-top: 58px;
+}
+
+.classic-choice-group-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  color: var(--ink);
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.classic-choice-group-title::after {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  content: "";
+}
+
+.classic-choice-grid > .classic-choice-card:only-child {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-rows: auto;
+}
+
+.classic-choice-grid > .classic-choice-card:only-child .classic-choice-media {
+  aspect-ratio: auto;
+  min-height: 100%;
+}
+
+.classic-choice-grid > .classic-choice-card:only-child .classic-choice-body {
+  padding: 40px;
+}
+
+.compare-table-section {
+  background: var(--paper);
+}
+
+.compare-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.compare-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.compare-table thead th {
+  color: white;
+  background: var(--forest);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.compare-table tbody tr:nth-child(even) {
+  background: #f6f7f9;
+}
+
+.compare-table tbody tr:last-child th,
+.compare-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.compare-table tbody th a {
+  color: var(--forest);
+  font-weight: 800;
+  text-decoration: none;
+  border-bottom: 2px solid var(--sun);
+}
+
+.compare-table td {
+  color: var(--muted);
+}
+
+/* Υφάσματα */
+.fabric-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.fabric-type-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.fabric-type-card > span {
+  margin-bottom: 26px;
+  color: #b88a1c;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.fabric-type-card h3 {
+  margin-bottom: 12px;
+  font-size: 1.12rem;
+  letter-spacing: -0.02em;
+}
+
+.fabric-type-card p {
+  margin-bottom: 22px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.fabric-type-card dl {
+  display: grid;
+  gap: 10px;
+  margin: auto 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.fabric-type-card dt {
+  color: var(--ink);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fabric-type-card dd {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.supplier-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  margin-top: 26px;
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  background: #eef2f7;
+}
+
+.supplier-row strong {
+  font-size: 0.86rem;
+}
+
+.supplier-row div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+}
+
+.supplier-row a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--forest);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.supplier-row a:hover {
+  text-decoration: underline;
+}
+
+/* Με μια ματιά */
+.quick-facts {
+  padding: 46px 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.quick-facts .eyebrow {
+  margin-bottom: 20px;
+}
+
+.quick-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.quick-facts-grid div {
+  padding: 20px 22px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: white;
+}
+
+.quick-facts-grid dt {
+  margin-bottom: 8px;
+  color: #b88a1c;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.quick-facts-grid dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+/* Άλλα συστήματα σε ομάδες */
+.other-group + .other-group {
+  margin-top: 96px;
+}
+
+.other-group {
+  scroll-margin-top: 180px;
+}
+
+.other-group .detail-option-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.other-group .detail-option-card {
+  display: flex;
+  min-height: 250px;
+  flex-direction: column;
+}
+
+.detail-option-card > .other-group-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 30px;
+  place-items: center;
+  color: var(--sun);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+}
+
+.detail-option-spec {
+  margin-top: auto;
+  padding-top: 20px;
+  color: var(--sun);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.classic-choice-group,
+#pos-doulevoume,
+#odigos-epilogis,
+#sygkrisi,
+#yfasmata,
+#aftomatismoi {
+  scroll-margin-top: 150px;
+}
+
+/* Επικοινωνία: τι να μας στείλετε */
+.contact-tips {
+  margin-top: 34px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sun);
+  background: white;
+}
+
+.contact-tips strong {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+/* Footer με χάρτη σελίδων */
+.site-footer .footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 10px 56px;
+  align-items: start;
+}
+
+.site-footer .footer-links div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.site-footer .footer-links strong {
+  margin-bottom: 6px;
+  color: var(--sun);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.site-footer .footer-links a {
+  padding: 4px 0;
+}
+
+.site-footer .footer-links a:hover {
+  color: white;
+}
+
+body.menu-is-open .mobile-quick-actions {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .fabric-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-facts-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 980px) {
+  .process-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .partners-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .other-group .detail-option-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer .footer-links {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 680px) {
+  .classic-choice-grid > .classic-choice-card:only-child {
+    grid-template-columns: 1fr;
+  }
+
+  .classic-choice-grid > .classic-choice-card:only-child .classic-choice-media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .classic-choice-grid > .classic-choice-card:only-child .classic-choice-body {
+    padding: 28px;
+  }
+
+  .process-grid,
+  .fabric-type-grid,
+  .quick-facts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .process-grid li {
+    min-height: 0;
+    padding: 24px;
+  }
+
+  .process-grid span {
+    margin-bottom: 18px;
+  }
+
+  .quick-facts {
+    padding: 34px 0;
+  }
+
+  .partners-section {
+    padding: 52px 0;
+  }
+
+  .partners-list li {
+    padding: 9px 14px;
+    font-size: 0.76rem;
+  }
+
+  .other-group + .other-group {
+    margin-top: 64px;
+  }
+
+  .supplier-row {
+    padding: 20px;
+  }
+
+  .site-footer .footer-links {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
   }
 }

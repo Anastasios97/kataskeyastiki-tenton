@@ -95,15 +95,6 @@ type AdvisorQuizQuestion = {
   }[];
 };
 
-type FabricDesign = {
-  name: string;
-  code: string;
-  supplier: string;
-  url: string;
-  image?: string;
-  value?: string;
-};
-
 function Icon({ name, size = 24 }: { name: IconName; size?: number }) {
   const paths: Record<IconName, ReactNode> = {
     arrow: <path d="m9 18 6-6-6-6" />,
@@ -591,7 +582,7 @@ const routeMeta: Record<string, { title: string; description: string }> = {
   "/klassika-systimata-skiasis": {
     title: "Κλασικά συστήματα σκίασης",
     description:
-      "Τέντες με αντιρίδες, σπαστούς βραχίονες, κασετίνες, monoblock και κάθετα συστήματα.",
+      "Τέντες με αντιρίδες, σπαστούς βραχίονες, κασέτες, monoblock, καποτίνες και κάθετα συστήματα ZIP, με σύγκριση, υφάσματα και αυτοματισμούς.",
   },
   "/pergkotentes": {
     title: "Περγκοτέντες",
@@ -606,7 +597,7 @@ const routeMeta: Record<string, { title: string; description: string }> = {
   "/alla-systimata-skiasis": {
     title: "Άλλα συστήματα σκίασης",
     description:
-      "Ομπρέλες, προστασία οχημάτων, ανεμοθραύστες και ειδικά συστήματα εξωτερικού χώρου.",
+      "Συστήματα με τζάμια (UP/DOWN, γκιλοτίνα, επάλληλα), ομπρέλες, εφελκυόμενα πανιά, στέγαστρα parking και ειδικές κατασκευές.",
   },
   "/erga": {
     title: "Έργα μας",
@@ -765,50 +756,116 @@ const productPages: ProductPage[] = [
   },
 ];
 
-const pergolaTypes = [
+type PergolaShape = "sloped" | "flat" | "curved" | "hanging" | "large" | "existing";
+
+const pergolaTypes: {
+  title: string;
+  shape: PergolaShape;
+  text: string;
+  bestFor: string;
+  keyBenefit: string;
+  tags: string[];
+}[] = [
   {
-    title: "Ευθύγραμμη με κλίση",
-    text: "Η κλασική τεντοπέργκολα αλουμινίου με προκαθορισμένη κλίση για σωστή τάση του PVC και οργανωμένη απορροή της βροχής.",
+    title: "Με κλίση",
+    shape: "sloped",
+    text: "Η κλασική περγκοτέντα αλουμινίου με προκαθορισμένη κλίση, για σωστό τέντωμα του PVC και οργανωμένη απορροή της βροχής.",
     bestFor: "Βεράντες και αυλές όπου χρειάζεται καθαρή απορροή νερού.",
     keyBenefit: "Σταθερή λειτουργία, απλή γεωμετρία και αξιόπιστη κάλυψη.",
     tags: ["Κλασική επιλογή", "Απορροή", "Καθημερινή χρήση"],
   },
   {
-    title: "Επίπεδη όψη 90°",
-    text: "Λύση με καθαρή, οριζόντια αρχιτεκτονική γραμμή για σύγχρονες προσόψεις και χώρους όπου ζητείται λιτή εμφάνιση.",
+    title: "Επίπεδη, χωρίς εμφανή κλίση",
+    shape: "flat",
+    text: "Καμπυλωτές δοκοί και περιμετρική υδρορροή απομακρύνουν το νερό, ενώ η όψη μένει οριζόντια και λιτή.",
     bestFor: "Σύγχρονες κατοικίες και επαγγελματικές όψεις.",
-    keyBenefit: "Πιο minimal αποτέλεσμα χωρίς έντονη εμφανή κλίση.",
+    keyBenefit: "Minimal αποτέλεσμα και εύκολη προσθήκη ZIP ή τζαμιών περιμετρικά.",
     tags: ["Minimal", "Σύγχρονη όψη", "Καθαρή γραμμή"],
   },
   {
     title: "Καμπυλωτή",
-    text: "Η καμπύλη διαδρομή της οροφής εξυπηρετεί ιδιαίτερες αρχιτεκτονικές απαιτήσεις και δημιουργεί πιο ανάλαφρη τελική μορφή.",
+    shape: "curved",
+    text: "Τοξωτή οροφή για ιδιαίτερες αρχιτεκτονικές απαιτήσεις, με πιο ανάλαφρη τελική μορφή.",
     bestFor: "Χώρους με ιδιαίτερη αρχιτεκτονική ή πιο μαλακή τελική μορφή.",
     keyBenefit: "Δίνει χαρακτήρα και βοηθά όταν η ευθεία γραμμή δεν ταιριάζει.",
-    tags: ["Καμπύλη", "Αρχιτεκτονική", "Ειδική μορφή"],
+    tags: ["Τοξωτή", "Αρχιτεκτονική", "Ειδική μορφή"],
   },
   {
     title: "Κρεμαστή",
-    text: "Αναρτώμενη κατασκευή χωρίς εμπρόσθιες κολώνες, όταν το κατάλληλο υπόβαθρο επιτρέπει ασφαλή στήριξη σε τοίχο ή οροφή.",
+    shape: "hanging",
+    text: "Αναρτάται σε τοίχο ή μαρκίζα με διακριτικές ντίζες, χωρίς εμπρόσθιες κολώνες, όταν το υπόβαθρο επιτρέπει ασφαλή στήριξη.",
     bestFor: "Χώρους όπου θέλουμε να μείνει ελεύθερη η μπροστινή πλευρά.",
-    keyBenefit: "Λιγότερα εμπόδια στο δάπεδο, εφόσον το επιτρέπει η στήριξη.",
-    tags: ["Χωρίς μπροστινές κολώνες", "Ελεύθερη κίνηση", "Τεχνικός έλεγχος"],
+    keyBenefit: "Ανεμπόδιστη θέα και κίνηση, χωρίς κολώνες στο δάπεδο.",
+    tags: ["Χωρίς κολώνες", "Ελεύθερη θέα", "Τεχνικός έλεγχος"],
   },
   {
-    title: "Μεγάλων ανοιγμάτων",
-    text: "Ενισχυμένες διατομές και οδηγοί για επαγγελματικές εφαρμογές, αυλές και μεγάλες επιφάνειες που απαιτούν στιβαρή κάλυψη.",
+    title: "Μεγάλων επιφανειών",
+    shape: "large",
+    text: "Οδηγοί βαρέως τύπου καλύπτουν με ένα σύστημα έως περίπου 150 m², για εστίαση, ξενοδοχεία και μεγάλες αυλές.",
     bestFor: "Επαγγελματικούς χώρους, μεγάλες αυλές και εκτεταμένες βεράντες.",
     keyBenefit: "Μεγάλη σκιαζόμενη επιφάνεια με ενισχυμένη κατασκευή.",
     tags: ["Μεγάλη κάλυψη", "Ενισχυμένη", "Επαγγελματική χρήση"],
   },
   {
     title: "Σε υπάρχουσα κατασκευή",
+    shape: "existing",
     text: "Το κινητό σύστημα σκίασης μπορεί, μετά από τεχνικό έλεγχο, να εφαρμοστεί επάνω σε κατάλληλη μεταλλική ή ξύλινη υποδομή.",
     bestFor: "Χώρους που έχουν ήδη μεταλλική ή ξύλινη υποδομή.",
     keyBenefit: "Αξιοποιεί υπάρχουσα κατασκευή όταν είναι ασφαλής και κατάλληλη.",
     tags: ["Υπάρχουσα βάση", "Προσαρμογή", "Έλεγχος στήριξης"],
   },
 ];
+
+/** Σχηματική πλάγια όψη για κάθε τύπο περγκοτέντας. */
+function PergolaShapeIcon({ shape }: { shape: PergolaShape }) {
+  const drawings: Record<PergolaShape, ReactNode> = {
+    sloped: (
+      <>
+        <path d="M6 4v34M58 18v20M6 10l52 8" />
+        <path className="accent" d="M10 11.5l44 6.8" />
+      </>
+    ),
+    flat: (
+      <>
+        <path d="M6 4v34M58 14v24M6 14h52" />
+        <path className="accent" d="M10 17q22 4 44 0" />
+      </>
+    ),
+    curved: (
+      <>
+        <path d="M6 4v34M58 18v20" />
+        <path d="M6 12q26-10 52 6" />
+        <path className="accent" d="M10 14q22-7 44 5" />
+      </>
+    ),
+    hanging: (
+      <>
+        <path d="M6 4v34M6 12l52 6M6 4l52 14" />
+        <path className="accent" d="M10 13.5l44 5" />
+      </>
+    ),
+    large: (
+      <>
+        <path d="M4 12h56M8 12v26M32 12v26M56 12v26" />
+        <path className="accent" d="M8 15h48" />
+      </>
+    ),
+    existing: (
+      <>
+        <path d="M8 12v26M56 12v26M4 12h56" strokeDasharray="3 3" />
+        <path className="accent" d="M8 9h48" />
+      </>
+    ),
+  };
+
+  return (
+    <svg aria-hidden="true" className="pergola-shape" fill="none" viewBox="0 0 64 42">
+      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8">
+        {drawings[shape]}
+      </g>
+    </svg>
+  );
+}
 
 const pergolaFeatures = [
   {
@@ -876,23 +933,23 @@ const bioclimaticModes = [
 const bioclimaticTypes = [
   {
     title: "Περιστρεφόμενες περσίδες",
-    text: "Οι περσίδες αλουμινίου μεταβάλλουν συνεχώς τη γωνία τους, επιτρέποντας ακριβή έλεγχο της σκιάς και του φυσικού αερισμού.",
+    text: "Οι περσίδες αλουμινίου αλλάζουν γωνία έως 120°–135°, για ακριβή έλεγχο της σκιάς και του φυσικού αερισμού. Όταν κλείνουν, η οροφή γίνεται στεγανή.",
   },
   {
     title: "Περιστρεφόμενες και αναδιπλούμενες",
-    text: "Εκτός από την αλλαγή κλίσης, τα κινητά πάνελ συγκεντρώνονται στη μία πλευρά ώστε να απελευθερώνεται μεγάλο τμήμα της οροφής.",
-  },
-  {
-    title: "Επίπεδη χωρίς εμφανή κλίση",
-    text: "Σύγχρονη οριζόντια μορφή με την απορροή ενσωματωμένη στον σχεδιασμό, για καθαρή αρχιτεκτονική ένταξη.",
-  },
-  {
-    title: "Με ελάχιστη κλίση",
-    text: "Αναδιπλούμενες λύσεις με μικρή τεχνική κλίση, κατάλληλες όταν προτεραιότητα είναι το μεγάλο άνοιγμα της οροφής.",
+    text: "Εκτός από την περιστροφή, οι περσίδες μαζεύονται στη μία πλευρά και η οροφή ανοίγει σχεδόν ολόκληρη για ανοιχτό ουρανό.",
   },
   {
     title: "Σταθερές περσίδες",
-    text: "Παθητική λύση με μελετημένη γωνία και απόσταση πτερυγίων, για μόνιμη σκίαση και φυσικό αερισμό χωρίς μηχανισμό.",
+    text: "Περσίδες αλουμινίου σε σταθερή, μελετημένη γωνία για μόνιμη σκίαση και φυσικό αερισμό, χωρίς μηχανισμό.",
+  },
+  {
+    title: "Οριζόντιες περσίδες για όψεις",
+    text: "Ρυθμιζόμενες περσίδες για όψεις κτιρίων, παράθυρα και τζαμαρίες, που μειώνουν τη θερμική επιβάρυνση και την ανάγκη για κλιματισμό.",
+  },
+  {
+    title: "Μόνωση και στεγανότητα",
+    text: "Σε επιλεγμένες σειρές οι περσίδες έχουν θερμική και ηχητική μόνωση, ενώ το νερό οδηγείται στην περιμετρική υδρορροή και μέσα από τις κολώνες.",
   },
   {
     title: "Αυτόνομη ή επιτοίχια",
@@ -1148,24 +1205,155 @@ const classicSystems: ClassicSystem[] = [
   },
 ];
 
+// Συγκριτικά στοιχεία ανά σύστημα. Τα ενδεικτικά όρια προέρχονται από
+// σειρές των προμηθευτών (βλ. KATALOGOS-PROMITHEFTON.md).
+const classicSystemDetails: Record<
+  string,
+  { group: "horizontal" | "vertical"; support: string; closed: string; size: string; operation: string }
+> = {
+  "/klassika-systimata-skiasis/antirida": {
+    group: "horizontal",
+    support: "Στον τοίχο, με αντιρίδες στηριγμένες στο κάγκελο ή στο στηθαίο.",
+    closed: "Το πανί τυλίγεται στον άξονα.",
+    size: "Στο πλάτος του μπαλκονιού.",
+    operation: "Χειροκίνητη ή με μοτέρ.",
+  },
+  "/klassika-systimata-skiasis/spastoi-vrachiones": {
+    group: "horizontal",
+    support: "Μόνο σε τοίχο ή οροφή, χωρίς μπροστινή στήριξη.",
+    closed: "Οι βραχίονες διπλώνουν κάτω από τον άξονα.",
+    size: "Προβολή έως 3 m, έως 6,25 m με βραχίονες βαρέως τύπου.",
+    operation: "Χειροκίνητη ή ηλεκτρική.",
+  },
+  "/klassika-systimata-skiasis/kasetes-kasoneta": {
+    group: "horizontal",
+    support: "Σε τοίχο ή οροφή.",
+    closed: "Πανί, άξονας και βραχίονες κλείνουν μέσα στην κασέτα.",
+    size: "Έως 7 × 3,5 m.",
+    operation: "Συνήθως με μοτέρ και τηλεχειρισμό.",
+  },
+  "/klassika-systimata-skiasis/monoblock": {
+    group: "horizontal",
+    support: "Ενιαία μπάρα με λίγα σημεία στήριξης στον τοίχο.",
+    closed: "Προαιρετικό στέγαστρο αλουμινίου πάνω από το πανί.",
+    size: "Έως 8 × 3 m, μεγαλύτερες μετά από μελέτη.",
+    operation: "Χειροκίνητη ή με μοτέρ.",
+  },
+  "/klassika-systimata-skiasis/katheta-systimata": {
+    group: "vertical",
+    support: "Κουτί επάνω, πλευρικοί οδηγοί ZIP ή συρματόσχοινα.",
+    closed: "Το ύφασμα τυλίγεται μέσα στο κουτί.",
+    size: "Συστήματα ZIP έως 5 × 3,25 m.",
+    operation: "Χειροκίνητη ή ηλεκτρική.",
+  },
+  "/klassika-systimata-skiasis/kapotines": {
+    group: "horizontal",
+    support: "Σε τοίχο, πάνω από παράθυρο, είσοδο ή βιτρίνα.",
+    closed: "Σταθερή ή ανασυρόμενη, αναδιπλώνεται σαν φυσαρμόνικα.",
+    size: "Έως 4,5 × 1,5 m.",
+    operation: "Σταθερή ή χειροκίνητη.",
+  },
+};
+
+const fabricTypes = [
+  {
+    title: "Ακρυλικά τεντόπανα",
+    text: "Η κλασική επιλογή για τέντες μπαλκονιού και κασέτες. Αναπνέουν, κρατούν το χρώμα τους και διατίθενται σε μονόχρωμα, ριγέ και αδιάβροχες εκδόσεις.",
+    brands: "Dickson, Tempotest, Docril, Recasens",
+    bestFor: "Σπαστοί βραχίονες, κασέτες, αντιρίδες",
+  },
+  {
+    title: "Πολυεστερικά & Block out",
+    text: "Τεχνικά υφάσματα με επίστρωση, 100% αδιάβροχα και με σκίαση που φτάνει σχεδόν το 100%. Υπάρχουν μονόχρωμα, εμπριμέ και ψηφιακά τυπωμένα σχέδια.",
+    brands: "TenCate, DAS Awning, Calbari",
+    bestFor: "Χώροι με έντονη ηλιοφάνεια και βροχή",
+  },
+  {
+    title: "PVC για οροφές",
+    text: "Βαρύ αδιαφανές PVC blockout για την κινητή οροφή της περγκοτέντας. Δίνει πλήρη σκίαση και στεγανότητα σε μεγάλες επιφάνειες.",
+    brands: "Dickson, NYFAN Blackout",
+    bestFor: "Περγκοτέντες",
+  },
+  {
+    title: "Screen & κρυστάλ ζελατίνα",
+    text: "Διάτρητα υφάσματα που κόβουν τον ήλιο χωρίς να κρύβουν τη θέα, ή διάφανη ζελατίνα για προστασία από αέρα και βροχή.",
+    brands: "Serge Ferrari, NYFAN Screen, Achilles",
+    bestFor: "Κάθετα συστήματα και ZIP",
+  },
+];
+
 const fabricSuppliers = [
   {
     name: "NYFAN • TenCate",
-    text: "Συλλογή ψηφιακών εμπριμέ σχεδίων TenCate για σύγχρονες και κλασικές εφαρμογές σκίασης.",
-    url: "https://nyfan.gr/emprime-nyfan-tencate/",
-    action: "Δείτε τα εμπριμέ σχέδια",
+    text: "Μονόχρωμα, block out, Perla και ψηφιακά τυπωμένα σχέδια.",
+    url: "https://nyfan.gr/en/nyfan-tencate-en/",
   },
   {
     name: "DAS Awning",
-    text: "Μονόχρωμα, διπλής επίστρωσης και ειδικά τεχνικά τεντόπανα με σαφείς χρωματικούς κωδικούς.",
+    text: "Block out, αυτοκαθαριζόμενα και ανθεκτικά στον άνεμο τεντόπανα.",
     url: "https://catalogue.dashome.gr/DasAwning/18/",
-    action: "Ανοίξτε τον κατάλογο",
   },
   {
     name: "Calbari",
-    text: "Μονόχρωμες, εμπριμέ και υβριδικές συλλογές τεντοπάνων για διαφορετικές ανάγκες σκίασης.",
+    text: "Μονόχρωμες, εμπριμέ, υβριδικές και ανακυκλωμένες συλλογές.",
     url: "https://www.calbari.gr/tentopana",
-    action: "Δείτε τις συλλογές",
+  },
+  {
+    name: "Dickson",
+    text: "Ακρυλικά τεντόπανα γαλλικής παραγωγής σε μεγάλη χρωματική γκάμα.",
+    url: "https://www.dickson-constant.com/en/solar-protection/awning-fabrics.html",
+  },
+];
+
+const automationFeatures = [
+  {
+    title: "Μοτέρ ενσύρματο ή ασύρματο",
+    text: "Σωληνωτό μοτέρ μέσα στον άξονα, με διακόπτη ή τηλεχειριστήριο ενός ή περισσότερων καναλιών.",
+  },
+  {
+    title: "Χειροκίνηση ανάγκης",
+    text: "Προαιρετικός μηχανισμός για να κλείνει η τέντα και σε διακοπή ρεύματος.",
+  },
+  {
+    title: "Αισθητήρες ανέμου και ήλιου",
+    text: "Η τέντα μαζεύεται μόνη της στις ριπές και ανοίγει όταν δυναμώνει ο ήλιος.",
+  },
+  {
+    title: "Έλεγχος από το κινητό",
+    text: "Σύνδεση με έξυπνο σπίτι μέσω εφαρμογής, μαζί με φωτισμό LED στους βραχίονες ή στην κασέτα.",
+  },
+];
+
+const partnerBrands = [
+  "LAMDA",
+  "MetaForm",
+  "NYFAN",
+  "SevenSun",
+  "Floros",
+  "Sabbas",
+  "Somfy",
+  "Dickson",
+  "TenCate",
+  "Calbari",
+  "DAS Awning",
+];
+
+const processSteps = [
+  {
+    title: "Επικοινωνία",
+    text: "Μας καλείτε ή στέλνετε το αίτημά σας. Αν έχετε φωτογραφίες ή διαστάσεις του χώρου, βοηθούν από την αρχή.",
+  },
+  {
+    title: "Αυτοψία & μέτρηση",
+    text: "Ερχόμαστε στον χώρο, μετράμε και ελέγχουμε στήριξη, προσανατολισμό και έκθεση στον αέρα.",
+  },
+  {
+    title: "Πρόταση & προσφορά",
+    text: "Σας προτείνουμε σύστημα, ύφασμα, χρώμα και αυτοματισμούς, με δείγματα και καθαρή προσφορά.",
+  },
+  {
+    title: "Κατασκευή & τοποθέτηση",
+    text: "Κατασκευάζουμε στις διαστάσεις σας, τοποθετούμε, ρυθμίζουμε και μένουμε δίπλα σας για τη συντήρηση.",
   },
 ];
 
@@ -1250,69 +1438,78 @@ const advisorQuizQuestions: AdvisorQuizQuestion[] = [
   },
 ];
 
-const fabricSwatches: FabricDesign[] = [
+const otherSystemGroups: {
+  id: string;
+  icon: IconName;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  items: { title: string; text: string; spec?: string; icon?: IconName }[];
+}[] = [
   {
-    name: "Cherokee",
-    code: "1630",
-    supplier: "NYFAN • TenCate",
-    url: "https://nyfan.gr/emprime-nyfan-tencate/cherokee/",
-    image: "https://nyfan.gr/wp-content/uploads/2023/04/CHEROKEE-1630-600x401.webp",
+    id: "tzamia",
+    icon: "glass",
+    eyebrow: "Συστήματα με τζάμια",
+    title: "Κλείστε τη βεράντα χωρίς να χάσετε τη θέα.",
+    intro: "Περιμετρικό κλείσιμο για πέργκολες, βεράντες και καταστήματα, με προστασία από αέρα και βροχή.",
+    items: [
+      {
+        title: "Ανεμοθραύστες UP/DOWN",
+        text: "Δύο τζάμια με αντίβαρο: το επάνω ανεβοκατεβαίνει εύκολα στο ύψος που θέλετε.",
+        spec: "Χειροκίνητοι · έως 3,25 × 2,20 m",
+      },
+      {
+        title: "Τριπλή γκιλοτίνα",
+        text: "Ηλεκτροκίνητο σύστημα τριών φύλλων που κινούνται κατακόρυφα. Ιδανικό για καφέ, εστιατόρια και μπαρ.",
+        spec: "Με μοτέρ και τηλεχειρισμό · έως 4,50 × 3,00 m",
+      },
+      {
+        title: "Επάλληλα συρόμενα τζάμια",
+        text: "Συρόμενα φύλλα για περιμετρικό κλείσιμο, με κλειδαριά και επιλογή υαλοπίνακα: διάφανο, φιμέ, αμμοβολή ή θερμομονωτικό.",
+        spec: "Έως 8,00 × 3,00 m",
+      },
+    ],
   },
   {
-    name: "Garden",
-    code: "1579",
-    supplier: "NYFAN • TenCate",
-    url: "https://nyfan.gr/emprime-nyfan-tencate/garden/",
-    image: "https://nyfan.gr/wp-content/uploads/2023/04/garden-600x401.webp",
+    id: "ompreles",
+    icon: "umbrella",
+    eyebrow: "Ομπρέλες & πανιά σκίασης",
+    title: "Σκιά εκεί που δεν μπαίνει τέντα.",
+    intro: "Ευέλικτες λύσεις για αυλές, πισίνες, τραπεζοκαθίσματα και ακάλυπτους χώρους.",
+    items: [
+      {
+        title: "Ομπρέλες",
+        text: "Επαγγελματικές και οικιακές ομπρέλες μεγάλης κάλυψης, με ανθεκτικό ύφασμα και εύκολο άνοιγμα.",
+      },
+      {
+        title: "Εφελκυόμενα πανιά σκίασης",
+        text: "Τεντωμένα τριγωνικά ή τετράγωνα πανιά σε ιστούς ή τοίχους. Μοντέρνα όψη και υψηλή προστασία από την υπεριώδη ακτινοβολία.",
+        spec: "Έτοιμα μεγέθη ή κατασκευή στα μέτρα σας",
+      },
+    ],
   },
   {
-    name: "Dream",
-    code: "1607",
-    supplier: "NYFAN • TenCate",
-    url: "https://nyfan.gr/emprime-nyfan-tencate/dream/",
-    image: "https://nyfan.gr/wp-content/uploads/2023/04/dream-600x401.webp",
-  },
-  {
-    name: "Grey / Ecru",
-    code: "4516",
-    supplier: "DAS Awning",
-    url: "https://catalogue.dashome.gr/DasAwning/18/",
-    value: "linear-gradient(135deg,#8e9292 0 52%,#ded8c7 52%)",
-  },
-  {
-    name: "Dark Grey / Dark Grey",
-    code: "4500",
-    supplier: "DAS Awning",
-    url: "https://catalogue.dashome.gr/DasAwning/18/",
-    value: "#555758",
-  },
-  {
-    name: "Black / Black",
-    code: "4517",
-    supplier: "DAS Awning",
-    url: "https://catalogue.dashome.gr/DasAwning/18/",
-    value: "#191919",
-  },
-  {
-    name: "Hybrid Bali HD",
-    code: "3003",
-    supplier: "Calbari",
-    url: "https://www.calbari.gr/tentopana/emprime",
-    image: "https://static.wixstatic.com/media/5a92a2_7f3d1be84be6472e87d9f87af4324980~mv2.png/v1/fit/w_849,h_1408,q_90,enc_avif,quality_auto/5a92a2_7f3d1be84be6472e87d9f87af4324980~mv2.png",
-  },
-  {
-    name: "Hybrid Varadero HD",
-    code: "3001",
-    supplier: "Calbari",
-    url: "https://www.calbari.gr/tentopana/emprime",
-    image: "https://static.wixstatic.com/media/5a92a2_e5a9ec71e776429e8819f4a89e082288~mv2.png/v1/fit/w_849,h_1408,q_90,enc_avif,quality_auto/5a92a2_e5a9ec71e776429e8819f4a89e082288~mv2.png",
-  },
-  {
-    name: "Hybrid Catalina HD",
-    code: "3006",
-    supplier: "Calbari",
-    url: "https://www.calbari.gr/tentopana/emprime",
-    image: "https://static.wixstatic.com/media/5a92a2_2dddaf0bb74944c08cbe535f1c0bf38b~mv2.png/v1/fit/w_849,h_1408,q_90,enc_avif,quality_auto/5a92a2_2dddaf0bb74944c08cbe535f1c0bf38b~mv2.png",
+    id: "stegastra",
+    icon: "parking",
+    eyebrow: "Στέγαστρα & ειδικές κατασκευές",
+    title: "Λύσεις στα μέτρα του κτιρίου.",
+    intro: "Για χώρους που χρειάζονται κάτι πιο ειδικό από ένα τυποποιημένο σύστημα.",
+    items: [
+      {
+        title: "Προστασία οχήματος",
+        text: "Στέγαστρα parking με σκελετό και τεχνικό ύφασμα ή PVC, για προστασία από ήλιο, βροχή και καθημερινή φθορά.",
+      },
+      {
+        title: "Ειδικές μεταλλικές κατασκευές",
+        icon: "shield",
+        text: "Σκελετοί, στηθαία και στέγαστρα προσαρμοσμένα στις ιδιαιτερότητες του κτιρίου.",
+      },
+      {
+        title: "Εκτύπωση και σήμανση",
+        icon: "spark",
+        text: "Ψηφιακή εκτύπωση λογότυπου ή σχεδίου στο ύφασμα, για καταστήματα και επαγγελματικούς χώρους.",
+      },
+    ],
   },
 ];
 
@@ -1320,7 +1517,8 @@ const homeProducts = [
   {
     title: "Κλασικά συστήματα σκίασης",
     description:
-      "Σπαστοί βραχίονες, κασέτες, monoblock και κάθετα συστήματα για κατοικίες και επιχειρήσεις.",
+      "Τέντες για μπαλκόνια, βεράντες και προσόψεις, και κάθετη σκίαση για πλαϊνή προστασία.",
+    includes: ["Αντιρίδα", "Σπαστοί βραχίονες", "Κασέτες", "Monoblock", "Κάθετα & ZIP", "Καποτίνες"],
     icon: "awning" as IconName,
     image: albums.classic.cover,
     tag: "Σκίαση στα μέτρα σας",
@@ -1329,7 +1527,8 @@ const homeProducts = [
   {
     title: "Περγκοτέντες",
     description:
-      "Σταθερές κατασκευές με κινητή οροφή για άνεση και προστασία σε μεγάλους εξωτερικούς χώρους.",
+      "Σταθερή κατασκευή αλουμινίου με οροφή PVC που ανοίγει και κλείνει.",
+    includes: ["Με κλίση", "Επίπεδες", "Καμπυλωτές", "Κρεμαστές", "Μεγάλων επιφανειών"],
     icon: "pergola" as IconName,
     image: albums.pergola.cover,
     tag: "Κάλυψη όλο τον χρόνο",
@@ -1338,29 +1537,32 @@ const homeProducts = [
   {
     title: "Βιοκλιματικές πέργκολες",
     description:
-      "Περιστρεφόμενες περσίδες αλουμινίου για έλεγχο φωτός, αερισμού και προστασίας.",
+      "Περσίδες αλουμινίου που ρυθμίζουν φως, αερισμό και προστασία.",
+    includes: ["Περιστρεφόμενες", "Αναδιπλούμενες", "Σταθερές περσίδες"],
     icon: "pergola" as IconName,
     image: albums.bioclimatic.cover,
     tag: "Έξυπνη διαχείριση σκίασης",
     path: "/vioklimatikes-pergkoles",
   },
   {
-    title: "Ομπρέλες",
+    title: "Ομπρέλες & πανιά σκίασης",
     description:
-      "Επαγγελματικές και οικιακές λύσεις μεγάλης κάλυψης, με έμφαση στην αντοχή και την ευχρηστία.",
+      "Σκιά για αυλές, πισίνες και τραπεζοκαθίσματα, εκεί που δεν μπαίνει τέντα.",
+    includes: ["Ομπρέλες", "Εφελκυόμενα πανιά"],
     icon: "umbrella" as IconName,
     image: albums.umbrellas.cover,
     tag: "Για κάθε εξωτερικό χώρο",
-    path: "/alla-systimata-skiasis",
+    path: "/alla-systimata-skiasis#ompreles",
   },
   {
-    title: "Προστασία οχήματος",
+    title: "Τζάμια, στέγαστρα & ειδικές κατασκευές",
     description:
-      "Ανθεκτικές κατασκευές που προστατεύουν το όχημα από ήλιο, βροχή και καθημερινή φθορά.",
+      "Περιμετρικό κλείσιμο με τζάμια, στέγαστρα parking και κατασκευές στα μέτρα του κτιρίου.",
+    includes: ["UP/DOWN", "Γκιλοτίνα", "Επάλληλα", "Parking"],
     icon: "parking" as IconName,
     image: albums.parking.cover,
-    tag: "Σκίαση parking",
-    path: "/alla-systimata-skiasis",
+    tag: "Ολοκληρωμένες λύσεις",
+    path: "/alla-systimata-skiasis#tzamia",
   },
 ];
 
@@ -1443,24 +1645,6 @@ const services = [
   },
 ];
 
-const applications = [
-  {
-    title: "Κατοικίες",
-    subtitle: "Μπαλκόνια, βεράντες και αυλές",
-    image: albums.appHomes.cover,
-  },
-  {
-    title: "Εστίαση",
-    subtitle: "Καφέ, εστιατόρια και ξενοδοχεία",
-    image: albums.appHospitality.cover,
-  },
-  {
-    title: "Ειδικές κατασκευές",
-    subtitle: "Λύσεις προσαρμοσμένες στον χώρο",
-    image: albums.appSpecial.cover,
-  },
-];
-
 const serviceAreas = [
   {
     title: "Όλη η Αττική",
@@ -1483,19 +1667,29 @@ const faqs = [
       "Με μια σύντομη επικοινωνία και αυτοψία στον χώρο. Καταγράφουμε διαστάσεις, προσανατολισμό και ανάγκες πριν προτείνουμε σύστημα και υλικά.",
   },
   {
+    question: "Πόσο κοστίζει μία τέντα ή πέργκολα;",
+    answer:
+      "Η τιμή εξαρτάται από τις διαστάσεις, το σύστημα, το ύφασμα και τους αυτοματισμούς. Γι' αυτό κάνουμε πρώτα αυτοψία και σας δίνουμε δωρεάν, αναλυτική προσφορά.",
+  },
+  {
+    question: "Τι εγγύηση έχουν τα προϊόντα;",
+    answer:
+      "Τα συστήματα και τα υφάσματα που χρησιμοποιούμε συνοδεύονται από την εγγύηση του κατασκευαστή τους. Σε ορισμένες σειρές υφασμάτων φτάνει τα 10 χρόνια. Σας ενημερώνουμε για τους όρους κάθε προϊόντος πριν αποφασίσετε.",
+  },
+  {
     question: "Αναλαμβάνετε επισκευές παλιών τεντών;",
     answer:
       "Ναι. Ελέγχουμε πανί, βραχίονες, στηρίξεις και μηχανισμό και σας ενημερώνουμε αν συμφέρει επισκευή ή αντικατάσταση.",
   },
   {
-    question: "Υπάρχουν επιλογές αυτοματισμού;",
+    question: "Μπορώ να βάλω μοτέρ σε τέντα που ήδη έχω;",
     answer:
-      "Ναι, ανάλογα με το σύστημα μπορούν να τοποθετηθούν ηλεκτρικοί μηχανισμοί, τηλεχειρισμός και αισθητήρες ήλιου ή ανέμου.",
+      "Στις περισσότερες περιπτώσεις ναι. Ελέγχουμε τον άξονα και τον μηχανισμό και προτείνουμε το κατάλληλο μοτέρ, με τηλεχειρισμό και προαιρετικά αισθητήρες ήλιου ή ανέμου.",
   },
   {
     question: "Μπορώ να επιλέξω πανί και χρώμα;",
     answer:
-      "Βεβαίως. Διατίθεται μεγάλη γκάμα ακρυλικών, αδιάβροχων και τεχνικών υφασμάτων, σε μονόχρωμες και ριγέ επιλογές.",
+      "Βεβαίως. Υπάρχουν ακρυλικά, πολυεστερικά block out, PVC και διάτρητα screen υφάσματα, σε μονόχρωμα, ριγέ και εμπριμέ σχέδια. Φέρνουμε δείγματα στην αυτοψία για να διαλέξετε με σιγουριά.",
   },
 ];
 
@@ -2072,7 +2266,204 @@ function SelectionAdvisor() {
   );
 }
 
+function ClassicChoiceCard({ system, index }: { system: ClassicSystem; index: number }) {
+  const details = classicSystemDetails[system.path];
+
+  return (
+    <article className="classic-choice-card">
+      <a className="classic-choice-media" href={appHref(system.path)}>
+        <MediaImage
+          image={system.image}
+          alt={system.image.alt}
+          loading="lazy"
+        />
+        <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
+      </a>
+      <div className="classic-choice-body">
+        <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
+        <h3>{system.title}</h3>
+        <p>{system.chooser.decisionHint}</p>
+        <dl className="classic-choice-facts">
+          <div>
+            <dt>Ιδανικό για</dt>
+            <dd>{system.chooser.bestFor}</dd>
+          </div>
+          <div>
+            <dt>Κερδίζετε</dt>
+            <dd>{system.chooser.keyBenefit}</dd>
+          </div>
+          {details && (
+            <div>
+              <dt>Ενδεικτικό μέγεθος</dt>
+              <dd>{details.size}</dd>
+            </div>
+          )}
+        </dl>
+        <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
+          {system.chooser.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+        <a className="classic-choice-link" href={appHref(system.path)}>
+          Δείτε αναλυτικά <Icon name="arrow" size={17} />
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function ClassicCompareTable() {
+  return (
+    <section className="compare-table-section section" id="sygkrisi">
+      <div className="container">
+        <div className="section-heading split-heading">
+          <div>
+            <p className="eyebrow"><span /> Σύγκριση με μια ματιά</p>
+            <h2>Ποια τέντα ταιριάζει στο δικό σας άνοιγμα;</h2>
+          </div>
+          <p>
+            Τα βασικά σημεία κάθε συστήματος δίπλα δίπλα. Τα μεγέθη είναι
+            ενδεικτικά μέγιστα των σειρών που χρησιμοποιούμε· το τελικό
+            ορίζεται στην αυτοψία.
+          </p>
+        </div>
+        <div className="compare-table-wrap" role="region" aria-label="Σύγκριση κλασικών συστημάτων" tabIndex={0}>
+          <table className="compare-table">
+            <thead>
+              <tr>
+                <th scope="col">Σύστημα</th>
+                <th scope="col">Ιδανικό για</th>
+                <th scope="col">Στήριξη</th>
+                <th scope="col">Όταν κλείνει</th>
+                <th scope="col">Ενδεικτικό μέγεθος</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classicSystems.map((system) => {
+                const details = classicSystemDetails[system.path];
+                return (
+                  <tr key={system.path}>
+                    <th scope="row">
+                      <a href={appHref(system.path)}>{system.chooser.shortTitle}</a>
+                    </th>
+                    <td>{system.chooser.bestFor}</td>
+                    <td>{details?.support}</td>
+                    <td>{details?.closed}</td>
+                    <td>{details?.size}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FabricGuide() {
+  return (
+    <section className="fabrics-section section" id="yfasmata">
+      <div className="container">
+        <div className="section-heading split-heading">
+          <div>
+            <p className="eyebrow"><span /> Είδος και χρώμα πανιών</p>
+            <h2>Το σωστό ύφασμα κάνει τη μισή δουλειά.</h2>
+          </div>
+          <p>
+            Διαλέγουμε μαζί το ύφασμα με φυσικό δείγμα στην αυτοψία, ώστε να
+            δείτε σωστά απόχρωση, ύφανση και πόσο φως περνά. Πολλές σειρές
+            συνοδεύονται από εγγύηση του κατασκευαστή έως 10 ετών.
+          </p>
+        </div>
+
+        <div className="fabric-type-grid">
+          {fabricTypes.map((type, index) => (
+            <article className="fabric-type-card" key={type.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{type.title}</h3>
+              <p>{type.text}</p>
+              <dl>
+                <div>
+                  <dt>Για</dt>
+                  <dd>{type.bestFor}</dd>
+                </div>
+                <div>
+                  <dt>Οίκοι</dt>
+                  <dd>{type.brands}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+
+        <div className="supplier-row">
+          <strong>Δείτε χρώματα και σχέδια στους καταλόγους:</strong>
+          <div>
+            {fabricSuppliers.map((supplier) => (
+              <a
+                href={supplier.url}
+                key={supplier.name}
+                rel="noreferrer"
+                target="_blank"
+                title={supplier.text}
+              >
+                {supplier.name} <Icon name="arrow" size={15} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AutomationSection() {
+  return (
+    <section className="automation-section section" id="aftomatismoi">
+      <div className="container automation-grid">
+        <div>
+          <p className="eyebrow light"><span /> Αυτοματισμοί</p>
+          <h2>Άνετη λειτουργία και αυτόματη προστασία.</h2>
+          <p>
+            Το μοτέρ τοποθετείται μέσα στον άξονα και ταιριάζει σε όλα τα
+            κλασικά συστήματα σκίασης, ακόμη και σε πολλές υπάρχουσες τέντες.
+            Χρησιμοποιούμε μοτέρ και αισθητήρες αναγνωρισμένων κατασκευαστών,
+            όπως η Somfy.
+          </p>
+          <a className="button button-outline" href={appHref("/epikoinonia")}>
+            Ρωτήστε για ηλεκτροκίνηση <Icon name="arrow" size={18} />
+          </a>
+        </div>
+        <div className="automation-features">
+          {automationFeatures.map((feature, index) => (
+            <article key={feature.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{feature.title}</h3>
+              <p>{feature.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ClassicSystemsPage() {
+  const groups = [
+    {
+      id: "orizontia",
+      title: "Τέντες για μπαλκόνια, βεράντες και προσόψεις",
+      systems: classicSystems.filter((system) => classicSystemDetails[system.path]?.group !== "vertical"),
+    },
+    {
+      id: "katheta",
+      title: "Κάθετη σκίαση για πλαϊνό ή μπροστινό κλείσιμο",
+      systems: classicSystems.filter((system) => classicSystemDetails[system.path]?.group === "vertical"),
+    },
+  ];
+  const displayOrder = groups.flatMap((group) => group.systems);
+
   return (
     <main className="detail-main">
       <DetailHero
@@ -2095,7 +2486,7 @@ function ClassicSystemsPage() {
         title="Κατασκευή με βάση τον χώρο και τη χρήση."
       />
 
-      <section className="classic-choices section">
+      <section className="classic-choices section" id="systimata">
         <div className="container">
           <div className="section-heading split-heading">
             <div>
@@ -2107,158 +2498,26 @@ function ClassicSystemsPage() {
               και ποια λύση αξίζει να δείτε αναλυτικά.
             </p>
           </div>
-          <div className="classic-choice-grid" aria-label="Οδηγός επιλογής κλασικού συστήματος σκίασης">
-            {classicSystems.map((system, index) => (
-              <article className="classic-choice-card" key={system.path}>
-                <a className="classic-choice-media" href={appHref(system.path)}>
-                  <MediaImage
-                    image={system.image}
-                    alt={system.image.alt}
-                    loading="lazy"
+          {groups.map((group) => (
+            <div className="classic-choice-group" id={group.id} key={group.id}>
+              <h3 className="classic-choice-group-title">{group.title}</h3>
+              <div className="classic-choice-grid" aria-label={group.title}>
+                {group.systems.map((system) => (
+                  <ClassicChoiceCard
+                    index={displayOrder.indexOf(system)}
+                    key={system.path}
+                    system={system}
                   />
-                  <span className="classic-choice-number">{String(index + 1).padStart(2, "0")}</span>
-                </a>
-                <div className="classic-choice-body">
-                  <span className="classic-choice-kicker">{system.chooser.shortTitle}</span>
-                  <h3>{system.title}</h3>
-                  <p>{system.chooser.decisionHint}</p>
-                  <dl className="classic-choice-facts">
-                    <div>
-                      <dt>Ιδανικό για</dt>
-                      <dd>{system.chooser.bestFor}</dd>
-                    </div>
-                    <div>
-                      <dt>Κερδίζετε</dt>
-                      <dd>{system.chooser.keyBenefit}</dd>
-                    </div>
-                  </dl>
-                  <div className="classic-choice-tags" aria-label="Χαρακτηριστικά">
-                    {system.chooser.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                  <a className="classic-choice-link" href={appHref(system.path)}>
-                    Δείτε αναλυτικά <Icon name="arrow" size={17} />
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="fabrics-section section">
-        <div className="container">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow"><span /> Είδος και χρώμα πανιών</p>
-              <h2>Προμηθευτές και σχέδια για κάθε αισθητική.</h2>
-            </div>
-            <p>
-              Συνεργαζόμαστε με μεγάλους προμηθευτές όπως TenCate, DAS και
-              Calbari. Η τελική επιλογή γίνεται με φυσικό δείγμα, ώστε να
-              αξιολογούνται σωστά η απόχρωση, η ύφανση και η διαπερατότητα.
-            </p>
-          </div>
-
-          <div className="supplier-grid">
-            {fabricSuppliers.map((supplier) => (
-              <a
-                className="supplier-card"
-                href={supplier.url}
-                key={supplier.name}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <strong>{supplier.name}</strong>
-                <p>{supplier.text}</p>
-                <span>{supplier.action} <Icon name="arrow" size={17} /></span>
-              </a>
-            ))}
-          </div>
-
-          <div className="swatch-panel">
-            <div>
-              <h3>Ενδεικτικά σχέδια και κωδικοί</h3>
-              <p>
-                Επιλεγμένες αναφορές από τους ηλεκτρονικούς καταλόγους των
-                προμηθευτών. Πατήστε σε ένα δείγμα για να δείτε τη συλλογή του.
-              </p>
-            </div>
-            <div className="swatch-grid">
-              {fabricSwatches.map((swatch) => (
-                <a
-                  className="swatch"
-                  href={swatch.url}
-                  key={`${swatch.supplier}-${swatch.code}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="swatch-preview"
-                    style={
-                      swatch.image
-                        ? { backgroundImage: `url("${swatch.image}")` }
-                        : { background: swatch.value }
-                    }
-                  />
-                  <span className="swatch-copy">
-                    <small>{swatch.supplier}</small>
-                    <strong>{swatch.name}</strong>
-                    <em>Κωδικός {swatch.code} <Icon name="arrow" size={15} /></em>
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="automation-section section">
-        <div className="container automation-grid">
-          <div>
-            <p className="eyebrow light"><span /> Αυτοματισμοί</p>
-            <h2>Άνετη λειτουργία και αυτόματη προστασία.</h2>
-            <p>
-              Το σωληνωτό μοτέρ τοποθετείται εσωτερικά στον άξονα και μπορεί να
-              εφαρμοστεί σε όλα τα κλασικά συστήματα σκίασης. Επιλέγεται
-              ενσύρματη ή ασύρματη λειτουργία, με ή χωρίς χειροκίνηση έκτακτης
-              ανάγκης για διακοπή ρεύματος.
-            </p>
-            <a
-              className="button button-outline"
-              href="https://www.somfy.gr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Δείτε τις λύσεις Somfy <Icon name="arrow" size={18} />
-            </a>
-          </div>
-          <div className="automation-features">
-            <article>
-              <span>01</span>
-              <h3>Ενσύρματα ή ασύρματα</h3>
-              <p>Διακόπτης, τηλεχειρισμός ή συνδυασμός με σύστημα έξυπνου σπιτιού.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Χειροκίνηση ανάγκης</h3>
-              <p>Προαιρετική λειτουργία για χρήση της τέντας ακόμη και σε διακοπή ρεύματος.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Αισθητήρας ήλιου</h3>
-              <p>Αυτόματη ανάπτυξη της σκίασης όταν η ένταση της ηλιοφάνειας αυξάνεται.</p>
-            </article>
-            <article>
-              <span>04</span>
-              <h3>Αισθητήρας αέρα</h3>
-              <p>Αυτόματο μάζεμα για προστασία της κατασκευής όταν εντοπιστούν ισχυρές ριπές.</p>
-            </article>
-          </div>
-        </div>
-      </section>
+      <ClassicCompareTable />
+      <FabricGuide />
+      <AutomationSection />
       <DetailCta />
     </main>
   );
@@ -2287,6 +2546,10 @@ function CassettePage() {
         intro="Ολοκληρωμένα συστήματα σκίασης που φυλάσσουν ύφασμα, βραχίονες και μηχανισμό μέσα σε ένα καθαρό, συμπαγές κέλυφος αλουμινίου."
         title="Η τέντα κλείνει. Η κατασκευή προστατεύεται."
       />
+
+      {classicSystems
+        .filter((system) => system.path === "/klassika-systimata-skiasis/kasetes-kasoneta")
+        .map((system) => <SystemQuickFacts key={system.path} system={system} />)}
 
       <DetailOverview
         bullets={[
@@ -2410,6 +2673,35 @@ function CassettePage() {
   );
 }
 
+function SystemQuickFacts({ system }: { system: ClassicSystem }) {
+  const details = classicSystemDetails[system.path];
+  if (!details) return null;
+
+  const facts = [
+    { label: "Ιδανικό για", value: system.chooser.bestFor },
+    { label: "Στήριξη", value: details.support },
+    { label: "Όταν κλείνει", value: details.closed },
+    { label: "Λειτουργία", value: details.operation },
+    { label: "Ενδεικτικό μέγεθος", value: details.size },
+  ];
+
+  return (
+    <section className="quick-facts" aria-label="Με μια ματιά">
+      <div className="container">
+        <p className="eyebrow"><span /> Με μια ματιά</p>
+        <dl className="quick-facts-grid">
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
 function ClassicSystemDetailPage({
   system,
 }: {
@@ -2426,6 +2718,8 @@ function ClassicSystemDetailPage({
         intro={system.summary}
         title={system.title}
       />
+
+      <SystemQuickFacts system={system} />
 
       <section className="system-description section">
         <div className="container system-description-grid">
@@ -2512,11 +2806,7 @@ function PergolaPage() {
             {pergolaTypes.map((type, index) => (
               <article className="pergola-type-card" key={type.title}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
-                <div className="pergola-line-icon" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </div>
+                <PergolaShapeIcon shape={type.shape} />
                 <h3>{type.title}</h3>
                 <p>{type.text}</p>
                 <dl className="pergola-type-facts">
@@ -2566,12 +2856,12 @@ function PergolaPage() {
               <span>ενδεικτική μέγιστη προβολή</span>
             </article>
             <article>
-              <strong>130 m²</strong>
-              <span>κάλυψη σε ειδικά ενισχυμένα συστήματα</span>
+              <strong>150 m²</strong>
+              <span>κάλυψη με ένα σύστημα σε σειρές μεγάλων επιφανειών</span>
             </article>
             <article>
-              <strong>UV</strong>
-              <span>πιστοποιημένη προστασία ανά επιλεγμένο υλικό</span>
+              <strong>100%</strong>
+              <span>αδιάβροχη οροφή με PVC blockout</span>
             </article>
           </div>
           <p className="pergola-scale-note">
@@ -2747,7 +3037,7 @@ function BioclimaticPergolaPage() {
               <span>μέγιστη μονάδα του συστήματος NYFAN Aperto</span>
             </article>
             <article>
-              <strong>7 × 7 m</strong>
+              <strong>4 × 20 m</strong>
               <span>ενδεικτική μέγιστη μονάδα επιλεγμένης σειράς LAMDA</span>
             </article>
             <article>
@@ -2835,11 +3125,7 @@ function BioclimaticPergolaPage() {
   );
 }
 
-function ProductDetailPage({
-  page,
-}: {
-  page: ProductPage;
-}) {
+function OtherSystemsPage({ page }: { page: ProductPage }) {
   return (
     <main className="detail-main">
       <DetailHero
@@ -2862,26 +3148,32 @@ function ProductDetailPage({
         title="Κατασκευή με βάση τον χώρο και τη χρήση."
       />
 
-      <section className="detail-options section">
+      <section className="detail-options other-groups section">
         <div className="container">
-          <div className="section-heading split-heading">
-            <div>
-              <p className="eyebrow light"><span /> Επιλογές</p>
-              <h2>Οι βασικές εφαρμογές.</h2>
+          {otherSystemGroups.map((group) => (
+            <div className="other-group" id={group.id} key={group.id}>
+              <div className="section-heading split-heading">
+                <div>
+                  <p className="eyebrow light"><span /> {group.eyebrow}</p>
+                  <h2>{group.title}</h2>
+                </div>
+                <p>{group.intro}</p>
+              </div>
+              <div className="detail-option-grid">
+                {group.items.map((item) => (
+                  <article className="detail-option-card" key={item.title}>
+                    <span className="other-group-icon"><Icon name={item.icon ?? group.icon} size={22} /></span>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                    {item.spec && <small className="detail-option-spec">{item.spec}</small>}
+                  </article>
+                ))}
+              </div>
             </div>
-            <p>Η τελική διαμόρφωση καθορίζεται μετά την αυτοψία και τη συζήτηση των αναγκών σας.</p>
-          </div>
-          <div className="detail-option-grid">
-            {page.items.map((item, index) => (
-              <article className="detail-option-card" key={item.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
+
       {page.albums && (
         <AlbumShowcase
           albumList={page.albums}
@@ -3050,6 +3342,52 @@ function ProjectsPage() {
   );
 }
 
+function ProcessSteps({ tone = "light" }: { tone?: "light" | "dark" }) {
+  return (
+    <section className={`process-section section process-${tone}`} id="pos-doulevoume">
+      <div className="container">
+        <div className="section-heading split-heading">
+          <div>
+            <p className={`eyebrow ${tone === "dark" ? "light" : ""}`}><span /> Πώς δουλεύουμε</p>
+            <h2>Από το πρώτο τηλεφώνημα μέχρι την τοποθέτηση, σε 4 βήματα.</h2>
+          </div>
+          <p>
+            Η εκτίμηση είναι δωρεάν και δεν σας δεσμεύει. Πριν ξεκινήσει η
+            κατασκευή ξέρετε ακριβώς τι θα πάρετε και πόσο κοστίζει.
+          </p>
+        </div>
+        <ol className="process-grid">
+          {processSteps.map((step, index) => (
+            <li key={step.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function PartnersStrip() {
+  return (
+    <section className="partners-section" aria-labelledby="partners-title">
+      <div className="container partners-inner">
+        <div>
+          <p className="eyebrow"><span /> Υλικά & συστήματα</p>
+          <h2 id="partners-title">Δουλεύουμε με αναγνωρισμένους Έλληνες και Ευρωπαίους κατασκευαστές.</h2>
+        </div>
+        <ul className="partners-list">
+          {partnerBrands.map((brand) => (
+            <li key={brand}>{brand}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function RecentWorkStrip() {
   // Πρώτα η κεντρική φωτογραφία κάθε κατηγορίας, μετά οι υπόλοιπες.
   const covers = projectAlbums.map((album) => ({ ...album.cover, albumTitle: album.title }));
@@ -3110,6 +3448,7 @@ function ServicesPage() {
           ))}
         </div>
       </section>
+      <ProcessSteps tone="dark" />
       <DetailCta />
     </main>
   );
@@ -3184,6 +3523,15 @@ function ContactPage() {
               σε όλη την Ελλάδα.
             </p>
             <ContactDetails />
+            <div className="contact-tips">
+              <strong>Για πιο γρήγορη και ακριβή προσφορά, στείλτε μας:</strong>
+              <ul className="check-list">
+                <li><Icon name="check" size={18} /> Περίπου διαστάσεις (πλάτος και βάθος)</li>
+                <li><Icon name="check" size={18} /> Μία ή δύο φωτογραφίες του χώρου</li>
+                <li><Icon name="check" size={18} /> Την περιοχή και τον όροφο</li>
+                <li><Icon name="check" size={18} /> Αν θέλετε μοτέρ ή αυτοματισμούς</li>
+              </ul>
+            </div>
           </div>
           <QuoteForm />
         </div>
@@ -3272,41 +3620,15 @@ function HomePage({
             <span>χρόνια εμπειρίας στη σκίαση</span>
           </div>
           <div>
-            <strong>Στα μέτρα σας</strong>
-            <span>λύσεις για κάθε χώρο</span>
+            <strong>Δωρεάν</strong>
+            <span>εκτίμηση και πρόταση για τον χώρο σας</span>
           </div>
           <div>
-            <strong>Ποιότητα</strong>
-            <span>με λύσεις για κάθε προϋπολογισμό</span>
+            <strong>Αττική</strong>
+            <span>και έργα σε όλη την Ελλάδα</span>
           </div>
         </div>
       </section>
-
-      <section className="intro-section section">
-        <div className="container intro-grid">
-          <div>
-            <p className="eyebrow"><span /> Γιατί να μας εμπιστευτείτε;</p>
-            <h2>
-              Πάνω από 30 χρόνια εμπειρίας, προσφέροντας συγκεκριμένες λύσεις στον
-              δικό σας εξωτερικό χώρο.
-            </h2>
-          </div>
-          <div className="intro-copy">
-            <p>
-              Από μια μικρή τέντα μπαλκονιού μέχρι μια ολοκληρωμένη επαγγελματική
-              κατασκευή, κάθε έργο ξεκινά με σωστή μέτρηση και τελειώνει με
-              προσεγμένη τοποθέτηση.
-            </p>
-            <ul className="check-list">
-              <li><Icon name="check" size={18} /> Επιλεγμένα υλικά και μηχανισμοί</li>
-              <li><Icon name="check" size={18} /> Λύσεις για κατοικίες και επιχειρήσεις</li>
-              <li><Icon name="check" size={18} /> Υποστήριξη και μετά την εγκατάσταση</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <CoverageBand />
 
       <section className="products-section section" id="products">
         <div className="container">
@@ -3316,8 +3638,9 @@ function HomePage({
               <h2>Μία λύση για κάθε χώρο.</h2>
             </div>
             <p>
-              Επιλέξτε κατηγορία για να δείτε περισσότερες πληροφορίες, εφαρμογές
-              και δυνατότητες κατασκευής.
+              Πέντε κατηγορίες καλύπτουν όλα όσα κατασκευάζουμε. Δεν ξέρετε από
+              πού να ξεκινήσετε;{" "}
+              <a className="inline-link" href="#odigos-epilogis">Κάντε το γρήγορο quiz</a>.
             </p>
           </div>
 
@@ -3335,6 +3658,11 @@ function HomePage({
                   <span>{product.tag}</span>
                   <h3>{product.title}</h3>
                   <p>{product.description}</p>
+                  <ul className="product-includes" aria-label="Περιλαμβάνει">
+                    {product.includes.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                   <span className="card-link">
                     Δείτε αναλυτικά <Icon name="arrow" size={18} />
                   </span>
@@ -3345,9 +3673,13 @@ function HomePage({
         </div>
       </section>
 
+      <ProcessSteps />
+
       <RecentWorkStrip />
 
       <SelectionAdvisor />
+
+      <CoverageBand />
 
       <section className="services-section section" id="services">
         <div className="container services-grid">
@@ -3376,29 +3708,7 @@ function HomePage({
         </div>
       </section>
 
-      <section className="applications-section section" id="applications">
-        <div className="container">
-          <div className="section-heading centered-heading">
-            <p className="eyebrow"><span /> Εφαρμογές</p>
-            <h2>Λύσεις που προσαρμόζονται στη ζωή του χώρου.</h2>
-            <p>
-              Οι εικόνες είναι ενδεικτικές των εφαρμογών που αναλαμβάνουμε.
-              Σύντομα η ενότητα θα εμπλουτιστεί με πραγματικά έργα της επιχείρησης.
-            </p>
-          </div>
-          <div className="application-grid">
-            {applications.map((application) => (
-              <article className="application-card" key={application.title}>
-                <MediaImage image={application.image} loading="lazy" />
-                <div className="application-caption">
-                  <span>{application.subtitle}</span>
-                  <h3>{application.title}</h3>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PartnersStrip />
 
       <section className="about-section section" id="about">
         <div className="container about-grid">
@@ -3421,6 +3731,11 @@ function HomePage({
               υφάσματα και αυτοματισμούς. Στόχος μας είναι κάθε κατασκευή να
               λειτουργεί σωστά, να αντέχει και να δείχνει δεμένη με το κτίριο.
             </p>
+            <ul className="check-list about-checks">
+              <li><Icon name="check" size={18} /> Επιλεγμένα υλικά και μηχανισμοί αναγνωρισμένων κατασκευαστών</li>
+              <li><Icon name="check" size={18} /> Λύσεις για κατοικίες και επιχειρήσεις</li>
+              <li><Icon name="check" size={18} /> Υποστήριξη και μετά την εγκατάσταση</li>
+            </ul>
             <div className="values">
               <div><Icon name="shield" /><span><strong>Αξιοπιστία</strong>Καθαρή πρόταση και σωστή εφαρμογή.</span></div>
               <div><Icon name="spark" /><span><strong>Φροντίδα</strong>Προσοχή στη λεπτομέρεια του χώρου.</span></div>
@@ -3485,6 +3800,15 @@ function HomePage({
       </section>
     </main>
   );
+}
+
+/** Μετά την αλλαγή σελίδας: στην αρχή ή στην ενότητα του #anchor. */
+function scrollToHash(hash: string) {
+  window.scrollTo(0, 0);
+  if (!hash) return;
+  window.setTimeout(() => {
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: "start" });
+  }, 80);
 }
 
 export default function App() {
@@ -3594,6 +3918,10 @@ export default function App() {
   }, [isMenuOpen]);
 
   useEffect(() => {
+    if (window.location.hash) scrollToHash(window.location.hash);
+  }, []);
+
+  useEffect(() => {
     const preload = document.createElement("link");
     preload.rel = "preload";
     preload.as = "image";
@@ -3633,7 +3961,7 @@ export default function App() {
       event.preventDefault();
       window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
       setPath(cleanPath(url.pathname));
-      window.scrollTo(0, 0);
+      scrollToHash(url.hash);
     };
 
     document.addEventListener("click", onDocumentClick);
@@ -3705,7 +4033,13 @@ export default function App() {
             { label: "Τύποι", href: "#typoi-vioklimatikis", isActive: false },
             { label: "Εξοπλισμός", href: "#eksoplismos-vioklimatikis", isActive: false },
           ]
-        : [];
+        : path === "/alla-systimata-skiasis"
+          ? otherSystemGroups.map((group) => ({
+              label: group.eyebrow,
+              href: `#${group.id}`,
+              isActive: false,
+            }))
+          : [];
 
   return (
     <div className="site-shell">
@@ -3852,11 +4186,8 @@ export default function App() {
       )}
       {path === "/pergkotentes" && <PergolaPage />}
       {path === "/vioklimatikes-pergkoles" && <BioclimaticPergolaPage />}
-      {activeProductPage &&
-        path !== "/klassika-systimata-skiasis" &&
-        path !== "/pergkotentes" &&
-        path !== "/vioklimatikes-pergkoles" && (
-        <ProductDetailPage page={activeProductPage} />
+      {activeProductPage && path === "/alla-systimata-skiasis" && (
+        <OtherSystemsPage page={activeProductPage} />
       )}
       {path === "/erga" && <ProjectsPage />}
       {path === "/ypiresies" && <ServicesPage />}
@@ -3872,13 +4203,22 @@ export default function App() {
               <span>Λύσεις σκίασης με τεχνική συνέπεια.</span>
             </div>
           </div>
-          <div className="footer-links">
-            <a href={appHref("/klassika-systimata-skiasis")}>Συστήματα</a>
-            <a href={appHref("/erga")}>Έργα μας</a>
-            <a href={appHref("/ypiresies")}>Υπηρεσίες</a>
-            <a href={appHref("/i-etaireia-mas")}>Η εταιρεία</a>
-            <a href={appHref("/epikoinonia")}>Επικοινωνία</a>
-          </div>
+          <nav className="footer-links" aria-label="Χάρτης ιστοσελίδας">
+            <div>
+              <strong>Προϊόντα</strong>
+              <a href={appHref("/klassika-systimata-skiasis")}>Κλασικά συστήματα σκίασης</a>
+              <a href={appHref("/pergkotentes")}>Περγκοτέντες</a>
+              <a href={appHref("/vioklimatikes-pergkoles")}>Βιοκλιματικές πέργκολες</a>
+              <a href={appHref("/alla-systimata-skiasis")}>Άλλα συστήματα σκίασης</a>
+            </div>
+            <div>
+              <strong>Εταιρεία</strong>
+              <a href={appHref("/erga")}>Έργα μας</a>
+              <a href={appHref("/ypiresies")}>Υπηρεσίες</a>
+              <a href={appHref("/i-etaireia-mas")}>Η εταιρεία μας</a>
+              <a href={appHref("/epikoinonia")}>Επικοινωνία</a>
+            </div>
+          </nav>
           <div className="footer-contact">
             <div className="footer-phones">
               {business.phones.map((phone) => (
