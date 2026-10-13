@@ -1,5 +1,6 @@
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Album, albums, Photo, projectAlbums } from "./photos";
+import { Fabric, FabricSupplier, FabricType, fabricCollections, fabricFamilies, fabrics, fabricSuppliers } from "./fabrics";
 
 const business = {
   name: "Κατασκευαστική Τεντών",
@@ -567,6 +568,7 @@ const navItems = [
   { label: "Περγκοτέντες", path: "/pergkotentes" },
   { label: "Βιοκλιματικές πέργκολες", path: "/vioklimatikes-pergkoles" },
   { label: "Άλλα συστήματα σκίασης", path: "/alla-systimata-skiasis" },
+  { label: "Υφάσματα & χρώματα", path: "/yfasmata-xromata" },
   { label: "Έργα μας", path: "/erga" },
   { label: "Υπηρεσίες", path: "/ypiresies" },
   { label: "Η εταιρεία μας", path: "/i-etaireia-mas" },
@@ -598,6 +600,11 @@ const routeMeta: Record<string, { title: string; description: string }> = {
     title: "Άλλα συστήματα σκίασης",
     description:
       "Συστήματα με τζάμια (UP/DOWN, γκιλοτίνα, επάλληλα), ομπρέλες, εφελκυόμενα πανιά, στέγαστρα parking και ειδικές κατασκευές.",
+  },
+  "/yfasmata-xromata": {
+    title: "Υφάσματα & χρώματα τεντών",
+    description:
+      "Όλα τα χρώματα και σχέδια τεντόπανων TenCate, DAS Awning και Calbari: μονόχρωμα, block out, εμπριμέ, ριγέ και ομπρελόπανα, με φίλτρα και κωδικούς.",
   },
   "/erga": {
     title: "Έργα μας",
@@ -1255,7 +1262,7 @@ const classicSystemDetails: Record<
   },
 };
 
-const fabricTypes = [
+const fabricGuideTypes = [
   {
     title: "Ακρυλικά τεντόπανα",
     text: "Η κλασική επιλογή για τέντες μπαλκονιού και κασέτες. Αναπνέουν, κρατούν το χρώμα τους και διατίθενται σε μονόχρωμα, ριγέ και αδιάβροχες εκδόσεις.",
@@ -1282,28 +1289,6 @@ const fabricTypes = [
   },
 ];
 
-const fabricSuppliers = [
-  {
-    name: "NYFAN • TenCate",
-    text: "Μονόχρωμα, block out, Perla και ψηφιακά τυπωμένα σχέδια.",
-    url: "https://nyfan.gr/en/nyfan-tencate-en/",
-  },
-  {
-    name: "DAS Awning",
-    text: "Block out, αυτοκαθαριζόμενα και ανθεκτικά στον άνεμο τεντόπανα.",
-    url: "https://catalogue.dashome.gr/DasAwning/18/",
-  },
-  {
-    name: "Calbari",
-    text: "Μονόχρωμες, εμπριμέ, υβριδικές και ανακυκλωμένες συλλογές.",
-    url: "https://www.calbari.gr/tentopana",
-  },
-  {
-    name: "Dickson",
-    text: "Ακρυλικά τεντόπανα γαλλικής παραγωγής σε μεγάλη χρωματική γκάμα.",
-    url: "https://www.dickson-constant.com/en/solar-protection/awning-fabrics.html",
-  },
-];
 
 const automationFeatures = [
   {
@@ -1689,7 +1674,7 @@ const faqs = [
   {
     question: "Μπορώ να επιλέξω πανί και χρώμα;",
     answer:
-      "Βεβαίως. Υπάρχουν ακρυλικά, πολυεστερικά block out, PVC και διάτρητα screen υφάσματα, σε μονόχρωμα, ριγέ και εμπριμέ σχέδια. Φέρνουμε δείγματα στην αυτοψία για να διαλέξετε με σιγουριά.",
+      "Βεβαίως. Υπάρχουν ακρυλικά, πολυεστερικά block out, PVC και διάτρητα screen υφάσματα, σε μονόχρωμα, ριγέ και εμπριμέ σχέδια. Δείτε όλα τα χρώματα στη σελίδα «Υφάσματα & χρώματα» και φέρνουμε δείγματα στην αυτοψία για να διαλέξετε με σιγουριά.",
   },
 ];
 
@@ -1801,6 +1786,7 @@ function ContactDetails() {
 }
 
 function QuoteForm() {
+  const [fabricMessage] = useState(() => fabricPicksMessage(window.location.search));
   const [status, setStatus] = useState<{
     type: "idle" | "sending" | "success" | "error";
     message: string;
@@ -1911,6 +1897,7 @@ function QuoteForm() {
       <label>
         Σύντομη περιγραφή
         <textarea
+          defaultValue={fabricMessage}
           name="message"
           placeholder="Περιγράψτε τον χώρο, τις διαστάσεις ή ό,τι θέλετε να γνωρίζουμε."
           rows={4}
@@ -2378,7 +2365,7 @@ function FabricGuide() {
         </div>
 
         <div className="fabric-type-grid">
-          {fabricTypes.map((type, index) => (
+          {fabricGuideTypes.map((type, index) => (
             <article className="fabric-type-card" key={type.title}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <h3>{type.title}</h3>
@@ -2398,20 +2385,10 @@ function FabricGuide() {
         </div>
 
         <div className="supplier-row">
-          <strong>Δείτε χρώματα και σχέδια στους καταλόγους:</strong>
-          <div>
-            {fabricSuppliers.map((supplier) => (
-              <a
-                href={supplier.url}
-                key={supplier.name}
-                rel="noreferrer"
-                target="_blank"
-                title={supplier.text}
-              >
-                {supplier.name} <Icon name="arrow" size={15} />
-              </a>
-            ))}
-          </div>
+          <strong>Δείτε όλα τα χρώματα και σχέδια ({fabrics.length}) με κωδικούς, σε μία σελίδα.</strong>
+          <a className="button button-primary" href={appHref("/yfasmata-xromata")}>
+            Υφάσματα & χρώματα <Icon name="arrow" size={18} />
+          </a>
         </div>
       </div>
     </section>
@@ -3503,7 +3480,359 @@ function CompanyPage() {
   );
 }
 
+const FABRIC_PICKS_KEY = "kt-fabric-picks";
+const MAX_FABRIC_PICKS = 6;
+const fabricTypeFilters: FabricType[] = ["Μονόχρωμα", "Block out", "Σχέδια", "Ριγέ", "Ομπρελόπανα"];
+
+function fabricId(fabric: Fabric) {
+  return `${fabric.supplier}-${fabric.code}`;
+}
+
+function fabricLabel(fabric: Fabric) {
+  return `${fabricSuppliers[fabric.supplier].name} ${fabric.collection} ${fabric.code} (${fabric.name})`;
+}
+
+function readFabricPicks(): string[] {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(FABRIC_PICKS_KEY) ?? "[]");
+    return Array.isArray(stored) ? stored.filter((id) => typeof id === "string").slice(0, MAX_FABRIC_PICKS) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFabricPicks(ids: string[]) {
+  try {
+    window.localStorage.setItem(FABRIC_PICKS_KEY, JSON.stringify(ids));
+  } catch {
+    // Η αποθήκευση είναι προαιρετική· οι επιλογές μένουν για την τρέχουσα επίσκεψη.
+  }
+}
+
+/** Κείμενο για τη φόρμα, όταν ο επισκέπτης έρχεται από τις επιλογές υφασμάτων. */
+function fabricPicksMessage(search: string) {
+  const ids = new URLSearchParams(search).get("yfasmata")?.split(",") ?? [];
+  const picked = ids
+    .map((id) => fabrics.find((fabric) => fabricId(fabric) === id))
+    .filter((fabric): fabric is Fabric => Boolean(fabric));
+  if (picked.length === 0) return "";
+  return `Με ενδιαφέρουν τα παρακάτω υφάσματα:\n${picked.map((fabric) => `• ${fabricLabel(fabric)}`).join("\n")}\n\n`;
+}
+
+function FabricModal({
+  fabric,
+  isPicked,
+  canPick,
+  onTogglePick,
+  onClose,
+}: {
+  fabric: Fabric;
+  isPicked: boolean;
+  canPick: boolean;
+  onTogglePick: () => void;
+  onClose: () => void;
+}) {
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const supplier = fabricSuppliers[fabric.supplier];
+
+  useBodyScrollLock(true);
+
+  useEffect(() => {
+    closeButton.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      aria-label={`${fabric.name}, κωδικός ${fabric.code}`}
+      aria-modal="true"
+      className="fabric-modal"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      role="dialog"
+    >
+      <div className="fabric-modal-card">
+        <button aria-label="Κλείσιμο" className="fabric-modal-close" onClick={onClose} ref={closeButton} type="button">
+          <Icon name="x" size={20} />
+        </button>
+        <div className="fabric-modal-image" style={{ backgroundColor: fabric.hex }}>
+          <img alt={`Δείγμα υφάσματος ${fabric.name}`} src={fabric.image} />
+        </div>
+        <div className="fabric-modal-body">
+          <span className="fabric-modal-kicker">{supplier.name} · {fabric.collection}</span>
+          <h2>{fabric.name}</h2>
+          <dl>
+            <div><dt>Κωδικός</dt><dd>{fabric.code}</dd></div>
+            <div><dt>Είδος</dt><dd>{fabric.type}</dd></div>
+            {fabric.family && <div><dt>Απόχρωση</dt><dd>{fabric.family}</dd></div>}
+          </dl>
+          {fabricCollections[fabric.collection] && <p>{fabricCollections[fabric.collection]}</p>}
+          {fabric.note && <p className="fabric-modal-note">{fabric.note}</p>}
+          <div className="fabric-modal-actions">
+            <button
+              className={`button ${isPicked ? "button-ghost" : "button-primary"}`}
+              disabled={!isPicked && !canPick}
+              onClick={onTogglePick}
+              type="button"
+            >
+              {isPicked ? "Αφαίρεση από τις επιλογές" : "Προσθήκη στις επιλογές μου"}
+            </button>
+            <a className="button button-sun" href={appHref(`/epikoinonia?yfasmata=${fabricId(fabric)}`)}>
+              Ζητήστε αυτό το χρώμα <Icon name="arrow" size={18} />
+            </a>
+          </div>
+          {!isPicked && !canPick && (
+            <small className="fabric-modal-hint">Έχετε ήδη {MAX_FABRIC_PICKS} επιλογές. Αφαιρέστε μία για να προσθέσετε άλλη.</small>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FabricsPage() {
+  const [supplierFilter, setSupplierFilter] = useState<FabricSupplier | "all">("all");
+  const [typeFilter, setTypeFilter] = useState<FabricType | "all">("all");
+  const [familyFilter, setFamilyFilter] = useState("all");
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [picks, setPicks] = useState<string[]>(() => readFabricPicks());
+
+  useEffect(() => saveFabricPicks(picks), [picks]);
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const filtered = fabrics.filter(
+    (fabric) =>
+      (supplierFilter === "all" || fabric.supplier === supplierFilter) &&
+      (typeFilter === "all" || fabric.type === typeFilter) &&
+      (familyFilter === "all" || fabric.family === familyFilter) &&
+      (!normalizedQuery ||
+        `${fabric.name} ${fabric.code} ${fabric.collection} ${fabricSuppliers[fabric.supplier].name}`
+          .toLowerCase()
+          .includes(normalizedQuery)),
+  );
+
+  const groups: { key: string; supplier: FabricSupplier; collection: string; items: Fabric[] }[] = [];
+  for (const fabric of filtered) {
+    const key = `${fabric.supplier}|${fabric.collection}`;
+    const group = groups.find((item) => item.key === key);
+    if (group) group.items.push(fabric);
+    else groups.push({ key, supplier: fabric.supplier, collection: fabric.collection, items: [fabric] });
+  }
+
+  const pickedFabrics = picks
+    .map((id) => fabrics.find((fabric) => fabricId(fabric) === id))
+    .filter((fabric): fabric is Fabric => Boolean(fabric));
+  const openFabric = fabrics.find((fabric) => fabricId(fabric) === openId);
+  const hasFilters = supplierFilter !== "all" || typeFilter !== "all" || familyFilter !== "all" || normalizedQuery !== "";
+
+  function togglePick(id: string) {
+    setPicks((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : current.length >= MAX_FABRIC_PICKS
+          ? current
+          : [...current, id],
+    );
+  }
+
+  function resetFilters() {
+    setSupplierFilter("all");
+    setTypeFilter("all");
+    setFamilyFilter("all");
+    setQuery("");
+  }
+
+  return (
+    <main className={`detail-main fabrics-page ${pickedFabrics.length > 0 ? "has-picks" : ""}`}>
+      <PlainDetailHero
+        className="fabrics-hero"
+        eyebrow="Υφάσματα & χρώματα"
+        intro={`Δείτε ${fabrics.length} χρώματα και σχέδια τεντόπανων από TenCate, DAS Awning και Calbari. Φιλτράρετε ανά είδος ή απόχρωση και κρατήστε τα αγαπημένα σας για την προσφορά.`}
+        title="Διαλέξτε το πανί που ταιριάζει στον χώρο σας."
+      />
+
+      <section className="fabrics-browser section">
+        <div className="container">
+          <div className="fabric-filters" role="search" aria-label="Φίλτρα υφασμάτων">
+            <div className="fabric-filter-row">
+              <span className="fabric-filter-label">Προμηθευτής</span>
+              <div className="filter-chips">
+                <button aria-pressed={supplierFilter === "all"} className={supplierFilter === "all" ? "is-active" : ""} onClick={() => setSupplierFilter("all")} type="button">
+                  Όλοι
+                </button>
+                {(Object.keys(fabricSuppliers) as FabricSupplier[]).map((key) => (
+                  <button aria-pressed={supplierFilter === key} className={supplierFilter === key ? "is-active" : ""} key={key} onClick={() => setSupplierFilter(key)} type="button">
+                    {fabricSuppliers[key].name} <small>{fabrics.filter((fabric) => fabric.supplier === key).length}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="fabric-filter-row">
+              <span className="fabric-filter-label">Είδος</span>
+              <div className="filter-chips">
+                <button aria-pressed={typeFilter === "all"} className={typeFilter === "all" ? "is-active" : ""} onClick={() => setTypeFilter("all")} type="button">
+                  Όλα
+                </button>
+                {fabricTypeFilters.map((type) => (
+                  <button aria-pressed={typeFilter === type} className={typeFilter === type ? "is-active" : ""} key={type} onClick={() => setTypeFilter(type)} type="button">
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="fabric-filter-row">
+              <span className="fabric-filter-label">Απόχρωση</span>
+              <div className="fabric-family-chips">
+                <button aria-pressed={familyFilter === "all"} className={familyFilter === "all" ? "is-active" : ""} onClick={() => setFamilyFilter("all")} type="button">
+                  Όλες
+                </button>
+                {fabricFamilies.map((family) => (
+                  <button
+                    aria-pressed={familyFilter === family.name}
+                    className={familyFilter === family.name ? "is-active" : ""}
+                    key={family.name}
+                    onClick={() => setFamilyFilter(family.name)}
+                    title={family.name}
+                    type="button"
+                  >
+                    <i style={{ background: family.swatch }} /> {family.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="fabric-filter-row fabric-search-row">
+              <label className="fabric-search">
+                <span className="visually-hidden">Αναζήτηση με όνομα ή κωδικό</span>
+                <input onChange={(event) => setQuery(event.target.value)} placeholder="Αναζήτηση με όνομα ή κωδικό, π.χ. 4505" type="search" value={query} />
+              </label>
+              <p className="fabric-count" aria-live="polite">
+                {filtered.length} {filtered.length === 1 ? "ύφασμα" : "υφάσματα"}
+                {hasFilters && (
+                  <button onClick={resetFilters} type="button">Καθαρισμός φίλτρων</button>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {groups.length === 0 && (
+            <div className="fabric-empty">
+              <p>Δεν βρέθηκαν υφάσματα με αυτά τα φίλτρα.</p>
+              <button className="button button-ghost" onClick={resetFilters} type="button">Εμφάνιση όλων</button>
+            </div>
+          )}
+
+          {groups.map((group) => (
+            <section className="fabric-group" key={group.key} aria-label={`${fabricSuppliers[group.supplier].name} ${group.collection}`}>
+              <header className="fabric-group-head">
+                <div>
+                  <span>{fabricSuppliers[group.supplier].name}</span>
+                  <h2>{group.collection}</h2>
+                </div>
+                {fabricCollections[group.collection] && <p>{fabricCollections[group.collection]}</p>}
+              </header>
+              <div className="fabric-grid">
+                {group.items.map((fabric) => {
+                  const id = fabricId(fabric);
+                  const isPicked = picks.includes(id);
+                  return (
+                    <article className={`fabric-card ${isPicked ? "is-picked" : ""}`} key={id}>
+                      <button aria-label={`Μεγέθυνση: ${fabric.name}, κωδικός ${fabric.code}`} className="fabric-card-open" onClick={() => setOpenId(id)} type="button">
+                        <span className="fabric-card-swatch" style={{ backgroundColor: fabric.hex }}>
+                          <img alt="" decoding="async" loading="lazy" src={fabric.thumb} />
+                        </span>
+                        <span className="fabric-card-copy">
+                          <strong>{fabric.name}</strong>
+                          <small>Κωδ. {fabric.code}</small>
+                        </span>
+                      </button>
+                      <button
+                        aria-label={isPicked ? `Αφαίρεση ${fabric.code} από τις επιλογές` : `Προσθήκη ${fabric.code} στις επιλογές`}
+                        aria-pressed={isPicked}
+                        className="fabric-card-pick"
+                        disabled={!isPicked && picks.length >= MAX_FABRIC_PICKS}
+                        onClick={() => togglePick(id)}
+                        type="button"
+                      >
+                        <Icon name={isPicked ? "check" : "plus"} size={16} />
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+
+          <aside className="fabric-disclaimer">
+            <Icon name="spark" size={20} />
+            <p>
+              Τα χρώματα στην οθόνη είναι ενδεικτικά και η διαθεσιμότητα κάθε
+              κωδικού αλλάζει. Στην αυτοψία φέρνουμε φυσικά δείγματα, ώστε να
+              δείτε σωστά απόχρωση, ύφανση και πόσο φως περνά. Οι φωτογραφίες
+              προέρχονται από τους καταλόγους των{" "}
+              {(Object.keys(fabricSuppliers) as FabricSupplier[]).map((key, index, all) => (
+                <span key={key}>
+                  <a href={fabricSuppliers[key].url} rel="noreferrer" target="_blank">{fabricSuppliers[key].name}</a>
+                  {index < all.length - 2 ? ", " : index === all.length - 2 ? " και " : ""}
+                </span>
+              ))}
+              .
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      {pickedFabrics.length > 0 && (
+        <aside className="fabric-picks" aria-label="Οι επιλογές μου">
+          <div className="fabric-picks-inner">
+            <div className="fabric-picks-head">
+              <strong>Οι επιλογές μου</strong>
+              <small>{pickedFabrics.length} / {MAX_FABRIC_PICKS}</small>
+            </div>
+            <ul>
+              {pickedFabrics.map((fabric) => (
+                <li key={fabricId(fabric)}>
+                  <button
+                    aria-label={`Αφαίρεση ${fabric.name} ${fabric.code}`}
+                    onClick={() => togglePick(fabricId(fabric))}
+                    style={{ backgroundColor: fabric.hex, backgroundImage: `url("${fabric.thumb}")` }}
+                    title={`${fabric.name} · ${fabric.code}`}
+                    type="button"
+                  >
+                    <Icon name="x" size={12} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <a className="button button-sun" href={appHref(`/epikoinonia?yfasmata=${picks.join(",")}`)}>
+              Ζητήστε προσφορά <Icon name="arrow" size={18} />
+            </a>
+          </div>
+        </aside>
+      )}
+
+      {openFabric && (
+        <FabricModal
+          canPick={picks.length < MAX_FABRIC_PICKS}
+          fabric={openFabric}
+          isPicked={picks.includes(fabricId(openFabric))}
+          onClose={() => setOpenId(null)}
+          onTogglePick={() => togglePick(fabricId(openFabric))}
+        />
+      )}
+
+      <DetailCta />
+    </main>
+  );
+}
+
 function ContactPage() {
+
   return (
     <main className="detail-main contact-page">
       <PlainDetailHero
@@ -4007,7 +4336,8 @@ export default function App() {
     path === "/erga" ||
     path === "/ypiresies" ||
     path === "/i-etaireia-mas" ||
-    path === "/epikoinonia";
+    path === "/epikoinonia" ||
+    path === "/yfasmata-xromata";
   const secondaryTabs = path.startsWith("/klassika-systimata-skiasis")
     ? [
         {
@@ -4193,6 +4523,7 @@ export default function App() {
       {path === "/ypiresies" && <ServicesPage />}
       {path === "/i-etaireia-mas" && <CompanyPage />}
       {path === "/epikoinonia" && <ContactPage />}
+      {path === "/yfasmata-xromata" && <FabricsPage />}
 
       <footer className="site-footer">
         <div className="container footer-grid">
@@ -4210,6 +4541,7 @@ export default function App() {
               <a href={appHref("/pergkotentes")}>Περγκοτέντες</a>
               <a href={appHref("/vioklimatikes-pergkoles")}>Βιοκλιματικές πέργκολες</a>
               <a href={appHref("/alla-systimata-skiasis")}>Άλλα συστήματα σκίασης</a>
+              <a href={appHref("/yfasmata-xromata")}>Υφάσματα & χρώματα</a>
             </div>
             <div>
               <strong>Εταιρεία</strong>
