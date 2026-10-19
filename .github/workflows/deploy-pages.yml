@@ -38,6 +38,23 @@ jobs:
             echo "BASE_PATH=/${{ github.event.repository.name }}/" >> "$GITHUB_ENV"
           fi
 
+      - name: Configure site settings
+        shell: bash
+        # Προαιρετικές ρυθμίσεις από Settings > Secrets and variables > Actions > Variables.
+        env:
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.VITE_GOOGLE_SITE_VERIFICATION }}
+          VITE_BING_SITE_VERIFICATION: ${{ vars.VITE_BING_SITE_VERIFICATION }}
+          VITE_GA_MEASUREMENT_ID: ${{ vars.VITE_GA_MEASUREMENT_ID }}
+          VITE_GOOGLE_ADS_ID: ${{ vars.VITE_GOOGLE_ADS_ID }}
+          VITE_GOOGLE_ADS_LEAD_LABEL: ${{ vars.VITE_GOOGLE_ADS_LEAD_LABEL }}
+          VITE_GOOGLE_ADS_CALL_LABEL: ${{ vars.VITE_GOOGLE_ADS_CALL_LABEL }}
+        run: |
+          for name in VITE_SITE_URL VITE_GOOGLE_SITE_VERIFICATION VITE_BING_SITE_VERIFICATION VITE_GA_MEASUREMENT_ID VITE_GOOGLE_ADS_ID VITE_GOOGLE_ADS_LEAD_LABEL VITE_GOOGLE_ADS_CALL_LABEL; do
+            value="${!name}"
+            if [ -n "$value" ]; then echo "$name=$value" >> "$GITHUB_ENV"; fi
+          done
+
       - name: Build
         run: npm run build
 

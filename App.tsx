@@ -1,5 +1,6 @@
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Album, albums, Photo, projectAlbums } from "./photos";
+import { analyticsEnabled, clearConsent, loadGoogleTag, readConsent, saveConsent, trackCallClick, trackLead, trackPageView } from "./analytics";
 import { Fabric, FabricSupplier, FabricType, fabricCollections, fabricFamilies, fabrics, fabricSuppliers } from "./fabrics";
 
 const business = {
@@ -605,6 +606,11 @@ const routeMeta: Record<string, { title: string; description: string }> = {
     title: "Υφάσματα & χρώματα τεντών",
     description:
       "Όλα τα χρώματα και σχέδια τεντόπανων TenCate, DAS Awning και Calbari: μονόχρωμα, block out, εμπριμέ, ριγέ και ομπρελόπανα, με φίλτρα και κωδικούς.",
+  },
+  "/politiki-aporritou": {
+    title: "Πολιτική απορρήτου",
+    description:
+      "Πώς χρησιμοποιεί η Κατασκευαστική Τεντών τα στοιχεία που στέλνετε μέσω της φόρμας και ποια cookies χρησιμοποιούνται στην ιστοσελίδα.",
   },
   "/erga": {
     title: "Έργα μας",
@@ -1786,7 +1792,7 @@ function ContactDetails() {
 }
 
 function QuoteForm() {
-  const [fabricMessage] = useState(() => fabricPicksMessage(window.location.search));
+  const [fabricMessage] = useState(() => (typeof window === "undefined" ? "" : fabricPicksMessage(window.location.search)));
   const [status, setStatus] = useState<{
     type: "idle" | "sending" | "success" | "error";
     message: string;
@@ -1823,6 +1829,7 @@ function QuoteForm() {
       });
 
       if (!response.ok) throw new Error("Quote form submission failed");
+      trackLead();
 
       formElement.reset();
       setStatus({
@@ -1928,7 +1935,8 @@ function QuoteForm() {
       )}
       <small>
         Τα στοιχεία αποστέλλονται αποκλειστικά για να οργανώσουμε επικοινωνία
-        και αρχική εκτίμηση.
+        και αρχική εκτίμηση.{" "}
+        <a href={appHref("/politiki-aporritou")}>Πολιτική απορρήτου</a>
       </small>
     </form>
   );
@@ -4140,8 +4148,143 @@ function scrollToHash(hash: string) {
   }, 80);
 }
 
-export default function App() {
-  const [path, setPath] = useState(() => cleanPath(window.location.pathname));
+/** Τίτλος και περιγραφή κάθε σελίδας (χρησιμοποιούνται και στο prerender). */
+export function getPageSeo(path: string) {
+  const classicSystem = classicSystems.find((system) => system.path === path);
+  const meta =
+    routeMeta[path] ??
+    (classicSystem ? { title: classicSystem.title, description: classicSystem.summary } : routeMeta["/"]);
+  return { title: `${meta.title} | ${business.name}`, heading: meta.title, description: meta.description };
+}
+
+/** Όλες οι σελίδες που δημιουργούνται ως ξεχωριστά αρχεία HTML και μπαίνουν στο sitemap. */
+export const prerenderRoutes: string[] = [
+  "/",
+  ...navItems.map((item) => item.path),
+  ...classicSystems.map((system) => system.path),
+  "/politiki-aporritou",
+];
+
+export const seoFaqs = faqs;
+
+function PrivacyPage() {
+  return (
+    <main className="detail-main">
+      <PlainDetailHero
+        className="privacy-hero"
+        eyebrow="Πολιτική απορρήτου"
+        intro="Πώς χρησιμοποιούμε τα στοιχεία που μας στέλνετε και ποια cookies υπάρχουν στην ιστοσελίδα."
+        title="Τα στοιχεία σας, με διαφάνεια."
+      />
+      <section className="privacy-section section">
+        <div className="container privacy-copy">
+          <h2>Ποιοι είμαστε</h2>
+          <p>
+            Υπεύθυνος επεξεργασίας είναι η επιχείρηση «{business.name}», υπεύθυνος{" "}
+            {business.manager}, {business.address}. Για κάθε θέμα που αφορά τα
+            στοιχεία σας επικοινωνήστε στο <a href={`mailto:${business.email}`}>{business.email}</a>{" "}
+            ή στο <a href={`tel:+30${business.phones[0]}`}>{business.phones[0]}</a>.
+          </p>
+
+          <h2>Ποια στοιχεία συλλέγουμε</h2>
+          <p>
+            Μόνο όσα συμπληρώνετε εσείς στη φόρμα αιτήματος προσφοράς:
+            ονοματεπώνυμο, τηλέφωνο ή email, περιοχή, τι σας ενδιαφέρει και την
+            περιγραφή του χώρου, καθώς και τα υφάσματα που τυχόν επιλέξατε.
+          </p>
+
+          <h2>Γιατί τα χρησιμοποιούμε</h2>
+          <p>
+            Για να επικοινωνήσουμε μαζί σας, να οργανώσουμε αυτοψία και να σας
+            δώσουμε προσφορά, δηλαδή για ενέργειες πριν από τη σύναψη σύμβασης
+            που ζητάτε εσείς (άρθρο 6 παρ. 1 β΄ ΓΚΠΔ). Δεν τα χρησιμοποιούμε για
+            διαφήμιση και δεν τα πουλάμε ή τα δίνουμε σε τρίτους.
+          </p>
+
+          <h2>Πώς μεταφέρονται</h2>
+          <p>
+            Η φόρμα στέλνει το μήνυμα στο email της επιχείρησης μέσω της
+            υπηρεσίας FormSubmit (formsubmit.co), που λειτουργεί ως ενδιάμεσος
+            αποστολής. Η ιστοσελίδα φιλοξενείται σε πάροχο φιλοξενίας, ο οποίος
+            καταγράφει τεχνικά στοιχεία πρόσβασης (π.χ. διεύθυνση IP) για λόγους
+            ασφάλειας.
+          </p>
+
+          <h2>Πόσο τα κρατάμε</h2>
+          <p>
+            Όσο χρειάζεται για την επικοινωνία και την προσφορά και, αν γίνει
+            συνεργασία, όσο ορίζει η φορολογική νομοθεσία. Αιτήματα χωρίς
+            συνέχεια διαγράφονται το αργότερο σε 2 χρόνια.
+          </p>
+
+          <h2>Cookies και μετρήσεις</h2>
+          <p>
+            Η ιστοσελίδα αποθηκεύει στη συσκευή σας μόνο ό,τι χρειάζεται για να
+            λειτουργήσει (π.χ. τα υφάσματα που κρατήσατε στις «επιλογές μου»).
+            Εργαλεία μέτρησης επισκεψιμότητας και διαφήμισης της Google
+            (Google Analytics, Google Ads) ενεργοποιούνται μόνο αν πατήσετε
+            «Αποδοχή» στο σχετικό μήνυμα.
+          </p>
+          {analyticsEnabled && (
+            <p>
+              <button
+                className="button button-ghost"
+                onClick={() => {
+                  clearConsent();
+                  window.location.reload();
+                }}
+                type="button"
+              >
+                Αλλαγή ρυθμίσεων cookies
+              </button>
+            </p>
+          )}
+
+          <h2>Τα δικαιώματά σας</h2>
+          <p>
+            Μπορείτε να ζητήσετε πρόσβαση, διόρθωση ή διαγραφή των στοιχείων σας
+            και να αντιταχθείτε στη χρήση τους, με ένα email στο{" "}
+            <a href={`mailto:${business.email}`}>{business.email}</a>. Έχετε
+            επίσης δικαίωμα καταγγελίας στην Αρχή Προστασίας Δεδομένων
+            Προσωπικού Χαρακτήρα (www.dpa.gr).
+          </p>
+          <p className="privacy-updated">Τελευταία ενημέρωση: Οκτώβριος 2026.</p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function CookieConsent() {
+  const [choice, setChoice] = useState<string | null>(() => (typeof window === "undefined" ? "pending" : readConsent()));
+
+  useEffect(() => {
+    if (choice === "granted") loadGoogleTag();
+  }, [choice]);
+
+  if (!analyticsEnabled || choice !== null) return null;
+
+  return (
+    <aside className="cookie-consent" aria-label="Cookies" role="dialog">
+      <p>
+        Χρησιμοποιούμε cookies της Google για να μετράμε την επισκεψιμότητα και
+        την απόδοση των διαφημίσεών μας, μόνο αν συμφωνείτε.{" "}
+        <a href={appHref("/politiki-aporritou")}>Περισσότερα</a>
+      </p>
+      <div>
+        <button className="button button-ghost" onClick={() => { saveConsent("denied"); setChoice("denied"); }} type="button">
+          Απόρριψη
+        </button>
+        <button className="button button-primary" onClick={() => { saveConsent("granted"); setChoice("granted"); }} type="button">
+          Αποδοχή
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+export default function App({ initialPath }: { initialPath?: string } = {}) {
+  const [path, setPath] = useState(() => initialPath ?? cleanPath(window.location.pathname));
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -4280,6 +4423,8 @@ export default function App() {
       const link = target?.closest<HTMLAnchorElement>("a[href]");
       const rawHref = link?.getAttribute("href");
 
+      if (rawHref?.startsWith("tel:")) trackCallClick(rawHref.slice(4));
+
       if (!link || !rawHref || !rawHref.startsWith("/") || (link.target && link.target !== "_self")) {
         return;
       }
@@ -4298,16 +4443,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const classicSystem = classicSystems.find((system) => system.path === path);
-    const meta = routeMeta[path] ?? (
-      classicSystem
-        ? {
-            title: classicSystem.title,
-            description: classicSystem.summary,
-          }
-        : routeMeta["/"]
-    );
-    const title = `${meta.title} | ${business.name}`;
+    const { title, description } = getPageSeo(path);
+    const meta = { description };
     const canonicalUrl = absoluteSiteUrl(path);
     const imageUrl = absoluteSiteUrl("/og-image.jpg");
 
@@ -4325,6 +4462,7 @@ export default function App() {
     setMetaAttribute('meta[name="twitter:title"]', "content", title);
     setMetaAttribute('meta[name="twitter:description"]', "content", meta.description);
     setMetaAttribute('meta[name="twitter:image"]', "content", imageUrl);
+    trackPageView(path);
   }, [path]);
 
   const activeProductPage = productPages.find((page) => page.path === path);
@@ -4337,7 +4475,8 @@ export default function App() {
     path === "/ypiresies" ||
     path === "/i-etaireia-mas" ||
     path === "/epikoinonia" ||
-    path === "/yfasmata-xromata";
+    path === "/yfasmata-xromata" ||
+    path === "/politiki-aporritou";
   const secondaryTabs = path.startsWith("/klassika-systimata-skiasis")
     ? [
         {
@@ -4524,6 +4663,7 @@ export default function App() {
       {path === "/i-etaireia-mas" && <CompanyPage />}
       {path === "/epikoinonia" && <ContactPage />}
       {path === "/yfasmata-xromata" && <FabricsPage />}
+      {path === "/politiki-aporritou" && <PrivacyPage />}
 
       <footer className="site-footer">
         <div className="container footer-grid">
@@ -4577,7 +4717,10 @@ export default function App() {
                 Instagram
               </a>
             </div>
-            <p>© {new Date().getFullYear()} {business.name}</p>
+            <p>
+              © {new Date().getFullYear()} {business.name} ·{" "}
+              <a href={appHref("/politiki-aporritou")}>Πολιτική απορρήτου</a>
+            </p>
           </div>
         </div>
       </footer>
@@ -4590,6 +4733,7 @@ export default function App() {
       >
         <Icon name="up" size={20} />
       </button>
+      <CookieConsent />
       <div className="mobile-quick-actions" aria-label="Γρήγορες ενέργειες">
         <a href={`tel:+30${business.phones[0]}`}>
           <Icon name="phone" size={17} /> Κλήση

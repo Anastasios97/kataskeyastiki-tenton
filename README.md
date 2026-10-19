@@ -30,3 +30,17 @@ VITE_SITE_URL=https://example.gr
 ```bash
 npm run check:photos
 ```
+
+## Google, domain και διαφήμιση
+
+Στο build κάθε σελίδα γράφεται ως ξεχωριστό HTML με δικό της τίτλο,
+περιγραφή και structured data, και δημιουργούνται `sitemap.xml` και
+`robots.txt` με βάση τη `VITE_SITE_URL`. Οδηγίες για Vercel, αγορά domain,
+Google Search Console, Google Business Profile, λέξεις-κλειδιά και Google Ads:
+[ODIGOS-ANAZITISI-DIAFIMISI.md](ODIGOS-ANAZITISI-DIAFIMISI.md). Όλες οι
+ρυθμίσεις: [.env.example](.env.example).
+
+```bash
+npm run build                      # δημιουργεί το dist/
+python3 scripts/serve-spa.py       # τοπική προβολή στο http://127.0.0.1:3002
+```

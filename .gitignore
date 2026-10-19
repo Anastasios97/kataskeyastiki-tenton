@@ -6,3 +6,4 @@ __pycache__/
 .DS_Store
 .write-test
 npm-debug.log*
+dist-ssr/
