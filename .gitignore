@@ -7,3 +7,4 @@ __pycache__/
 .write-test
 npm-debug.log*
 dist-ssr/
+dist-pages/

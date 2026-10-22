@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Redirect GitHub Pages to the main domain
 
 on:
   push:
@@ -29,34 +29,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure base path
-        shell: bash
-        run: |
-          if [ "${{ github.event.repository.name }}" = "${{ github.repository_owner }}.github.io" ]; then
-            echo "BASE_PATH=/" >> "$GITHUB_ENV"
-          else
-            echo "BASE_PATH=/${{ github.event.repository.name }}/" >> "$GITHUB_ENV"
-          fi
-
-      - name: Configure site settings
-        shell: bash
-        # Προαιρετικές ρυθμίσεις από Settings > Secrets and variables > Actions > Variables.
+      # Το site ζει στο www.kataskeuastiki-tenton.com (Vercel). Εδώ το παλιό
+      # αντίγραφο του GitHub Pages γίνεται ανακατευθύνσεις προς το domain.
+      - name: Build redirects to the main domain
         env:
-          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
-          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.VITE_GOOGLE_SITE_VERIFICATION }}
-          VITE_BING_SITE_VERIFICATION: ${{ vars.VITE_BING_SITE_VERIFICATION }}
-          VITE_GA_MEASUREMENT_ID: ${{ vars.VITE_GA_MEASUREMENT_ID }}
-          VITE_GOOGLE_ADS_ID: ${{ vars.VITE_GOOGLE_ADS_ID }}
-          VITE_GOOGLE_ADS_LEAD_LABEL: ${{ vars.VITE_GOOGLE_ADS_LEAD_LABEL }}
-          VITE_GOOGLE_ADS_CALL_LABEL: ${{ vars.VITE_GOOGLE_ADS_CALL_LABEL }}
+          VITE_SITE_URL: https://www.kataskeuastiki-tenton.com
         run: |
-          for name in VITE_SITE_URL VITE_GOOGLE_SITE_VERIFICATION VITE_BING_SITE_VERIFICATION VITE_GA_MEASUREMENT_ID VITE_GOOGLE_ADS_ID VITE_GOOGLE_ADS_LEAD_LABEL VITE_GOOGLE_ADS_CALL_LABEL; do
-            value="${!name}"
-            if [ -n "$value" ]; then echo "$name=$value" >> "$GITHUB_ENV"; fi
-          done
-
-      - name: Build
-        run: npm run build
+          npm run build
+          node scripts/pages-redirect.mjs dist-pages
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -64,7 +44,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: dist-pages
 
   deploy:
     needs: build
@@ -76,6 +56,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Redirect GitHub Pages to the main domain
         id: deployment
         uses: actions/deploy-pages@v4

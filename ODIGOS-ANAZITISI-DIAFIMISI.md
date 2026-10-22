@@ -114,15 +114,17 @@
 
 ### 2.5 Τι γίνεται με το παλιό site στο GitHub Pages
 
-Δύο ίδια sites σε δύο διευθύνσεις μπερδεύουν τη Google. Όταν το νέο domain δουλεύει:
+Δύο ίδια sites σε δύο διευθύνσεις μπερδεύουν τη Google. Γι' αυτό το παλιό
+αντίγραφο (`anastasios97.github.io/kataskeyastiki-tenton`) **δεν δείχνει πια το
+site**: κάθε σελίδα του στέλνει αυτόματα τον επισκέπτη και τη Google στην ίδια
+σελίδα του `www.kataskeuastiki-tenton.com`. Έτσι ό,τι «αξία» είχε μαζέψει η παλιά
+διεύθυνση (π.χ. σύνδεσμοι από άλλες σελίδες) μεταφέρεται στο νέο domain.
 
-- GitHub → repository → **Settings → Pages → Build and deployment**: επιλέξτε
-  **Source: None** (απενεργοποίηση), **ή**
-- αν θέλετε να μείνει, **Settings → Secrets and variables → Actions → Variables
-  → New repository variable** `VITE_SITE_URL` = `https://www.kataskeuastiki-tenton.com`
-  και ξανατρέξτε το workflow (**Actions → Deploy to GitHub Pages → Run workflow**).
-  Έτσι και το αντίγραφο στο GitHub δείχνει στη Google (μέσω canonical) ότι
-  η κύρια διεύθυνση είναι το νέο domain.
+Το κάνει μόνο του το workflow **Actions → Redirect GitHub Pages to the main
+domain** σε κάθε αλλαγή στο `main`. Δεν χρειάζεται να απενεργοποιήσετε το
+GitHub Pages ούτε να ορίσετε μεταβλητές εκεί. Αν κάποτε θέλετε να το σβήσετε
+εντελώς: **Settings → Pages → Unpublish site** και διαγραφή του αρχείου
+`.github/workflows/deploy-pages.yml`.
 
 ### 2.6 Email με το domain (προτείνεται)
 
@@ -159,6 +161,32 @@ Vercel → **Domains → (το domain) → DNS Records**. Μετά αλλάξτ�
 6. Κάθε 1–2 εβδομάδες δείτε:
    - **Pages**: πόσες σελίδες είναι «Indexed» και αν υπάρχουν σφάλματα.
    - **Performance**: με ποιες αναζητήσεις σας βρίσκουν, θέση, κλικ.
+
+#### Δεν εμφανίζεται ακόμα στη Google;
+
+Είναι φυσιολογικό. Ένα καινούριο domain χρειάζεται συνήθως **από λίγες μέρες
+έως 2–3 εβδομάδες** για τις πρώτες σελίδες και περισσότερο για να ανέβει σε
+θέσεις. Ελέγξτε με τη σειρά:
+
+1. Στη Google γράψτε `site:kataskeuastiki-tenton.com`. Αν βγάλει έστω μία
+   σελίδα, η καταλογοποίηση έχει ξεκινήσει.
+2. Search Console → **Sitemaps**: η κατάσταση πρέπει να είναι «Success».
+   Το «Couldn't fetch» τις πρώτες ώρες συνήθως διορθώνεται μόνο του.
+3. **URL inspection** στην αρχική σελίδα:
+   - «URL is not on Google» + «Discovered/Crawled – currently not indexed»:
+     η Google την έχει δει και θα την προσθέσει· απλώς περιμένετε.
+   - Πατήστε **Test live URL**: πρέπει να γράφει «URL is available to Google».
+     Αν γράφει κάτι άλλο (π.χ. «Blocked by robots.txt» ή «noindex»), στείλτε
+     μου τι λέει.
+   - Το **Request indexing** πατιέται **μία** φορά ανά σελίδα· η επανάληψη δεν
+     επιταχύνει τίποτα.
+4. Τα δεδομένα στις καρτέλες **Pages** και **Performance** εμφανίζονται με
+   2–3 μέρες καθυστέρηση, οπότε άδειες αναφορές την πρώτη εβδομάδα δεν
+   σημαίνουν πρόβλημα.
+5. Αυτό που βοηθά περισσότερο: σύνδεσμοι προς το site από άλλα μέρη
+   (Google Business Profile, Facebook/Instagram της επιχείρησης, καταλόγους
+   όπως vrisko.gr και xo.gr). Η Google ανακαλύπτει πιο γρήγορα σελίδες στις
+   οποίες οδηγούν σύνδεσμοι.
 
 ### 3.2 Bing (και DuckDuckGo, Yahoo, ChatGPT search)
 
@@ -365,7 +393,7 @@ Negative keywords** της καμπάνιας.
 - [ ] Auto-renew και επιβεβαίωση email κατόχου (2.1)
 - [ ] Σύνδεση `www` + redirect στο project, έλεγχος `/sitemap.xml` (2.3)
 - [ ] (Προαιρετικά) δεύτερη γραφή ή `.gr` με redirect (2.4)
-- [ ] Απενεργοποίηση GitHub Pages ή `VITE_SITE_URL` και εκεί (2.5)
+- [x] Το παλιό GitHub Pages ανακατευθύνει στο νέο domain (2.5, αυτόματο)
 - [ ] Google Search Console: επαλήθευση, sitemap, request indexing (3.1)
 - [ ] Bing Webmaster Tools: import από Google (3.2)
 - [ ] Google Business Profile: δημιουργία, επαλήθευση, φωτογραφίες, υπηρεσίες (Μέρος 4)
@@ -392,7 +420,7 @@ Negative keywords** της καμπάνιας.
 | `VITE_GOOGLE_ADS_CALL_LABEL` | `KlMnOpQrSt` | μετατροπή «Κλήση από το site» |
 
 Στο **Vercel**: project → **Settings → Environment Variables** (Production), μετά **Redeploy**.
-Στο **GitHub Pages**: repository → **Settings → Secrets and variables → Actions → Variables**.
+Το GitHub Pages δεν χρειάζεται μεταβλητές: κάνει μόνο ανακατευθύνσεις (2.5).
 
 Η πολιτική απορρήτου (`/politiki-aporritou`) γράφτηκε ως πρότυπο. Διαβάστε την
 και, αν αλλάξει κάτι (π.χ. νέο email, πάροχος φιλοξενίας), ενημερώστε το
