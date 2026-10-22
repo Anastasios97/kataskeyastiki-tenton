@@ -10,8 +10,10 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadEnv } from "vite";
+import { applySiteUrl } from "./site-url.mjs";
 
 const root = resolve(".");
+const { noindex } = applySiteUrl();
 const dist = join(root, "dist");
 const env = {
   ...loadEnv(process.env.MODE || "production", root, "VITE_"),
@@ -99,7 +101,8 @@ function renderPage(path) {
   html = setMeta(html, /(<meta\s+property="og:description"\s+content=")([^"]*)("[^>]*>)/, seo.description);
   html = setMeta(html, /(<meta name="twitter:title" content=")([^"]*)(")/, seo.title);
   html = setMeta(html, /(<meta\s+name="twitter:description"\s+content=")([^"]*)("[^>]*>)/, seo.description);
-  html = html.replace("</head>", `    ${[verificationTags(), structuredData(path, seo)].filter(Boolean).join("\n    ")}\n  </head>`);
+  const robotsTag = noindex ? '<meta name="robots" content="noindex" />' : "";
+  html = html.replace("</head>", `    ${[robotsTag, verificationTags(), structuredData(path, seo)].filter(Boolean).join("\n    ")}\n  </head>`);
   html = html.replace('<div id="root"></div>', `<div id="root">${server.render(path)}</div>`);
   return html;
 }
@@ -137,7 +140,10 @@ write(
     .map((path) => `  <url>\n    <loc>${pageUrl(path)}</loc>\n    <lastmod>${today}</lastmod>\n    <priority>${priority(path)}</priority>\n  </url>`)
     .join("\n")}\n</urlset>\n`,
 );
-write(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
+write(
+  join(dist, "robots.txt"),
+  noindex ? "User-agent: *\nDisallow: /\n" : `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`,
+);
 
 rmSync(join(root, "dist-ssr"), { recursive: true, force: true });
 console.log(`Prerendered ${routes.length} pages for ${siteUrl} (+404.html, sitemap.xml, robots.txt).`);

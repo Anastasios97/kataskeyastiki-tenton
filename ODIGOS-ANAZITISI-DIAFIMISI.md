@@ -2,7 +2,7 @@
 
 Βήμα προς βήμα οδηγίες για να:
 
-1. ανεβεί το site στο **Vercel** με δικό του **domain** (π.χ. `kataskevastiki-tenton.com`),
+1. ανεβεί το site στο **Vercel** με το δικό του **domain**, `kataskeuastiki-tenton.com`,
 2. το βρίσκουν η **Google**, το **Bing** και οι άλλες μηχανές αναζήτησης,
 3. εμφανίζεται στον **χάρτη της Google** για αναζητήσεις όπως «τέντες Άγιος Δημήτριος»,
 4. τρέξει **διαφήμιση Google Ads** σε συγκεκριμένες λέξεις-κλειδιά και να μετράμε τα αποτελέσματα.
@@ -56,9 +56,10 @@
 4. Στη σελίδα ρυθμίσεων:
    - **Framework Preset:** `Vite` (το διαβάζει και από το `vercel.json`).
    - **Build Command / Output Directory:** αφήστε τα όπως είναι (`npm run build`, `dist`).
-   - **Environment Variables:** προσθέστε προσωρινά
-     `VITE_SITE_URL` = η διεύθυνση που θα σας δώσει το Vercel (π.χ.
-     `https://kataskeyastiki-tenton.vercel.app`). Θα την αλλάξετε στο Μέρος 2.
+   - **Environment Variables:** δεν χρειάζεται τίποτα. Στο production build του
+     Vercel η κύρια διεύθυνση γίνεται αυτόματα `https://www.kataskeuastiki-tenton.com`
+     (ορίζεται στο `scripts/site-url.mjs`). Τα preview deployments (δοκιμαστικές
+     εκδόσεις από άλλα branches) σημειώνονται αυτόματα ώστε να μην τα ευρετηριάζει η Google.
 5. **Deploy**. Σε 1–2 λεπτά το site είναι online στη διεύθυνση `*.vercel.app`.
 
 Από εδώ και πέρα, κάθε αλλαγή στο branch `main` ανεβαίνει αυτόματα.
@@ -67,48 +68,47 @@
 
 ## Μέρος 2: Αγορά domain στο Vercel
 
-### 2.1 Ποιο όνομα
+### 2.1 Το domain
 
-- Το Vercel **δεν πουλάει `.gr`** (ούτε `.eu`). Πουλάει `.com`, `.net`, `.shop` κ.ά.
-- Τιμή `.com` στο Vercel (έλεγχος Οκτώβριος 2026): **11,25$ τον χρόνο**, ίδια στην ανανέωση.
-- Διαθέσιμο σήμερα, για παράδειγμα: **`kataskevastiki-tenton.com`**. Κρατήστε το
-  όνομα κοντά στην επωνυμία, χωρίς ελληνικούς χαρακτήρες, εύκολο να το πει
-  κάποιος στο τηλέφωνο.
+Αγοράστηκε στο Vercel το **`kataskeuastiki-tenton.com`** (11,25$ τον χρόνο). Ήδη
+χρησιμοποιεί το DNS του Vercel, οπότε δεν χρειάζεται καμία ρύθμιση DNS για
+να συνδεθεί με το project.
 
-> **Πρόταση:** Οι Έλληνες πελάτες εμπιστεύονται το `.gr`. Αν θέλετε, αγοράστε
-> **επιπλέον** το ίδιο όνομα σε `.gr` από ελληνικό καταχωρητή (π.χ. Papaki,
-> Top.host, περίπου 10–20€ τον χρόνο) και συνδέστε το στο Vercel ως
-> ανακατεύθυνση προς το `.com` (βήμα 2.4).
+Ελέγξτε μία φορά στο Vercel → **Domains → kataskeuastiki-tenton.com**:
 
-### 2.2 Αγορά
+- ότι η **αυτόματη ανανέωση (auto-renew)** είναι ενεργή, ώστε να μη χαθεί το domain,
+- ότι έχετε επιβεβαιώσει το **email επιβεβαίωσης στοιχείων κατόχου** που στέλνει
+  ο καταχωρητής μετά την αγορά. Αν δεν επιβεβαιωθεί, το domain μπορεί να «παγώσει».
 
-1. Στο Vercel: **Domains** (στο μενού του λογαριασμού/ομάδας) → **Buy**.
-   Εναλλακτικά: μέσα στο project **Settings → Domains → Add Domain → Buy**.
-2. Γράψτε το όνομα, επιλέξτε το διαθέσιμο, και ολοκληρώστε την πληρωμή.
-   Συμπληρώστε σωστά τα στοιχεία κατόχου (στο όνομα της επιχείρησης ή του
-   υπεύθυνου). Ενεργοποιήστε την **αυτόματη ανανέωση**, ώστε να μη χαθεί το domain.
-3. Ελέγξτε το email σας: ο καταχωρητής στέλνει email επιβεβαίωσης στοιχείων.
-   Πρέπει να το επιβεβαιώσετε, αλλιώς το domain μπορεί να «παγώσει».
+> **Προαιρετικά, άλλες γραφές του ονόματος.** Όποιος ακούει το όνομα στο
+> τηλέφωνο μπορεί να γράψει `kataskevastiki` (με v). Το
+> `kataskevastiki-tenton.com` κοστίζει επίσης 11,25$ τον χρόνο και μπορεί να
+> κάνει ανακατεύθυνση στο κύριο (βήμα 2.4). Το ίδιο ισχύει για ένα `.gr` από
+> ελληνικό καταχωρητή (π.χ. Papaki, Top.host, περίπου 10–20€ τον χρόνο).
 
 ### 2.3 Σύνδεση με το project
 
-1. Project → **Settings → Domains → Add**: προσθέστε `kataskevastiki-tenton.com`
-   **και** `www.kataskevastiki-tenton.com`.
+1. Project → **Settings → Domains → Add**: προσθέστε `kataskeuastiki-tenton.com`
+   **και** `www.kataskeuastiki-tenton.com`.
 2. Ορίστε ένα ως κύριο (προτείνεται το `www.`) και το άλλο να κάνει
    **Redirect** (308) σε αυτό. Επειδή το domain αγοράστηκε στο Vercel, το DNS
    ρυθμίζεται αυτόματα και το HTTPS ενεργοποιείται μόνο του.
-3. **Settings → Environment Variables**: αλλάξτε το `VITE_SITE_URL` σε
-   `https://www.kataskevastiki-tenton.com` (χωρίς `/` στο τέλος).
-4. **Deployments →** στο τελευταίο deployment **⋯ → Redeploy**. Χωρίς redeploy
-   οι αλλαγές μεταβλητών δεν εφαρμόζονται.
-5. Ελέγξτε: ανοίξτε `https://www.kataskevastiki-tenton.com/sitemap.xml`. Όλες οι
-   διευθύνσεις πρέπει να ξεκινούν με το νέο domain.
+3. Η κύρια διεύθυνση του site είναι ήδη ρυθμισμένη στον κώδικα σε
+   `https://www.kataskeuastiki-tenton.com`, οπότε **δεν χρειάζεται** μεταβλητή.
+   Μόνο αν προτιμήσετε ως κύριο το σκέτο domain (χωρίς `www`), ορίστε στο
+   **Settings → Environment Variables** `VITE_SITE_URL` =
+   `https://kataskeuastiki-tenton.com` και κάντε **Deployments → ⋯ → Redeploy**.
+4. Ελέγξτε: ανοίξτε `https://www.kataskeuastiki-tenton.com/sitemap.xml`. Όλες οι
+   διευθύνσεις πρέπει να ξεκινούν με `https://www.kataskeuastiki-tenton.com`.
+   Ανοίξτε και το `https://kataskeuastiki-tenton.com`: πρέπει να μεταφέρει στο `www`.
 
-### 2.4 (Προαιρετικά) Domain `.gr` από άλλο καταχωρητή
+### 2.4 (Προαιρετικά) Δεύτερο domain ως ανακατεύθυνση
 
-1. Vercel → project → **Settings → Domains → Add** → `kataskevastiki-tenton.gr`
-   (και `www.`), επιλογή **Redirect to** `www.kataskevastiki-tenton.com`.
-2. Το Vercel δείχνει ποιες εγγραφές DNS χρειάζονται (συνήθως μία `A` για το
+1. Vercel → project → **Settings → Domains → Add** → το δεύτερο domain (π.χ.
+   `kataskevastiki-tenton.com` ή `kataskeuastiki-tenton.gr`, και το `www.` του),
+   επιλογή **Redirect to** `www.kataskeuastiki-tenton.com`.
+2. Αν το δεύτερο domain αγοράστηκε στο Vercel, δεν χρειάζεται τίποτα άλλο. Αν
+   είναι από άλλο καταχωρητή (π.χ. `.gr`), το Vercel δείχνει ποιες εγγραφές DNS χρειάζονται (συνήθως μία `A` για το
    σκέτο domain και μία `CNAME` για το `www`). Τις προσθέτετε στον πίνακα DNS του
    καταχωρητή (Papaki κ.λπ.). Σε λίγα λεπτά έως λίγες ώρες εμφανίζεται «Valid Configuration».
 
@@ -119,13 +119,14 @@
 - GitHub → repository → **Settings → Pages → Build and deployment**: επιλέξτε
   **Source: None** (απενεργοποίηση), **ή**
 - αν θέλετε να μείνει, **Settings → Secrets and variables → Actions → Variables
-  → New repository variable** `VITE_SITE_URL` = `https://www.kataskevastiki-tenton.com`.
+  → New repository variable** `VITE_SITE_URL` = `https://www.kataskeuastiki-tenton.com`
+  και ξανατρέξτε το workflow (**Actions → Deploy to GitHub Pages → Run workflow**).
   Έτσι και το αντίγραφο στο GitHub δείχνει στη Google (μέσω canonical) ότι
   η κύρια διεύθυνση είναι το νέο domain.
 
 ### 2.6 Email με το domain (προτείνεται)
 
-Ένα `info@kataskevastiki-tenton.com` δείχνει πιο επαγγελματικό από το
+Ένα `info@kataskeuastiki-tenton.com` δείχνει πιο επαγγελματικό από το
 `@yahoo.gr`. Το Vercel δεν δίνει email. Χρειάζεστε πάροχο email (π.χ. Google
 Workspace, Zoho Mail) και προσθέτετε τις εγγραφές `MX`/`TXT` που σας δίνει στο
 Vercel → **Domains → (το domain) → DNS Records**. Μετά αλλάξτε το email στο
@@ -143,7 +144,7 @@ Vercel → **Domains → (το domain) → DNS Records**. Μετά αλλάξτ�
 
 1. Μπείτε στο [search.google.com/search-console](https://search.google.com/search-console)
    με λογαριασμό Google της επιχείρησης.
-2. **Add property** → διαλέξτε **Domain** και γράψτε `kataskevastiki-tenton.com`.
+2. **Add property** → διαλέξτε **Domain** και γράψτε `kataskeuastiki-tenton.com`.
 3. Η Google δίνει μια εγγραφή **TXT** (`google-site-verification=…`).
    Vercel → **Domains → (domain) → DNS Records → Add**: Type `TXT`, Name `@`,
    Value ό,τι σας έδωσε η Google. Γυρίστε στη Search Console και πατήστε **Verify**.
@@ -203,7 +204,7 @@ Business Profile, και είναι **δωρεάν**. Συνήθως φέρνε�
 3. **Διεύθυνση**: Στρατάρχη Παπάγου Αλεξάνδρου 109, Άγιος Δημήτριος. Αν δεν
    δέχεστε πελάτες στον χώρο, επιλέξτε να **μην** εμφανίζεται η διεύθυνση και
    ορίστε **περιοχές εξυπηρέτησης** (Αθήνα, Πειραιάς, νότια προάστια κ.λπ.).
-4. Τηλέφωνο `693 225 4494`, ιστότοπος `https://www.kataskevastiki-tenton.com`.
+4. Τηλέφωνο `693 225 4494`, ιστότοπος `https://www.kataskeuastiki-tenton.com`.
 5. **Επαλήθευση**: η Google προτείνει τρόπο (συνήθως **βίντεο** από το κινητό,
    συνεχές και χωρίς μοντάζ, που δείχνει την περιοχή, την πινακίδα ή το
    εργαστήριο/όχημα με το όνομα και ότι έχετε πρόσβαση, π.χ. ξεκλείδωμα).
@@ -360,9 +361,10 @@ Negative keywords** της καμπάνιας.
 ## Μέρος 7: Λίστα ελέγχου με σειρά
 
 - [ ] Λογαριασμός Vercel Pro και import του repository (Μέρος 1)
-- [ ] Αγορά `.com` στο Vercel, σύνδεση `www` + redirect (Μέρος 2.2–2.3)
-- [ ] `VITE_SITE_URL` = νέο domain και Redeploy, έλεγχος `/sitemap.xml`
-- [ ] (Προαιρετικά) `.gr` από ελληνικό καταχωρητή με redirect (2.4)
+- [x] Αγορά `kataskeuastiki-tenton.com` στο Vercel
+- [ ] Auto-renew και επιβεβαίωση email κατόχου (2.1)
+- [ ] Σύνδεση `www` + redirect στο project, έλεγχος `/sitemap.xml` (2.3)
+- [ ] (Προαιρετικά) δεύτερη γραφή ή `.gr` με redirect (2.4)
 - [ ] Απενεργοποίηση GitHub Pages ή `VITE_SITE_URL` και εκεί (2.5)
 - [ ] Google Search Console: επαλήθευση, sitemap, request indexing (3.1)
 - [ ] Bing Webmaster Tools: import από Google (3.2)
@@ -380,7 +382,7 @@ Negative keywords** της καμπάνιας.
 
 | Μεταβλητή | Παράδειγμα | Από πού |
 |---|---|---|
-| `VITE_SITE_URL` | `https://www.kataskevastiki-tenton.com` | το domain σας |
+| `VITE_SITE_URL` | `https://www.kataskeuastiki-tenton.com` | αυτόματο στο Vercel· ορίστε το μόνο για αλλαγή |
 | `VITE_QUOTE_FORM_ENDPOINT` | `https://formsubmit.co/ajax/info@…` | FormSubmit |
 | `VITE_GOOGLE_SITE_VERIFICATION` | `abc123…` | Search Console → HTML tag |
 | `VITE_BING_SITE_VERIFICATION` | `0A1B2C…` | Bing Webmaster → meta tag |

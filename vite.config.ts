@@ -2,12 +2,16 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { getMetadata, setMetadata } from "imagetools-core";
 import { imagetools } from "vite-imagetools";
+import { applySiteUrl } from "./scripts/site-url.mjs";
 
 declare const process: {
   env: Record<string, string | undefined>;
 };
 
 const base = process.env.BASE_PATH || "/";
+
+// Ορίζει τη VITE_SITE_URL πριν διαβαστούν τα .env (βλ. scripts/site-url.mjs).
+applySiteUrl();
 
 export default defineConfig({
   base,
