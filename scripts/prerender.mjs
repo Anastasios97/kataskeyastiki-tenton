@@ -68,6 +68,15 @@ function structuredData(path, seo) {
       })),
     });
   } else {
+    // Το όνομα που δείχνει η Google πάνω από το αποτέλεσμα (site name).
+    blocks.push({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Κατασκευαστική Τεντών",
+      alternateName: ["Kataskeuastiki Tenton", "kataskeuastiki-tenton.com"],
+      url: pageUrl("/"),
+      inLanguage: "el-GR",
+    });
     blocks.push({
       "@context": "https://schema.org",
       "@type": "FAQPage",

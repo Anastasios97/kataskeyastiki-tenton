@@ -578,9 +578,9 @@ const navItems = [
 
 const routeMeta: Record<string, { title: string; description: string }> = {
   "/": {
-    title: "Λύσεις σκίασης με εμπειρία",
+    title: "Τέντες & πέργκολες στον Άγιο Δημήτριο",
     description:
-      "Οικογενειακή επιχείρηση με περισσότερα από 30 χρόνια εμπειρίας σε τέντες, πέργκολες και συστήματα σκίασης σε όλη την Αττική και την Ελλάδα.",
+      "Κατασκευαστική Τεντών: οικογενειακή επιχείρηση στον Άγιο Δημήτριο με περισσότερα από 30 χρόνια εμπειρίας σε τέντες, πέργκολες και συστήματα σκίασης σε όλη την Αττική και την Ελλάδα.",
   },
   "/klassika-systimata-skiasis": {
     title: "Κλασικά συστήματα σκίασης",
@@ -3926,8 +3926,8 @@ function HomePage({
             <em>για να ζείτε καλύτερα.</em>
           </h1>
           <p className="hero-lead">
-            Κατασκευάζουμε λύσεις σκίασης που ταιριάζουν στον χώρο, στις ανάγκες
-            και στην αισθητική σας.
+            Στην {business.name} κατασκευάζουμε λύσεις σκίασης που ταιριάζουν
+            στον χώρο, στις ανάγκες και στην αισθητική σας.
           </p>
           <div className="hero-actions">
             <a className="button button-sun" href={appHref("/epikoinonia")}>
@@ -4154,7 +4154,9 @@ export function getPageSeo(path: string) {
   const meta =
     routeMeta[path] ??
     (classicSystem ? { title: classicSystem.title, description: classicSystem.summary } : routeMeta["/"]);
-  return { title: `${meta.title} | ${business.name}`, heading: meta.title, description: meta.description };
+  // Στην αρχική το όνομα μπαίνει πρώτο, για να τη βρίσκουν όσοι ψάχνουν την επιχείρηση με το όνομά της.
+  const title = path === "/" ? `${business.name} | ${meta.title}` : `${meta.title} | ${business.name}`;
+  return { title, heading: meta.title, description: meta.description };
 }
 
 /** Όλες οι σελίδες που δημιουργούνται ως ξεχωριστά αρχεία HTML και μπαίνουν στο sitemap. */
